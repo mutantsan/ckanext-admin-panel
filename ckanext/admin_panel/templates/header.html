@@ -1,0 +1,9 @@
+{% ckan_extends %}
+
+{% block header_account %}
+    {% if g.userobj.sysadmin %}
+        {% snippet 'admin_panel/toolbar.html' %}
+    {% endif %}
+
+    {{ super() }}
+{% endblock %}

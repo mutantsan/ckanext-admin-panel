@@ -1,0 +1,15 @@
+{% extends 'page.html' %}
+
+{%- block page %}
+    {% block ap_toolbar %}
+        <header>
+            {% snippet 'admin_panel/toolbar.html' %}
+        </header>
+    {% endblock %}
+
+    <div class="main">
+        <div id="content" class="container">
+            {% block ap_content %}{% endblock ap_content %}
+        </div>
+    </div>
+{% endblock -%}

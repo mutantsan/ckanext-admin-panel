@@ -1,0 +1,14 @@
+admin_panel-js:
+  filter: rjsmin
+  output: ckanext-admin_panel/%(version)s-admin_panel.js
+  contents:
+    - js/admin_panel.js
+  extra:
+    preload:
+      - base/main
+
+admin_panel-css:
+  filter: cssrewrite
+  output: ckanext-admin_panel/%(version)s-admin_panel.css
+  contents:
+    - css/admin_panel.css

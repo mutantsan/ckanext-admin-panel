@@ -1,0 +1,54 @@
+<li class="nav-item">
+    <a class="nav-link" href="#">
+        <i class="fa-solid fa-folder"></i>
+        {{ _('Content') }}
+    </a>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link" href="#">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        {{ _('Appearance') }}
+    </a>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link" href="#">
+        <i class="fa-solid fa-gem"></i>
+        {{ _('Extensions') }}
+    </a>
+</li>
+
+<li class="nav-item dropdown">
+    <a class="nav-link" href="{{ url_for('ap_config_list.index') }}">
+        <i class="fa-solid fa-gear"></i>
+        {{ _('Configuration') }}
+    </a>
+    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+        aria-expanded="false">
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+        <li><a class="dropdown-item" href="{{ url_for('ap_basic.config') }}">{{ _("Basic") }}</a></li>
+    </ul>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link" href="#">
+        <i class="fa-solid fa-person"></i>
+        {{ _('People') }}
+    </a>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link" href="#">
+        <i class="fa-regular fa-chart-bar"></i>
+        {{ _('Reports') }}
+    </a>
+</li>
+
+<li class="nav-item">
+    <a class="nav-link" href="#">
+        <i class="fa-solid fa-circle-info"></i>
+        {{ _('Help') }}
+    </a>
+</li>

@@ -1,0 +1,22 @@
+<div id="admin-panel">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('home.index') }}">
+                {{ _('ADMIN 2.0') }}
+                {% snippet 'snippets/svg/admin-header-icon.svg' %}
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminPanelToggle" aria-controls="adminPanelToggle" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="adminPanelToggle">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% snippet 'admin_panel/panel_links.html' %}
+                </ul>
+
+                {% snippet 'admin_panel/panel_search.html' %}
+            </div>
+        </div>
+    </nav>
+</div>

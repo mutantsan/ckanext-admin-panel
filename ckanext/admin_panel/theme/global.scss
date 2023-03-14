@@ -1,0 +1,101 @@
+.masthead {
+    position: relative;
+
+    .container .debug {
+        position: absolute;
+    }
+}
+
+
+#admin-panel {
+    $border: 1px solid $black;
+    border: $border;
+    color: $black;
+
+    .navbar {
+        background: $black;
+
+        .navbar-brand {
+            margin-right: 0;
+            padding: 0 10px;
+        }
+
+        .nav-item {
+            background: $nav-item-bg;
+            display: flex;
+
+            .nav-link {
+                padding: 10px;
+                color: $black;
+                i {
+                    width: 15px;
+                }
+            }
+
+            .dropdown-menu.show {
+                border: 1px solid $black;
+                border-radius: 0;
+                padding: 0;
+                .dropdown-item {
+                    color: $black;
+                }
+            }
+
+            &:hover {
+                background: $nav-item-bg-hover;
+            }
+
+            &.dropdown {
+                .dropdown-toggle:after {
+                    margin-left: 0;
+                    vertical-align: 0.155em;
+                }
+                &:hover {
+                    background: $white;
+                }
+
+                a:hover {
+                    background: $nav-item-bg-hover;
+                }
+            }
+        }
+    }
+
+    input[type="search"],
+    .btn.btn-outline-success {
+        border: 1px solid $black;
+        border-radius: 0;
+        color: $black;
+    }
+
+    .btn.btn-outline-success:hover {
+        color: $white;
+    }
+
+    .navbar-toggler {
+        border: 1px solid $black;
+        border-radius: 0;
+        color: $black;
+        z-index: 1;
+    }
+
+    @media (min-width: $screen-md-min) {
+        .navbar {
+            padding: 0;
+            .nav-item {
+                padding: 0;
+            }
+
+            .navbar-brand {
+                padding: 0 10px 0 0;
+            }
+
+            .nav-item {
+                border-right: $border;
+                &:first-of-type {
+                    border-left: $border;
+                }
+            }
+        }
+    }
+}

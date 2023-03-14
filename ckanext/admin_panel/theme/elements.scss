@@ -1,0 +1,13 @@
+.btn {
+    &.btn-black {
+        border: 1px solid $black;
+        color: $black;
+        background-color: $white;
+        border-radius: 0;
+
+        &:hover, &:active, &:focus {
+            color: $white;
+            background-color: $black;
+        }
+    }
+}
