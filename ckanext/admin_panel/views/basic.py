@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 from flask import Blueprint, Response
 from flask.views import MethodView
@@ -199,9 +199,9 @@ class TrashView(MethodView):
 
         for action, deleted_entities in zip(actions, entities):
             for entity in deleted_entities:
-                ent_id = (
+                ent_id: str = (
                     entity.id if hasattr(entity, "id") else entity["id"]
-                )  # type: ignore
+                )
                 tk.get_action(action)({"user": tk.current_user.name}, {"id": ent_id})
             model.Session.remove()
         tk.h.flash_success(tk._("Massive purge complete"))
@@ -211,7 +211,7 @@ class TrashView(MethodView):
         number = len(entities) if type(entities) == list else entities.count()
 
         for ent in entities:
-            entity_id = ent.id if hasattr(ent, "id") else ent["id"]
+            entity_id: str = ent.id if hasattr(ent, "id") else ent["id"]
             tk.get_action(self._get_purge_action(ent_type))(
                 {"user": tk.current_user.name}, {"id": entity_id}
             )

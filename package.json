@@ -24,7 +24,7 @@
     "gulp-sass": "^5.1.0",
     "gulp-sourcemaps": "^3.0.0",
     "gulp-touch-fd": "^2.0.0",
-    "pyright": "^1.1.296",
+    "pyright": "^1.1.298",
     "sass": "^1.58.3"
   }
 }
