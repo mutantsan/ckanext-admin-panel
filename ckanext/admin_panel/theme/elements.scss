@@ -1,13 +1,45 @@
 .btn {
     &.btn-black {
-        border: 1px solid $black;
+        border: $border;
         color: $black;
         background-color: $white;
         border-radius: 0;
 
-        &:hover, &:active, &:focus {
+        &:hover,
+        &:active,
+        &:focus {
             color: $white;
             background-color: $black;
+        }
+    }
+}
+
+
+.accordion {
+    border: $border;
+
+    .accordion-header {
+
+        .accordion-button,
+        .accordion-button.collapsed {
+            border-radius: 0 !important;
+        }
+    }
+    .accordion-header,
+    .accordion-body {
+        padding: 0.5rem;
+    }
+}
+
+
+div.list-group {
+
+    .list-group-item {
+        border: $border;
+        border-radius: 0;
+        margin-bottom: 0.5rem;
+        &:last-of-type {
+            margin-bottom: 0;
         }
     }
 }
