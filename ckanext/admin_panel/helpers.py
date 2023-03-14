@@ -13,8 +13,8 @@ def ap_get_config_sections():
                     "blueprint": "ap_basic.config",
                 },
                 {
-                    "name": tk._("Pagination settings"),
-                    "blueprint": "ap_basic.config",
+                    "name": tk._("Trash bin"),
+                    "blueprint": "ap_basic.trash",
                 },
             ],
         },
@@ -33,8 +33,12 @@ def ap_get_config_sections():
             "configs": [
                 {
                     "name": tk._("User permissions"),
-                    "blueprint": "ap_basic.config",
-                }
+                    "blueprint": "user.index",
+                },
+                {
+                    "name": tk._("User permissions"),
+                    "blueprint": "user.index",
+                },
             ],
         },
     ]

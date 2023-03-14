@@ -2,10 +2,10 @@ import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 
 from ckanext.admin_panel.views import get_blueprints
-from ckanext.admin_panel.logic.auth import get_auth_functions
 
 
 @tk.blanket.helpers
+@tk.blanket.auth_functions
 class AdminPanelPlugin(p.SingletonPlugin):
     p.implements(p.IConfigurer)
     p.implements(p.IBlueprint)
@@ -23,8 +23,3 @@ class AdminPanelPlugin(p.SingletonPlugin):
 
     def get_blueprint(self):
         return get_blueprints()
-
-    # IAuthFunctions
-
-    def get_auth_functions(self):
-        return get_auth_functions()

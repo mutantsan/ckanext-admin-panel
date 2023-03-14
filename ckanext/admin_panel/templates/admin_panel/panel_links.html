@@ -13,7 +13,7 @@
 </li>
 
 <li class="nav-item">
-    <a class="nav-link" href="#">
+    <a class="nav-link" href="{{ h.url_for('api.action', ver=3, logic_function='status_show', qualified=True) }}">
         <i class="fa-solid fa-gem"></i>
         {{ _('Extensions') }}
     </a>
@@ -24,18 +24,39 @@
         <i class="fa-solid fa-gear"></i>
         {{ _('Configuration') }}
     </a>
-    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+    <a class="nav-link dropdown-toggle" href="#" id="configDropdown" role="button" data-bs-toggle="dropdown"
         aria-expanded="false">
     </a>
-    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-        <li><a class="dropdown-item" href="{{ url_for('ap_basic.config') }}">{{ _("Basic") }}</a></li>
+    <ul class="dropdown-menu" aria-labelledby="configDropdown">
+        {% for section in h.ap_get_config_sections() %}
+            {% set accordion_id = "accordion-" + h.ap_munge_string(section.name) %}
+            {% set with_subitems = section.configs | length > 1 %}
+            {% set conf_url = '#' if with_subitems else h.url_for(section.configs[0].blueprint) %}
+            <li>
+                <a class="dropdown-item {% if with_subitems %}with-subitems{% endif %}" href="{{ conf_url }}">
+                    {{ section.name }}
+                </a>
+
+                {% if with_subitems %}
+                    <ul class="submenu dropdown-menu">
+                        {% for config in section.configs %}
+                            <li>
+                                <a class="dropdown-item" href="{{ h.url_for(config.blueprint) }}">
+                                    {{ config.name }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </li>
+        {% endfor %}
     </ul>
 </li>
 
 <li class="nav-item">
     <a class="nav-link" href="#">
         <i class="fa-solid fa-person"></i>
-        {{ _('People') }}
+        {{ _('Users') }}
     </a>
 </li>
 

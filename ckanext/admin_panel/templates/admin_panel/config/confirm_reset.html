@@ -1,0 +1,13 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block ap_content %}
+    <h1>{{ _('Confirm reset') }}</h1>
+    <form action="{% url_for 'ap_basic.reset' %}" method="post">
+        {{ h.csrf_input() }}
+        <p>{{ _('Are you sure you want to reset the config?') }}</p>
+        <p class="form-actions">
+            <button class="btn btn-danger" type="submit" name="cancel" >{{ _('Cancel') }}</button>
+            <button class="btn btn-primary" type="submit" name="delete" >{{ _('Confirm Reset') }}</button>
+        </p>
+    </form>
+{% endblock ap_content %}

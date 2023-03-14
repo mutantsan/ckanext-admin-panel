@@ -2,41 +2,39 @@
 
 
 {% block ap_content %}
-    <div class="container-fluid">
-        <h1>{{ _("List of config options") }}</h1>
-        <div class="row g-3">
-            {% for section in h.ap_get_config_sections() %}
-                {% set accordion_id = "accordion-" + h.ap_munge_string(section.name) %}
+    <h1>{{ _("List of config options") }}</h1>
+    <div class="row g-3">
+        {% for section in h.ap_get_config_sections() %}
+            {% set accordion_id = "accordion-" + h.ap_munge_string(section.name) %}
 
-                <div class="col col-md-6">
-                    <div class="accordion accordion-flush" id="{{ parent_accordion_id }}">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="flush-headingOne">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#{{ accordion_id }}" aria-expanded="false"
-                                    aria-controls="{{ accordion_id }}">
-                                    {{ section.name }}
-                                </button>
-                            </h2>
-                            <div id="{{ accordion_id }}" class="accordion-collapse collapse show" aria-labelledby="flush-headingOne">
-                                <div class="accordion-body">
-                                    <div class="list-group">
-                                        {% for config in section.configs %}
-                                            <li class="list-group-item d-flex flex-column">
-                                                <a href="{{ h.url_for(config.blueprint) }}" aria-current="true">
-                                                    <i class="fa-solid fa-arrow-right"></i>
-                                                    {{ config.name }}
-                                                </a>
-                                                <span class="text-secondary">{{ config.info or _("No description") }}</span>
-                                            </li>
-                                        {% endfor %}
-                                    </div>
+            <div class="col-12 col-lg-6">
+                <div class="accordion accordion-flush" id="{{ parent_accordion_id }}">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="flush-headingOne">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#{{ accordion_id }}" aria-expanded="false"
+                                aria-controls="{{ accordion_id }}">
+                                {{ section.name }}
+                            </button>
+                        </h2>
+                        <div id="{{ accordion_id }}" class="accordion-collapse collapse show" aria-labelledby="flush-headingOne">
+                            <div class="accordion-body">
+                                <div class="list-group">
+                                    {% for config in section.configs %}
+                                        <li class="list-group-item d-flex flex-column">
+                                            <a href="{{ h.url_for(config.blueprint) }}" aria-current="true">
+                                                <i class="fa-solid fa-arrow-right"></i>
+                                                {{ config.name }}
+                                            </a>
+                                            <span class="text-secondary">{{ config.info or _("No description") }}</span>
+                                        </li>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            {% endfor %}
-        </div> <!-- row -->
-    </div>
+            </div>
+        {% endfor %}
+    </div> <!-- row -->
 {% endblock ap_content %}

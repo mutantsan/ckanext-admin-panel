@@ -1,5 +1,8 @@
 {% extends 'page.html' %}
 
+{% block bodytag %} admin-panel="true" {{ super() }}{% endblock %}
+
+
 {%- block page %}
     {% block ap_toolbar %}
         <header>
@@ -9,7 +12,23 @@
 
     <div class="main">
         <div id="content" class="container">
-            {% block ap_content %}{% endblock ap_content %}
+            {% block flash %}
+                <div class="flash-messages">
+                    {% block flash_inner %}
+                        {% for category, message in h.get_flashed_messages(with_categories=true) %}
+                            <div class="alert alert-dismissible fade show {{ category }}">
+                            {{ h.literal(message) }}
+                            </div>
+                        {% endfor %}
+                    {% endblock %}
+                </div>
+            {% endblock flash %}
+
+            <div class="module">
+                <div class="module-content">
+                    {% block ap_content %}{% endblock ap_content %}
+                </div>
+            </div>
         </div>
     </div>
 {% endblock -%}
