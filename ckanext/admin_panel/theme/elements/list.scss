@@ -1,0 +1,20 @@
+body[admin-panel="true"] {
+    div.list-group {
+        .list-group-item {
+            border: 1px solid var(--ap-border-color);
+            background: var(--ap-body-bg);
+            color: var(--ap-color);
+
+            border-radius: 0;
+            margin-bottom: 0.5rem;
+
+            &.list-group-item--description {
+                color: var(--ap-color);
+            }
+
+            &:last-of-type {
+                margin-bottom: 0;
+            }
+        }
+    }
+}

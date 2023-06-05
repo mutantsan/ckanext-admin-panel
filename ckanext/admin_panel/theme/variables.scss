@@ -1,12 +1,43 @@
+:root {
+    --ap-body-bg: white;
+    --ap-border-color: black;
+    --ap-color: black;
+    --ap-color-hover: black;
+    --ap-color-link: #0d6efd;
+    --ap-color-link-hover: #0a58ca;
+    --ap-accordion-arrow: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='black'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>");
+
+    --ap-nav-item-bg: white;
+    --ap-nav-item-bg-hover: #e9ecef;
+
+    --switcher-bg-color: black;
+    --switcher-border-color: black;
+    --switcher-color: white;
+}
+
+body[admin-panel-theme="dark"] {
+    --ap-body-bg: #18232c;
+    --ap-border-color: white;
+    --ap-color: white;
+    --ap-color-hover: white;
+    --ap-color-link: hsl(195, 85%, 41%);
+    --ap-color-link-hover: hsl(195, 80%, 50%);
+    --ap-accordion-arrow: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>");
+
+    --ap-nav-item-bg: #18232c;
+    --ap-nav-item-bg-hover: #{lighten(#18232c, 10%)};
+
+    --switcher-bg-color: white;
+    --switcher-border-color: black;
+    --switcher-color: black;
+}
+
 $black: black;
 $white: white;
-
-$nav-item-bg: $white;
-$nav-item-bg-hover: #e9ecef;
 
 $screen-xs-min: 480px;
 $screen-sm-min: 768px;
 $screen-md-min: 992px;
 $screen-lg-min: 1200px;
 
-$border: 1px solid $black;
+$border: 1px solid var(--ap-border-color);

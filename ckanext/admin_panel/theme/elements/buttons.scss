@@ -1,0 +1,27 @@
+body[admin-panel="true"] {
+    .btn {
+        border-radius: 0 ;
+        box-shadow: none;
+
+        &.btn-black {
+            border: 1px solid var(--ap-border-color);
+            color: $black;
+            background-color: $white;
+
+            background: var(--ap-body-bg);
+            color: var(--ap-color);
+
+
+            &:hover,
+            &:active,
+            &:focus {
+                color: var(--ap-color-hover);
+                background-color: var(--ap-nav-item-bg-hover);
+            }
+        }
+
+        &.btn-danger {
+            color: $white;
+        }
+    }
+}

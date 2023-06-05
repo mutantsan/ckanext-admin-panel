@@ -1,6 +1,10 @@
-// @import "base/scss/main.scss";
-
 @import "variables";
 @import "mixins";
 @import "global";
-@import "elements";
+
+@import "elements/admin-panel";
+@import "elements/buttons";
+@import "elements/theme-switcher";
+@import "elements/flash";
+@import "elements/list";
+@import "elements/accordion";

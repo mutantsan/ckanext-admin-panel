@@ -1,0 +1,31 @@
+body[admin-panel="true"] {
+    .accordion {
+        border: $border;
+
+        .accordion-item {
+            background: var(--ap-body-bg);
+
+            .accordion-header {
+                .accordion-button {
+                    border: $border;
+                    background: var(--ap-body-bg);
+                    color: var(--ap-color);
+
+                    &:after {
+                        background-image: var(--ap-accordion-arrow) !important;
+                    }
+                }
+
+                .accordion-button,
+                .accordion-button.collapsed {
+                    border-radius: 0 !important;
+                }
+            }
+
+            .accordion-header,
+            .accordion-body {
+                padding: 0.5rem;
+            }
+        }
+    }
+}

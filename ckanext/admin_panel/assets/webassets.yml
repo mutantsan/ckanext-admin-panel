@@ -3,6 +3,7 @@ admin_panel-js:
   output: ckanext-admin_panel/%(version)s-admin_panel.js
   contents:
     - js/admin_panel.js
+    - js/theme-switcher.js
   extra:
     preload:
       - base/main

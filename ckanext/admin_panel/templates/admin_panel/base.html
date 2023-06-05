@@ -1,9 +1,11 @@
 {% extends 'page.html' %}
 
-{% block bodytag %} admin-panel="true" {{ super() }}{% endblock %}
+{% block bodytag %} admin-panel="true" admin-panel-theme="light" {{ super() }}{% endblock %}
 
 
 {%- block page %}
+    <span class="hidden" data-module="ap-theme-switcher"></span>
+
     {% block ap_toolbar %}
         <header>
             {% snippet 'admin_panel/toolbar.html' %}
@@ -11,7 +13,7 @@
     {% endblock %}
 
     <div class="main">
-        <div id="content" class="container">
+        <div id="content" class="container-fluid">
             {% block flash %}
                 <div class="flash-messages">
                     {% block flash_inner %}

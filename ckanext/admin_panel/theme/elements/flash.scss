@@ -1,0 +1,8 @@
+body[admin-panel="true"] {
+    .flash-messages {
+        .alert {
+            border: 1px solid var(--ap-border-color);
+            border-radius: 0;
+        }
+    }
+}
