@@ -32,12 +32,14 @@ ckan.module("ap-theme-switcher", function ($, _) {
 
         applyScheme: function () {
             document.querySelector("body").setAttribute("admin-panel-theme", this.scheme);
+            document.querySelector("#admin-panel").setAttribute("admin-panel-theme", this.scheme);
         },
 
         addButton: function () {
             let btn = document.createElement("BUTTON");
             btn.className = "ap-theme-switcher";
-            document.querySelector("body").appendChild(btn)
+            btn.title = "Dark theme switcher"
+            document.querySelector("#admin-panel .collapse").appendChild(btn)
         },
 
         initSwitchers: function () {

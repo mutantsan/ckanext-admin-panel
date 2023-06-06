@@ -1,5 +1,14 @@
 {% ckan_extends %}
 
+{%- block page %}
+    <script>
+        let theme = localStorage.getItem('apPreferredColorScheme') || 'light';
+        document.querySelector("body").setAttribute('admin-panel-theme', theme);
+    </script>
+    {{ super() }}
+{% endblock page %}
+
+
 {%- block scripts %}
     {% asset 'admin_panel/admin_panel-js' %}
     {{ super() }}

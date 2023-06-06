@@ -8,7 +8,7 @@ body[admin-panel="true"] {
             .accordion-header {
                 .accordion-button {
                     border: $border;
-                    background: var(--ap-body-bg);
+                    background: transparent;
                     color: var(--ap-color);
 
                     &:after {

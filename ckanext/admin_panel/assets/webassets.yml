@@ -2,8 +2,9 @@ admin_panel-js:
   filter: rjsmin
   output: ckanext-admin_panel/%(version)s-admin_panel.js
   contents:
-    - js/admin_panel.js
-    - js/theme-switcher.js
+    - js/ap-main.js
+    - js/ap-theme-switcher.js
+    - js/ap-nested-dropdown.js
   extra:
     preload:
       - base/main

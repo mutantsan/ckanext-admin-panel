@@ -31,3 +31,7 @@ body[admin-panel="true"] {
         position: absolute;
     }
 }
+
+body[admin-panel-active="true"]:not([admin-panel="true"]) {
+    padding-top: $ap-height;
+}

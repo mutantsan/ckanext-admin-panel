@@ -14,7 +14,9 @@
 
     position: fixed;
     z-index: 999;
+    top: 0;
     width: 100%;
+    height: $ap-height;
 
     .navbar {
         background: $background;
@@ -93,7 +95,7 @@
     .btn.btn-outline-success {
         border: $border;
         border-radius: 0;
-        color: $black;
+        color: $color;
     }
 
     input[type="search"] {
@@ -110,6 +112,18 @@
         }
     }
 
+    .btn-search {
+        color: $color;
+
+        &:before {
+            color: $color;
+        }
+    }
+
+    .ap-theme-switcher {
+        margin-inline-start: 12px;
+    }
+
     .btn.btn-outline-success:hover {
         color: $white;
     }
@@ -117,10 +131,38 @@
     .navbar-toggler {
         border: $border;
         border-radius: 0;
-        color: $black;
+        color: $color;
         z-index: 1;
     }
 
+    // less than 992px, mobile
+    // I had to start from it, so now I have to style both desktop and mobile
+    // with media queries
+    @media (max-width: $screen-md-min) {
+        .navbar .nav-item {
+            flex-wrap: wrap;
+
+            ul.dropdown-menu {
+                flex-basis: 100%;
+
+                -webkit-box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.75);
+                -moz-box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.75);
+                box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.75);
+
+                .submenu.dropdown-menu.show {
+                    margin: 0.5rem 0.7rem;
+                }
+            }
+        }
+
+        .ap-theme-switcher {
+            width: 100%;
+            margin: 8px 0 0 0;
+        }
+    }
+
+    // more than 992px
+    // @media all and (min-width: $screen-md-min) { ? Do i need all here?
     @media (min-width: $screen-md-min) {
         .navbar {
             padding: 0;
@@ -141,9 +183,7 @@
                 }
             }
         }
-    }
 
-    @media all and (min-width: $screen-md-min) {
         .dropdown-menu li {
             position: relative;
         }
@@ -169,14 +209,6 @@
 
         .dropdown-menu>li:hover>.submenu {
             display: block;
-        }
-    }
-
-    @media (max-width: $screen-md-min) {
-        .dropdown-menu .dropdown-menu {
-            margin-left: 0.7rem;
-            margin-right: 0.7rem;
-            margin-bottom: .5rem;
         }
     }
 }
