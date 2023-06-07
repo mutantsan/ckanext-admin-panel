@@ -1,24 +1,15 @@
 from __future__ import annotations
 
-from typing import Optional, TypedDict
-
 import ckan.plugins.toolkit as tk
 import ckan.lib.munge as munge
+import ckan.plugins as p
 
-
-class SectionConfig(TypedDict):
-    name: str
-    configs: list["ConfigurationItem"]
-
-
-class ConfigurationItem(TypedDict, total=False):
-    name: str
-    blueprint: str
-    info: Optional[str]
+from ckanext.admin_panel.types import SectionConfig, ConfigurationItem
+from ckanext.admin_panel.interfaces import IAdminPanel
 
 
 def ap_get_config_sections() -> list[SectionConfig]:
-    return [
+    default_sections = [
         SectionConfig(
             name=tk._("Basic site settings"),
             configs=[
@@ -54,10 +45,15 @@ def ap_get_config_sections() -> list[SectionConfig]:
                 ConfigurationItem(
                     name=tk._("User permissions"),
                     blueprint="user.index",
-                )
+                ),
             ],
         ),
     ]
+
+    for plugin in reversed(list(p.PluginImplementations(IAdminPanel))):
+        default_sections = plugin.register_config_sections(default_sections)
+
+    return default_sections
 
 
 def ap_munge_string(value: str) -> str:

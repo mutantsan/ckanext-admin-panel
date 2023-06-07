@@ -199,9 +199,7 @@ class TrashView(MethodView):
 
         for action, deleted_entities in zip(actions, entities):
             for entity in deleted_entities:
-                ent_id: str = (
-                    entity.id if hasattr(entity, "id") else entity["id"]
-                )
+                ent_id: str = entity.id if hasattr(entity, "id") else entity["id"]
                 tk.get_action(action)({"user": tk.current_user.name}, {"id": ent_id})
             model.Session.remove()
         tk.h.flash_success(tk._("Massive purge complete"))
