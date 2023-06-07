@@ -1,10 +1,7 @@
 {% ckan_extends %}
 
 {%- block page %}
-    <script>
-        let theme = localStorage.getItem('apPreferredColorScheme') || 'light';
-        document.querySelector("body").setAttribute('admin-panel-theme', theme);
-    </script>
+    {% snippet 'snippets/apply_color_schema.html' %}
     {{ super() }}
 {% endblock page %}
 
