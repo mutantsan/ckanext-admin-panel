@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from ckan.plugins.interfaces import Interface
 
 from ckanext.admin_panel.helpers import SectionConfig
