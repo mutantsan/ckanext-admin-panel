@@ -1,0 +1,17 @@
+body[admin-panel="true"] {
+    // .modal .modal-content{
+    //     color: var(--ap-color);
+    //     background-color: var(--ap-body-bg);
+    //     border: 1px solid var(--ap-border-color);
+    // }
+    .toolbar .breadcrumb {
+        .home {
+            padding-left: 0;
+        }
+        li {
+            &:before, a {
+                color: var(--ap-color);
+            }
+        }
+    }
+}

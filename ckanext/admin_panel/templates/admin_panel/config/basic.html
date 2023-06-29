@@ -3,6 +3,9 @@
 {% import 'macros/autoform.html' as autoform %}
 {% import 'macros/form.html' as form %}
 
+{% block breadcrumb_content %}
+    <li>{% link_for _("Basic"), named_route='ap_basic.config' %}</li>
+{% endblock breadcrumb_content %}
 
 {% block ap_content %}
     <h1>Basic configuration</h1>
