@@ -3,6 +3,7 @@
 {% block bodytag %} admin-panel="true" admin-panel-theme="light" {{ super() }}{% endblock %}
 
 
+
 {%- block page %}
     {% snippet 'snippets/apply_color_schema.html' %}
 
@@ -26,8 +27,19 @@
                 </div>
             {% endblock flash %}
 
-            <div class="module">
+                <div class="module">
                 <div class="module-content">
+                    {% block toolbar %}
+                        <div class="toolbar" role="navigation" aria-label="{{ _('Breadcrumb') }}">
+                        {% block breadcrumb %}
+                            <ol class="breadcrumb">
+                                {% snippet 'admin_panel/config/snippets/home_breadcrumb.html' %}
+                                {% block breadcrumb_content %}{% endblock %}
+                            </ol>
+                        {% endblock %}
+                        </div>
+                    {% endblock %}
+
                     {% block ap_content %}{% endblock ap_content %}
                 </div>
             </div>

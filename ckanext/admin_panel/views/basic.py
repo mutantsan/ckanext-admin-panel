@@ -86,6 +86,8 @@ class ConfigView(MethodView):
             )
             return tk.render("admin_panel/config/basic.html", extra_vars=vars)
 
+        tk.h.flash_success(tk._("Settings have been saved"))
+
         return tk.redirect_to("ap_basic.config")
 
     def _get_config_options(self) -> dict[str, list[dict[str, str]]]:
