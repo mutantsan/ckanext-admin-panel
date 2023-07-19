@@ -55,7 +55,7 @@
         </div>
 
         <div class="form-actions js-form-wrapper form-wrapper" id="edit-actions">
-            <a href="{% url_for 'ap_basic.reset' %}" class="btn btn-danger pull-left" data-module="confirm-action" data-module-content="{{ _('Are you sure you want to reset the config?') }}">{{ _('Reset') }}</a>
+            <a href="{{ h.url_for('ap_basic.reset') }}" class="btn btn-danger pull-left" data-module="confirm-action" data-module-content="{{ _('Are you sure you want to reset the config?') }}">{{ _('Reset') }}</a>
 
             <button class="btn btn-primary" type="submit" name="save">
                 {{ _('Save configuration') }}

@@ -2,7 +2,7 @@
 
 {% block ap_content %}
     <h1>{{ _('Confirm reset') }}</h1>
-    <form action="{% url_for 'ap_basic.reset' %}" method="post">
+    <form action="{{ h.url_for('ap_basic.reset') }}" method="post">
         {{ h.csrf_input() }}
         <p>{{ _('Are you sure you want to reset the config?') }}</p>
         <p class="form-actions">
