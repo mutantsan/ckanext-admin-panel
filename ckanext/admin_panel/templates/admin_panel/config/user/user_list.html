@@ -1,0 +1,51 @@
+{% extends 'admin_panel/base.html' %}
+
+{% import 'macros/autoform.html' as autoform %}
+{% import 'macros/form.html' as form %}
+
+{% block ap_content %}
+    <h1>{{ _("List of users") }}</h1>
+
+    <div class="row g-3">
+        <form action="POST">
+            <div class="bulk-actions">
+                {{ form.select('bulk-action', id='bulk-action', label=_('Action'), options=bulk_options, selected="", error=error) }}
+
+                <input data-drupal-selector="edit-submit" type="submit" id="edit-submit--2" name="op" value="Apply to selected items" class="btn btn-primary mb-3">
+            </div>
+
+            <table class="table table-primary table-sm">
+                <tr>
+                    <th>{{ form.checkbox() }}</th>
+                    <th>{{ _("Username") }}</th>
+                    <th>{{ _("Full Name") }}</th>
+                    <th>{{ _("Email") }}</th>
+                    <th>{{ _("State") }}</th>
+                    <th>{{ _("Sysadmin") }}</th>
+                    <th>{{ _("Actions") }}</th>
+                </tr>
+
+                {% for user in page.items %}
+                    <tr>
+                        <td>
+                            {{ form.checkbox() }}
+                        </td>
+                        <td>{{ h.linked_user(user['name'], maxlength=20) }}</td>
+                        <td>{{ user.fullname or "-" }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.state | title }}</td>
+                        <td>{{ "Yes" if user.sysadmin else "No" }}</td>
+                        <td>
+                            <button class="btn btn-danger">
+                                {{ _("Delete") }}
+                            </button>
+                            <a class="btn btn-primary" href="{{ h.url_for("user.edit", id=user.id)}}">
+                                {{ _("Edit") }}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </form>
+    </div> <!-- row -->
+{% endblock ap_content %}
