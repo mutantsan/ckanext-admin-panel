@@ -111,6 +111,67 @@ class ConfigView(MethodView):
             ]
         }
 
+class EditableConfigView(MethodView):
+    """Adapter for ckanext-editable-config.
+
+    Once this extension get stable API, remove this logic and implement proper
+    hooks inside ckanext-editable-config.
+
+    """
+    def _render(
+            self,
+            data: dict[str, Any] | None = None,
+            error: tk.ValidationError | None = None,
+    ):
+        """Shared method for normal GET and failed POST request.
+        """
+        options = tk.get_action("editable_config_list")({}, {})
+
+        extra_vars: dict[str, Any] = {
+            "data": data or {},
+            "options": options,
+            "errors": error.error_dict if error else None,
+            "error_summary": error.error_summary if error else None,
+        }
+
+        return tk.render("admin_panel/config/editable_config.html", extra_vars)
+
+    def get(self) -> str:
+        return self._render()
+
+    def post(self) -> Union[str, Response]:
+        data = logic.parse_params(tk.request.form)
+
+        change: dict[str, Any] = {}
+        reset: list[str] = []
+
+        for key in data:
+            if key.startswith("reset:"):
+                # remove any customization from option if Reset checkbox is
+                # checked.
+                clean_key = key[6:]
+                change.pop(clean_key, None)
+                reset.append(clean_key)
+
+            else:
+                if key in reset:
+                    # don't try to modify options that will be removed. It
+                    # won't change the result. This condition exists merely for
+                    # optimization
+                    continue
+                change[key] = data[key]
+
+        try:
+            tk.get_action("editable_config_update")(
+                {},
+                {"change": change, "reset": reset},
+            )
+        except tk.ValidationError as e:
+            return self._render(data, e)
+
+        tk.h.flash_success(tk._("Settings have been saved"))
+        return tk.redirect_to("ap_basic.editable_config")
+
 
 class TrashView(MethodView):
     def __init__(self):
@@ -231,5 +292,6 @@ class TrashView(MethodView):
 
 
 ap_basic.add_url_rule("/config/basic", view_func=ConfigView.as_view("config"))
+ap_basic.add_url_rule("/config/editable-config", view_func=EditableConfigView.as_view("editable_config"))
 ap_basic.add_url_rule("/config/basic/reset", view_func=ResetView.as_view("reset"))
 ap_basic.add_url_rule("/config/basic/trash", view_func=TrashView.as_view("trash"))
