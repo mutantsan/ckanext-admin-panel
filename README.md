@@ -2,38 +2,31 @@
 
 # ckanext-admin-panel
 
-**TODO:** Put a description of your extension here:  What does it do? What features does it have? Consider including some screenshots or embedding a video!
+Next generation admin interface for CKAN.
 
+## Content
+
+* [Requirements](#requirements)
+* [Installation](#installation)
+* [Config settings](#installation)
+* [Developer installation](#developer-installation)
+* [Tests](#tests)
+* [Releasing a new version](#releasing-a-new-version)
+* [License](#license)
 
 ## Requirements
 
-**TODO:** For example, you might want to mention here which versions of CKAN this
-extension works with.
-
-If your extension works across different versions you can add the following table:
-
 Compatibility with core CKAN versions:
 
-| CKAN version    | Compatible?   |
-| --------------- | ------------- |
-| 2.6 and earlier | not tested    |
-| 2.7             | not tested    |
-| 2.8             | not tested    |
-| 2.9             | not tested    |
+| CKAN version | Compatible? |
+|--------------|-------------|
+| 2.9          | no          |
+| 2.10         | yes         |
+| 2.11         | yes         |
 
-Suggested values:
-
-* "yes"
-* "not tested" - I can't think of a reason why it wouldn't work
-* "not yet" - there is an intention to get it working
-* "no"
 
 
 ## Installation
-
-**TODO:** Add any additional install steps to the list below.
-   For example installing any non-Python dependencies or adding any required
-   config settings.
 
 To install ckanext-admin-panel:
 
@@ -61,13 +54,6 @@ To install ckanext-admin-panel:
 
 None at present
 
-**TODO:** Document any optional config settings here. For example:
-
-	# The minimum number of hours to wait before re-checking a resource
-	# (optional, default: 24).
-	ckanext.admin_panel.some_setting = some_default_value
-
-
 ## Developer installation
 
 To install ckanext-admin-panel for development, activate your CKAN virtualenv and
@@ -86,37 +72,48 @@ To run the tests, do:
     pytest --ckan-ini=test.ini
 
 
-## Releasing a new version of ckanext-admin-panel
+## Releasing a new version
 
 If ckanext-admin-panel should be available on PyPI you can follow these steps to publish a new version:
 
 1. Update the version number in the `setup.py` file. See [PEP 440](http://legacy.python.org/dev/peps/pep-0440/#public-version-identifiers) for how to choose version numbers.
 
-2. Make sure you have the latest version of necessary packages:
+1. Make sure you have the latest version of necessary packages:
+   ```sh
+   pip install --upgrade build twine
+   ```
 
-    pip install --upgrade setuptools wheel twine
 
-3. Create a source and binary distributions of the new version:
+1. Tag the new release of the project on GitHub with the version number from
+   the `setup.py` file. For example if the version number in `setup.py` is
+   0.0.1 then do:
+   ```sh
+   git tag v0.0.1
+   git push --tags
+   ```
 
-       python setup.py sdist bdist_wheel && twine check dist/*
+1. Update changelog:
+   ```sh
+   make changelog
+   ```
+
+1. Create a source and binary distributions of the new version:
+   ```sh
+   python -m build && twine check dist/*
+   ```
 
    Fix any errors you get.
 
-4. Upload the source distribution to PyPI:
+1. Upload the source distribution to PyPI:
+   ```sh
+   twine upload dist/*
+   ```
 
-       twine upload dist/*
-
-5. Commit any outstanding changes:
-
-       git commit -a
-       git push
-
-6. Tag the new release of the project on GitHub with the version number from
-   the `setup.py` file. For example if the version number in `setup.py` is
-   0.0.1 then do:
-
-       git tag 0.0.1
-       git push --tags
+1. Commit any outstanding changes:
+   ```sh
+   git commit -a
+   git push
+   ```
 
 ## License
 
