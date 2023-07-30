@@ -20,7 +20,7 @@ filterwarnings = [
 ]
 
 [tool.pyright]
-pythonVersion = "3.7"
+pythonVersion = "3.8"
 include = ["ckanext"]
 exclude = [
     "**/test*",
@@ -91,4 +91,3 @@ reportUnsupportedDunderAll = true
 reportUnusedCoroutine = true
 reportUnnecessaryTypeIgnoreComment = true
 reportMatchNotExhaustive = true
-
