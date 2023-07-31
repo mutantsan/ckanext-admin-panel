@@ -5,6 +5,7 @@ admin_panel-js:
     - js/ap-main.js
     - js/ap-theme-switcher.js
     - js/ap-nested-dropdown.js
+    - js/ap-toggle-state.js
   extra:
     preload:
       - base/main

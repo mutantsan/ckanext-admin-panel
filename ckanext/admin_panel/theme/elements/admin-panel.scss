@@ -11,12 +11,11 @@
     border: $border;
     color: $color;
 
-
-    position: fixed;
+    position: sticky;
     z-index: 999;
     top: 0;
     width: 100%;
-    height: $ap-height;
+
 
     .navbar {
         background: $background;
@@ -175,12 +174,17 @@
                 padding: 0 10px 0 0;
             }
 
-            .nav-item {
-                border-right: $border;
+            .navbar-nav {
+                // merge adjacent borders so that they look slim
+                margin-top: -1px;
+            }
 
-                &:first-of-type {
-                    border-left: $border;
-                }
+            .nav-item {
+                border: $border;
+
+                // merge adjacent borders so that they look slim
+                margin-left: -1px;
+                margin-bottom: -1px;
             }
         }
 
