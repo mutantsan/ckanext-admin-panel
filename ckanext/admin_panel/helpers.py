@@ -14,9 +14,13 @@ def ap_get_config_sections() -> list[SectionConfig]:
             name=tk._("Basic site settings"),
             configs=[
                 ConfigurationItem(
-                    name=tk._("Basic config"),
-                    info=tk._("Default CKAN site config options"),
-                    blueprint="ap_basic.config",
+                    name=tk._("CKAN configuration"),
+                    info=tk._("CKAN site config options"),
+                    blueprint=(
+                        "ap_basic.editable_config"
+                        if p.plugin_loaded("editable_config")
+                        else "ap_basic.config"
+                    ),
                 ),
                 ConfigurationItem(
                     name=tk._("Trash bin"),
