@@ -3,5 +3,9 @@ body[admin-panel="true"] {
         color: var(--ap-color);
         background-color: var(--ap-body-bg);
         border: 1px solid var(--ap-border-color);
+
+        .btn-close {
+            background-image: var(--ap-modal-close);
+        }
     }
 }

@@ -3,49 +3,105 @@
 {% import 'macros/autoform.html' as autoform %}
 {% import 'macros/form.html' as form %}
 
+{% block ap_main_class %} ap-user-list {% endblock %}
+
+{% block breadcrumb_content %}
+    <li>{% link_for _("User list"), named_route='ap_user.user_list' %}</li>
+{% endblock breadcrumb_content %}
+
 {% block ap_content %}
     <h1>{{ _("List of users") }}</h1>
 
     <div class="row g-3">
-        <form action="POST">
-            <div class="bulk-actions">
-                {{ form.select('bulk-action', id='bulk-action', label=_('Action'), options=bulk_options, selected="", error=error) }}
-
-                <input data-drupal-selector="edit-submit" type="submit" id="edit-submit--2" name="op" value="Apply to selected items" class="btn btn-primary mb-3">
+        <form action="{{ h.url_for('ap_user.user_list') }}" method="GET" id="ap-user-filter">
+            <div class="form-field">
+                <div class="search-input-wrapper">
+                    {% call form.input("q", label=_("Search"), value=q, placeholder=_('Search')) %}
+                        <button class="btn-search" type="submit"><i class="fa fa-search"></i></button>
+                    {% endcall %}
+                </div>
             </div>
 
-            <table class="table table-primary table-sm">
-                <tr>
-                    <th>{{ form.checkbox() }}</th>
-                    <th>{{ _("Username") }}</th>
-                    <th>{{ _("Full Name") }}</th>
-                    <th>{{ _("Email") }}</th>
-                    <th>{{ _("State") }}</th>
-                    <th>{{ _("Sysadmin") }}</th>
-                    <th>{{ _("Actions") }}</th>
-                </tr>
+            <div class="form-field">
+                {{ form.select('state', label=_("State"), options=[{'value': "any", 'text': "Any"},{'value': "deleted", 'text': "Deleted"},{'value': "active", 'text': "Active" }], selected=state, error='') }}
+            </div>
 
-                {% for user in page.items %}
-                    <tr>
-                        <td>
-                            {{ form.checkbox() }}
-                        </td>
-                        <td>{{ h.linked_user(user['name'], maxlength=20) }}</td>
-                        <td>{{ user.fullname or "-" }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.state | title }}</td>
-                        <td>{{ "Yes" if user.sysadmin else "No" }}</td>
-                        <td>
-                            <button class="btn btn-danger">
-                                {{ _("Delete") }}
-                            </button>
-                            <a class="btn btn-primary" href="{{ h.url_for("user.edit", id=user.id)}}">
-                                {{ _("Edit") }}
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
+            <div class="form-field">
+                {{ form.select('role', label=_("Role"), options=[{'value': "any", 'text': "Any"},{'value': "sysadmin", 'text': "Sysadmin"},{'value': "user", 'text': "User" }], selected=role, error='') }}
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-primary">{{ _("Filter") }}</button>
+                <a href="{{ h.url_for('ap_user.user_list') }}" class="btn btn-primary">{{ _("Clear") }}</a>
+            </div>
+
+            {{ form.hidden("sort", sort) }}
+            {{ form.hidden("order_by", order_by) }}
+        </form>
+
+        <form action="{{ h.url_for('ap_user.user_list') }}" method="POST">
+            {% if page.items %}
+                <div class="bulk-actions">
+                    {{ form.select('bulk-action', id='bulk-action', label=_('Action'), options=bulk_options, selected="", error=error) }}
+
+                    <input data-drupal-selector="edit-submit" type="submit" id="edit-submit--2" name="op" value="Apply to selected items" class="btn btn-primary mb-3">
+                </div>
+
+                <table class="table table-light table-primary table-striped">
+                    <colgroup>
+                        <col span="1" style="width: 2%;">
+                        <col span="1" style="width: 23%;">
+                        <col span="1" style="width: 25%;">
+                        <col span="1" style="width: 20%;">
+                        <col span="1" style="width: 10%;">
+                        <col span="1" style="width: 10%;">
+                        <col span="1" style="width: 10%;">
+                     </colgroup>
+
+                    <tbody>
+                        <tr>
+                            <th class="checkbox-cell">{{ form.checkbox() }}</th>
+
+                            {% for th in [{"value": "username", "label": "Username"}, {"value": "display_name", "label": "Full Name"}, {"value": "email", "label": "Email"}, {"value": "state", "label": "State"}, {"value": "sysadmin", "label": "Sysadmin"}] %}
+                                {% set sort_active = order_by == th.value %}
+                                {% set url = h.ap_add_url_param('order_by', th.value) if not sort_active else h.ap_add_url_param('sort', "asc" if sort == "desc" else "desc") %}
+
+                                <th class="th-sortable {% if sort_active %}th-active{% endif %}">
+                                    <a href="{{ url }}">
+                                        {{ th.label }}
+                                        <span class="table-sort {% if sort_active %}table-sort--{{ sort }}{% endif %}"></span>
+                                    </a>
+                                </th>
+                            {% endfor %}
+
+                            <th>{{ _("Actions") }}</th>
+                        </tr>
+
+                        {% for user in page.items %}
+                            <tr>
+                                <td class="checkbox-cell">
+                                    {{ form.checkbox() }}
+                                </td>
+                                <td>{{ h.linked_user(user['name'], maxlength=20) }}</td>
+                                <td>{{ user.fullname }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.state | title }}</td>
+                                <td>{{ "Yes" if user.sysadmin else "No" }}</td>
+                                <td>
+                                    <a class="btn btn-primary" href="{{ h.url_for("user.edit", id=user.id)}}">
+                                        {{ _("Edit") }}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>
+                    {{ _("No user found.") }}
+                    <a href="{{ h.url_for('ap_user.user_list') }}">{{ _("Clear the search") }}</a>
+                </p>
+            {% endif %}
         </form>
     </div> <!-- row -->
 {% endblock ap_content %}

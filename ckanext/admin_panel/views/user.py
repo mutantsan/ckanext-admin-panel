@@ -22,6 +22,9 @@ class UserList(MethodView):
     def get(self) -> Union[str, Response]:
         q = tk.request.args.get("q", "")
         order_by = tk.request.args.get("order_by", "name")
+        sort = tk.request.args.get("sort", "desc")
+        state = tk.request.args.get("state", "")
+        role = tk.request.args.get("role", "")
 
         context: types.Context = {
             "user": tk.current_user.name,
@@ -35,14 +38,17 @@ class UserList(MethodView):
         except logic.NotAuthorized:
             tk.abort(403, tk._("Not authorized to see this page"))
 
+        user_list = logic.get_action("user_list")(context, data_dict)
+
         return tk.render(
             "admin_panel/config/user/user_list.html",
             {
-                "page": self._get_pager(
-                    logic.get_action("user_list")(context, data_dict)
-                ),
+                "page": self._get_pager(user_list if sort == "desc" else user_list[::-1]),
                 "q": q,
                 "order_by": order_by,
+                "sort": sort,
+                "state": state,
+                "role": role,
                 "bulk_options": self._get_bulk_actions(),
             },
         )
@@ -50,7 +56,7 @@ class UserList(MethodView):
     def post(self) -> Response:
         return tk.redirect_to("ap_user.user_list")
 
-    def _get_pager(self, users_list: action_types.UserList) -> Page:
+    def _get_pager(self, users_list: list[dict[str, Any]]) -> Page:
         page_number = tk.h.get_page_number(tk.request.args)
         default_limit: int = tk.config.get("ckan.user_list_limit")
         limit = int(tk.request.args.get("limit", default_limit))

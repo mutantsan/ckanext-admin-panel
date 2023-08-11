@@ -1,17 +1,27 @@
 body[admin-panel="true"],
 #admin-panel {
-    .btn {
+    .btn,
+    a.btn {
         border-radius: 0 ;
         box-shadow: none;
 
+        &.btn-primary {
+            border: 1px solid var(--ap-primary-btn-border);
+            background: var(--ap-primary-btn-bg);
+            color: var(--ap-primary-btn-color);
+
+            &:hover,
+            &:active,
+            &:focus {
+                color: var(--ap-color-hover);
+                background-color: var(--ap-nav-item-bg-hover);
+            }
+        }
+
         &.btn-black {
             border: 1px solid var(--ap-border-color);
-            color: $black;
-            background-color: $white;
-
             background: var(--ap-body-bg);
             color: var(--ap-color);
-
 
             &:hover,
             &:active,
