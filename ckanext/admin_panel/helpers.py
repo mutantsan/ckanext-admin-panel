@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from urllib.parse import urlencode
+
 import ckan.plugins.toolkit as tk
 import ckan.lib.munge as munge
 import ckan.plugins as p
@@ -62,3 +64,25 @@ def ap_get_config_sections() -> list[SectionConfig]:
 
 def ap_munge_string(value: str) -> str:
     return munge.munge_name(value)
+
+
+def ap_add_url_param(key: str, value: str) -> str:
+    """Add a GET param to URL."""
+    blueprint, view = p.toolkit.get_endpoint()
+
+    url = tk.h.url_for(f"{blueprint}.{view}")
+
+    params_items = tk.request.args.items(multi=False)
+    params = [(k, v) for k, v in params_items if k != "page" and k != key]
+    params.append((key, value))
+
+    return (
+        url
+        + "?"
+        + urlencode(
+            [
+                (k, v.encode("utf-8") if isinstance(v, str) else str(v))
+                for k, v in params
+            ]
+        )
+    )

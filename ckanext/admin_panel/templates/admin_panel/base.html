@@ -2,8 +2,6 @@
 
 {% block bodytag %} admin-panel="true" admin-panel-theme="light" {{ super() }}{% endblock %}
 
-
-
 {%- block page %}
     {% snippet 'snippets/apply_color_schema.html' %}
 
@@ -13,7 +11,7 @@
         </header>
     {% endblock %}
 
-    <div class="main">
+    <div class="main {% block ap_main_class %}{% endblock %}">
         <div id="content" class="container-fluid">
             {% block flash %}
                 <div class="flash-messages">
