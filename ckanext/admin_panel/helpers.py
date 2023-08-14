@@ -5,6 +5,7 @@ from urllib.parse import urlencode
 import ckan.plugins.toolkit as tk
 import ckan.lib.munge as munge
 import ckan.plugins as p
+import ckan.model as model
 
 from ckanext.admin_panel.types import SectionConfig, ConfigurationItem
 from ckanext.admin_panel.interfaces import IAdminPanel
@@ -86,3 +87,19 @@ def ap_add_url_param(key: str, value: str) -> str:
             ]
         )
     )
+
+
+def ap_user_list_state_options() -> list[dict[str, str]]:
+    return [
+        {"value": "any", "text": "Any"},
+        {"value": model.State.DELETED, "text": "Deleted"},
+        {"value": model.State.ACTIVE, "text": "Active"},
+    ]
+
+
+def ap_user_list_role_options() -> list[dict[str, str]]:
+    return [
+        {"value": "any", "text": "Any"},
+        {"value": "sysadmin", "text": "Sysadmin"},
+        {"value": "user", "text": "User"},
+    ]
