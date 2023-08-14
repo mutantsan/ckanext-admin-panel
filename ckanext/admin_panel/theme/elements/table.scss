@@ -1,0 +1,7 @@
+.table.table-scrollable {
+    @media (max-width: $screen-sm-min) {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}

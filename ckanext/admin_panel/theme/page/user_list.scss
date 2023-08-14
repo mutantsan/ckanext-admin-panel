@@ -1,8 +1,10 @@
 .main.ap-user-list {
+    $input-height: 40px;
+
     #ap-user-filter {
         display: flex;
-        align-items: center;
-        gap: 8px;
+        flex-direction: column;
+        gap: 16px;
 
         .form-field {
             &:nth-child(1) {
@@ -16,6 +18,10 @@
             &:nth-child(3) {
                 flex-basis: 20%;
             }
+
+            .form-group {
+                margin: 0;
+            }
         }
 
         .form-buttons {
@@ -25,15 +31,14 @@
 
             .btn {
                 height: fit-content;
+                height: $input-height;
+                display: flex;
+                align-items: center;
             }
         }
 
         .controls {
             position: relative;
-
-            select {
-                appearance: auto;
-            }
 
             .btn-search {
                 position: absolute;
@@ -41,9 +46,25 @@
                 right: 1px;
                 background: unset;
                 border: none;
-                height: 35px;
-                width: 35px;
+                height: $input-height;
+                width: $input-height;
             }
+        }
+    }
+
+    input {
+        height: $input-height;
+        &[type="checkbox"] {
+            height: auto;
+        }
+    }
+
+    select {
+        height: $input-height;
+        appearance: auto;
+
+        &#bulk-action {
+            max-width: 500px;
         }
     }
 
@@ -106,6 +127,14 @@
             .form-group {
                 margin: 0;
             }
+        }
+    }
+
+    @media (min-width: $screen-sm-min) {
+        #ap-user-filter {
+            flex-direction: row;
+            align-items: end;
+            gap: 8px;
         }
     }
 }

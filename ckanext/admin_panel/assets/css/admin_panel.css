@@ -357,10 +357,18 @@ body[admin-panel=true] .toolbar .breadcrumb li:before, body[admin-panel=true] .t
   color: var(--ap-color);
 }
 
+@media (max-width: 768px) {
+  .table.table-scrollable {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
 .main.ap-user-list #ap-user-filter {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 16px;
 }
 .main.ap-user-list #ap-user-filter .form-field:nth-child(1) {
   flex-basis: 20%;
@@ -371,6 +379,9 @@ body[admin-panel=true] .toolbar .breadcrumb li:before, body[admin-panel=true] .t
 .main.ap-user-list #ap-user-filter .form-field:nth-child(3) {
   flex-basis: 20%;
 }
+.main.ap-user-list #ap-user-filter .form-field .form-group {
+  margin: 0;
+}
 .main.ap-user-list #ap-user-filter .form-buttons {
   flex-basis: 5%;
   display: flex;
@@ -378,12 +389,12 @@ body[admin-panel=true] .toolbar .breadcrumb li:before, body[admin-panel=true] .t
 }
 .main.ap-user-list #ap-user-filter .form-buttons .btn {
   height: fit-content;
+  height: 40px;
+  display: flex;
+  align-items: center;
 }
 .main.ap-user-list #ap-user-filter .controls {
   position: relative;
-}
-.main.ap-user-list #ap-user-filter .controls select {
-  appearance: auto;
 }
 .main.ap-user-list #ap-user-filter .controls .btn-search {
   position: absolute;
@@ -391,8 +402,21 @@ body[admin-panel=true] .toolbar .breadcrumb li:before, body[admin-panel=true] .t
   right: 1px;
   background: unset;
   border: none;
-  height: 35px;
-  width: 35px;
+  height: 40px;
+  width: 40px;
+}
+.main.ap-user-list input {
+  height: 40px;
+}
+.main.ap-user-list input[type=checkbox] {
+  height: auto;
+}
+.main.ap-user-list select {
+  height: 40px;
+  appearance: auto;
+}
+.main.ap-user-list select#bulk-action {
+  max-width: 500px;
 }
 .main.ap-user-list .table tbody {
   border-top: unset;
@@ -436,6 +460,13 @@ body[admin-panel=true] .toolbar .breadcrumb li:before, body[admin-panel=true] .t
 }
 .main.ap-user-list .table .checkbox-cell .form-group {
   margin: 0;
+}
+@media (min-width: 768px) {
+  .main.ap-user-list #ap-user-filter {
+    flex-direction: row;
+    align-items: end;
+    gap: 8px;
+  }
 }
 
 /*# sourceMappingURL=admin_panel.css.map */

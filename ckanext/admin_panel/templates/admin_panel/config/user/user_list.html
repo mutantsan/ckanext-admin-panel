@@ -23,11 +23,11 @@
             </div>
 
             <div class="form-field">
-                {{ form.select('state', label=_("State"), options=[{'value': "any", 'text': "Any"},{'value': "deleted", 'text': "Deleted"},{'value': "active", 'text': "Active" }], selected=state, error='') }}
+                {{ form.select('state', label=_("State"), options=h.ap_user_list_state_options(), selected=state, error='') }}
             </div>
 
             <div class="form-field">
-                {{ form.select('role', label=_("Role"), options=[{'value': "any", 'text': "Any"},{'value': "sysadmin", 'text': "Sysadmin"},{'value': "user", 'text': "User" }], selected=role, error='') }}
+                {{ form.select('role', label=_("Role"), options=h.ap_user_list_role_options(), selected=role, error='') }}
             </div>
 
             <div class="form-buttons">
@@ -44,10 +44,12 @@
                 <div class="bulk-actions">
                     {{ form.select('bulk-action', id='bulk-action', label=_('Action'), options=bulk_options, selected="", error=error) }}
 
-                    <input data-drupal-selector="edit-submit" type="submit" id="edit-submit--2" name="op" value="Apply to selected items" class="btn btn-primary mb-3">
+                    <button type="submit" id="bulk-submit" class="btn btn-primary mb-3">
+                        {{ _("Apply to selected items") }}
+                    </button>
                 </div>
 
-                <table class="table table-light table-primary table-striped">
+                <table class="table table-light table-primary table-striped table-scrollable">
                     <colgroup>
                         <col span="1" style="width: 2%;">
                         <col span="1" style="width: 23%;">
@@ -60,7 +62,9 @@
 
                     <tbody>
                         <tr>
-                            <th class="checkbox-cell">{{ form.checkbox() }}</th>
+                            <th class="checkbox-cell">
+                                <input type="checkbox" name="bulk_check" id="bulk_check">
+                            </th>
 
                             {% for th in [{"value": "username", "label": "Username"}, {"value": "display_name", "label": "Full Name"}, {"value": "email", "label": "Email"}, {"value": "state", "label": "State"}, {"value": "sysadmin", "label": "Sysadmin"}] %}
                                 {% set sort_active = order_by == th.value %}
@@ -80,7 +84,7 @@
                         {% for user in page.items %}
                             <tr>
                                 <td class="checkbox-cell">
-                                    {{ form.checkbox() }}
+                                    <input type="checkbox" name="user_id" id="user_id" value="{{ user.id }}">
                                 </td>
                                 <td>{{ h.linked_user(user['name'], maxlength=20) }}</td>
                                 <td>{{ user.fullname }}</td>
