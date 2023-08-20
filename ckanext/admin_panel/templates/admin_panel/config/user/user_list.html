@@ -6,14 +6,14 @@
 {% block ap_main_class %} ap-user-list {% endblock %}
 
 {% block breadcrumb_content %}
-    <li>{% link_for _("User list"), named_route='ap_user.user_list' %}</li>
+    <li>{% link_for _("User list"), named_route='ap_user.list' %}</li>
 {% endblock breadcrumb_content %}
 
 {% block ap_content %}
     <h1>{{ _("List of users") }}</h1>
 
     <div class="row g-3">
-        <form action="{{ h.url_for('ap_user.user_list') }}" method="GET" id="ap-user-filter">
+        <form action="{{ h.url_for('ap_user.list') }}" method="GET" id="ap-user-filter">
             <div class="form-field">
                 <div class="search-input-wrapper">
                     {% call form.input("q", label=_("Search"), value=q, placeholder=_('Search')) %}
@@ -32,14 +32,16 @@
 
             <div class="form-buttons">
                 <button type="submit" class="btn btn-primary">{{ _("Filter") }}</button>
-                <a href="{{ h.url_for('ap_user.user_list') }}" class="btn btn-primary">{{ _("Clear") }}</a>
+                <a href="{{ h.url_for('ap_user.list') }}" class="btn btn-primary">{{ _("Clear") }}</a>
             </div>
 
             {{ form.hidden("sort", sort) }}
             {{ form.hidden("order_by", order_by) }}
         </form>
 
-        <form action="{{ h.url_for('ap_user.user_list') }}" method="POST">
+        <form action="{{ h.url_for('ap_user.list') }}" method="POST">
+            {{ h.csrf_input() }}
+
             {% if page.items %}
                 <div class="bulk-actions">
                     {{ form.select('bulk-action', id='bulk-action', label=_('Action'), options=bulk_options, selected="", error=error) }}
@@ -103,7 +105,7 @@
             {% else %}
                 <p>
                     {{ _("No user found.") }}
-                    <a href="{{ h.url_for('ap_user.user_list') }}">{{ _("Clear the search") }}</a>
+                    <a href="{{ h.url_for('ap_user.list') }}">{{ _("Clear the search") }}</a>
                 </p>
             {% endif %}
         </form>

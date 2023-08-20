@@ -111,6 +111,7 @@ class ConfigView(MethodView):
             ]
         }
 
+
 class EditableConfigView(MethodView):
     """Adapter for ckanext-editable-config.
 
@@ -118,13 +119,13 @@ class EditableConfigView(MethodView):
     hooks inside ckanext-editable-config.
 
     """
+
     def _render(
-            self,
-            data: dict[str, Any] | None = None,
-            error: tk.ValidationError | None = None,
+        self,
+        data: dict[str, Any] | None = None,
+        error: tk.ValidationError | None = None,
     ):
-        """Shared method for normal GET and failed POST request.
-        """
+        """Shared method for normal GET and failed POST request."""
         options = tk.get_action("editable_config_list")({}, {})
 
         extra_vars: dict[str, Any] = {
@@ -292,6 +293,8 @@ class TrashView(MethodView):
 
 
 ap_basic.add_url_rule("/config/basic", view_func=ConfigView.as_view("config"))
-ap_basic.add_url_rule("/config/editable-config", view_func=EditableConfigView.as_view("editable_config"))
+ap_basic.add_url_rule(
+    "/config/editable-config", view_func=EditableConfigView.as_view("editable_config")
+)
 ap_basic.add_url_rule("/config/basic/reset", view_func=ResetView.as_view("reset"))
 ap_basic.add_url_rule("/config/basic/trash", view_func=TrashView.as_view("trash"))
