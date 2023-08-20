@@ -53,11 +53,33 @@
     </ul>
 </li>
 
-<li class="nav-item">
-    <a class="nav-link" href="{{ h.url_for('ap_user.user_list') }}">
+<li class="nav-item dropdown">
+    <a class="nav-link" href="{{ h.url_for('ap_user.list') }}">
         <i class="fa-solid fa-person"></i>
         {{ _('Users') }}
     </a>
+    <a class="nav-link dropdown-toggle" href="#" id="configDropdown" role="button" data-bs-toggle="dropdown"
+    aria-expanded="false">
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="configDropdown">
+        <li>
+            <a class="dropdown-item {% if with_subitems %}with-subitems{% endif %}" href="{{ h.url_for('ap_user.create') }}">
+                {{ _("Add user") }}
+            </a>
+
+            {% if with_subitems %}
+                <ul class="submenu dropdown-menu">
+                    {% for config in section.configs %}
+                        <li>
+                            <a class="dropdown-item" href="{{ h.url_for(config.blueprint) }}">
+                                {{ config.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </li>
+    </ul>
 </li>
 
 <li class="nav-item">
