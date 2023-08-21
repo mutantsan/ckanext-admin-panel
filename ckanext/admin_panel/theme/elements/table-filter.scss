@@ -1,0 +1,74 @@
+.ap-table-filter {
+    $input-height: 40px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    input {
+        height: $input-height;
+        &[type="checkbox"] {
+            height: auto;
+        }
+    }
+
+    select {
+        height: $input-height;
+        appearance: auto;
+
+        &#bulk-action {
+            max-width: 500px;
+        }
+    }
+
+    .form-field {
+        &:nth-child(1) {
+            flex-basis: 20%;
+        }
+
+        &:nth-child(2) {
+            flex-basis: 20%;
+        }
+
+        &:nth-child(3) {
+            flex-basis: 20%;
+        }
+
+        .form-group {
+            margin: 0;
+        }
+    }
+
+    .form-buttons {
+        flex-basis: 5%;
+        display: flex;
+        gap: 4px;
+
+        .btn {
+            height: fit-content;
+            height: $input-height;
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    .controls {
+        position: relative;
+
+        .btn-search {
+            position: absolute;
+            top: 0;
+            right: 1px;
+            background: unset;
+            border: none;
+            height: $input-height;
+            width: $input-height;
+        }
+    }
+
+    @media (min-width: $screen-sm-min) {
+        flex-direction: row;
+        align-items: end;
+        gap: 8px;
+    }
+}
