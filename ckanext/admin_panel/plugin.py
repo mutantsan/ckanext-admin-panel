@@ -4,6 +4,7 @@ import ckan.plugins.toolkit as tk
 
 @tk.blanket.helpers
 @tk.blanket.blueprints
+@tk.blanket.actions
 @tk.blanket.auth_functions
 class AdminPanelPlugin(p.SingletonPlugin):
     p.implements(p.IConfigurer)

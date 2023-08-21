@@ -1,0 +1,56 @@
+{% extends 'admin_panel/base.html' %}
+
+{% import 'macros/autoform.html' as autoform %}
+{% import 'macros/form.html' as form %}
+
+{% block ap_main_class %} ap-user-list {% endblock %}
+
+{% block breadcrumb_content %}
+    <li>{% link_for _("Recent log messages"), named_route='ap_report.logs' %}</li>
+{% endblock breadcrumb_content %}
+
+{% block ap_content %}
+    <h1>{{ _("Recent log messages") }}</h1>
+
+    <div class="row g-3">
+
+        <table class="table table-light table-primary table-striped table-scrollable">
+            <colgroup>
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 20%;">
+                <col span="1" style="width: 5%;">
+                <col span="1" style="width: 10%;">
+                <col span="1" style="width: 55%;">
+             </colgroup>
+
+            <tbody>
+                <tr>
+                    {% for th in [{"value": "name", "label": "Name"}, {"value": "path", "label": "Path"}, {"value": "level", "label": "Level"}, {"value": "timestamp", "label": "Timestamp"}] %}
+                        {% set sort_active = order_by == th.value %}
+                        {% set url = h.ap_add_url_param('order_by', th.value) if not sort_active else h.ap_add_url_param('sort', "asc" if sort == "desc" else "desc") %}
+
+                        <th class="th-sortable {% if sort_active %}th-active{% endif %}">
+                            <a href="{{ url }}">
+                                {{ th.label }}
+                                <span class="table-sort {% if sort_active %}table-sort--{{ sort }}{% endif %}"></span>
+                            </a>
+                        </th>
+                    {% endfor %}
+
+                    <th>{{ _("Message") }}</th>
+                </tr>
+
+                {% for log in page.items %}
+                    <tr>
+                        <td>{{ log.name }}</td>
+                        <td>{{ log.path }}</td>
+                        <td>{{ log.level }}</td>
+                        <td>{{ h.render_datetime(log.timestamp, date_format='%d/%m/%Y - %H:%M') }}</td>
+                        <td>{{ log.message_formatted }}</td>
+                    </tr>
+                    <!-- 08/21/2023 - 07:47 -->
+                {% endfor %}
+            </tbody>
+        </table>
+    </div> <!-- row -->
+{% endblock ap_content %}
