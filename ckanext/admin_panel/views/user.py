@@ -203,7 +203,9 @@ class UserAddView(MethodView):
             + "testuser_1"
             + tk.h.literal("</a>")
         )
-        tk.h.flash_success(tk._(f"Created a new user account for {link}"), allow_html=True)
+        tk.h.flash_success(
+            tk._(f"Created a new user account for {link}"), allow_html=True
+        )
 
         return tk.redirect_to("ap_user.create")
 
