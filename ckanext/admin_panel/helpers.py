@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from urllib.parse import urlencode
+from typing import Any, Optional
 
 import ckan.plugins.toolkit as tk
 import ckan.lib.munge as munge
@@ -103,3 +104,26 @@ def ap_user_list_role_options() -> list[dict[str, str]]:
         {"value": "sysadmin", "text": "Sysadmin"},
         {"value": "user", "text": "User"},
     ]
+
+
+def ap_table_column(
+    name: str,
+    label: Optional[str] = None,
+    sortable: Optional[bool] = True,
+    type_: Optional[str] = "text",
+    width: Optional[str] = "fit-content",
+    actions: Optional[list[dict[str, Any]]] = None,
+) -> dict[str, Any]:
+    supported_types = ("text", "bool", "date", "user_link", "actions")
+
+    if type_ not in supported_types:
+        raise tk.ValidationError("Column type {type_} is not supported")
+
+    return {
+        "name": name,
+        "label": label or name.title(),
+        "sortable": sortable,
+        "type": type_,
+        "width": width,
+        "actions": actions
+    }

@@ -15,6 +15,7 @@ from ckan import types, model
 from ckan.lib.helpers import Page
 
 from ckanext.admin_panel.utils import ap_before_request
+from ckanext.admin_panel.helpers import ap_table_column as ap_column
 
 
 UserList: TypeAlias = "list[dict[str, Any]]"
@@ -58,6 +59,7 @@ class UserListView(MethodView):
 
         return {
             "page": self._get_pager(user_list),
+            "columns": self._get_table_columns(),
             "q": self.q,
             "order_by": self.order_by,
             "sort": self.sort,
@@ -68,7 +70,7 @@ class UserListView(MethodView):
 
     def post(self) -> Response:
         bulk_action = tk.request.form.get("bulk-action")
-        user_ids = tk.request.form.getlist("user_id")
+        user_ids = tk.request.form.getlist("entity_id")
 
         if not bulk_action or not user_ids:
             return tk.redirect_to("ap_user.list")
@@ -87,8 +89,7 @@ class UserListView(MethodView):
 
     def _get_pager(self, users_list: UserList) -> Page:
         page_number = tk.h.get_page_number(tk.request.args)
-        default_limit: int = tk.config.get("ckan.user_list_limit")
-        limit = int(tk.request.args.get("limit", default_limit))
+        limit: int = tk.config.get("ckan.user_list_limit")
 
         return Page(
             collection=users_list,
@@ -97,6 +98,28 @@ class UserListView(MethodView):
             item_count=len(users_list),
             items_per_page=limit,
         )
+
+    def _get_table_columns(self) -> list[dict[str, Any]]:
+        return [
+            ap_column("name", "Username", type_="user_link", width="23%"),
+            ap_column("display_name", "Full Name", width="25%"),
+            ap_column("email", "Email", width="20%"),
+            ap_column("state", "State", width="10%"),
+            ap_column("sysadmin", "Sysadmin", type_="bool", width="10%"),
+            ap_column(
+                "actions",
+                sortable=False,
+                type_="actions",
+                width="10%",
+                actions=[
+                    {
+                        "endpoint": "user.edit",
+                        "params": {"id": "$id"},
+                        "label": tk._("Edit"),
+                    }
+                ],
+            ),
+        ]
 
     def _get_bulk_action_options(self):
         return [

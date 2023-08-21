@@ -1,0 +1,101 @@
+{#
+Creates a markup for a sortable table
+
+name        - The name of table.
+items       - List of the items to show
+columns     - List of table columns and their configurations
+    column attrs:
+        name        - column machine name. The item from items must have this attr
+        label       - column Label
+        type        - type of column - one of: date
+        sortable    - enable sorting by column
+bulk_check - Add bulk check column
+empty_msg       - Message to show if the items is empty (default: No items found for this query).
+order_by        - Order by
+sort            - Sort by
+
+Examples:
+
+{% import 'admin_panel/macros/sortable_table.html' as macro %}
+{{ macro.sortable_table('title') }}
+
+#}
+
+<table class="table table-light table-primary table-striped table-scrollable table-sortable table-{{ name }}">
+    <colgroup>
+        {% if bulk_check %}
+            <col span="1" style="width: 2%;">
+        {% endif %}
+
+        {% for col in columns %}
+            <col span="1" style="width: {{ col.width or 'fit-content' }};">
+        {% endfor %}
+    </colgroup>
+
+    <tbody>
+        <tr>
+            {% if bulk_check %}
+                <th class="checkbox-cell">
+                    <input type="checkbox" name="bulk_check" id="bulk_check">
+                </th>
+            {% endif %}
+
+            {% for col in columns %}
+                {% set sort_active = order_by == col.name %}
+                {% set url = h.ap_add_url_param('order_by', col.name) if not sort_active else h.ap_add_url_param('sort', "asc" if sort == "desc" else "desc") %}
+
+                {% if col.sortable %}
+                    <th class="th-sortable {% if sort_active %}th-active{% endif %}">
+                        <a href="{{ url }}">
+                            {{ col.label }}
+                            <span class="table-sort {% if sort_active %}table-sort--{{ sort }}{% endif %}"></span>
+                        </a>
+                    </th>
+                {% else %}
+                    <th>{{ col.label }}</th>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        {% for item in items %}
+            <tr>
+                {% if bulk_check %}
+                    <td class="checkbox-cell">
+                        <input type="checkbox" name="entity_id" id="entity_id" value="{{ item.id }}">
+                    </td>
+                {% endif %}
+
+                {% for col in columns %}
+                    {% if col.type == "date" %}
+                        <td>{{ h.render_datetime(item[col.name], date_format='%d/%m/%Y - %H:%M') }}</td>
+                    {% elif col.type == "user_link" %}
+                        <td>{{ h.linked_user(item[col.name], maxlength=20) }}</td>
+                    {% elif col.type == "bool" %}
+                        <td>{{ "Yes" if item[col.name] else "No" }}</td>
+                    {% elif col.type == "actions" %}
+                        <td>
+                            {% for action in col.actions %}
+                                {% set params = {} %}
+
+                                {% for k, v in action.params.items() %}
+                                    {% if v[0] == "$" %}
+                                        {% do params.update({k: item[v[1:]]}) %}
+                                    {% else %}
+                                        {% do params.update({k: v}) %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                <a class="btn btn-primary" href="{{  h.url_for(action.endpoint, **params) }}">
+                                    {{ action.label }}
+                                </a>
+                            {% endfor %}
+                        </td>
+                    {% else %}
+                        <td>{{ item[col.name] }}</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% else %}
+            {{ empty_msg or _("No items found for this query.") }}
+        {% endfor %}
+    </tbody>
+</table>
