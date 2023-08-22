@@ -2,6 +2,7 @@
 
 {% import 'macros/autoform.html' as autoform %}
 {% import 'macros/form.html' as form %}
+{% import 'admin_panel/macros/form.html' as ap_form %}
 
 {% block ap_main_class %} ap-log-list {% endblock %}
 
@@ -23,16 +24,16 @@
             </div>
 
             <div class="form-field">
-                {{ form.select('state', label=_("State"), options=h.ap_user_list_state_options(), selected=state, error='') }}
+                {{ ap_form.multi_select('type', label=_("Type"), options=h.ap_log_list_type_options(), selected=type, error='') }}
             </div>
 
             <div class="form-field">
-                {{ form.select('role', label=_("Role"), options=h.ap_user_list_role_options(), selected=role, error='') }}
+                {{ ap_form.multi_select('level', label=_("Level"), options=h.ap_log_list_level_options(), selected=level, error='') }}
             </div>
 
             <div class="form-buttons">
                 <button type="submit" class="btn btn-primary">{{ _("Filter") }}</button>
-                <a href="{{ h.url_for('ap_user.list') }}" class="btn btn-primary">{{ _("Clear") }}</a>
+                <a href="{{ h.url_for('ap_report.logs') }}" class="btn btn-primary">{{ _("Clear") }}</a>
             </div>
 
             {{ form.hidden("sort", sort) }}
