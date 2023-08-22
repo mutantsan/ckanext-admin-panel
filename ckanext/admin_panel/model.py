@@ -48,7 +48,7 @@ class ApLogs(tk.BaseModel):
                 name=record.name,
                 path=record.pathname,
                 level=record.levelno,
-                message=record.msg,
+                message=record.getMessage(),
                 message_formatted=message_formatted,
             )
         )
