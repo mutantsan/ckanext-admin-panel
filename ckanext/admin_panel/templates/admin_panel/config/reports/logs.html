@@ -41,18 +41,25 @@
         </form>
 
         <form action="{{ h.url_for('ap_report.logs') }}" method="POST">
-            <input type="hidden" name="clear_logs" value="1">
             <button
                 id="clear-logs-btn"
                 name="clear_logs"
-                value=
                 type="submit"
-                href="{{ h.url_for('ap_report.logs') }}"
                 class="btn btn-danger"
                 data-module="confirm-action"
-                data-module-content="{{ _('Are you sure you want to clear the logs?') }}"
+                data-module-content="{{ _('Are you sure you want to clear all logs?') }}"
                 data-module-with-data=true>
                 {{ _("Clear logs") }}
+            </button>
+            <button
+                id="clear-logs-btn"
+                name="clear_logs_partially"
+                type="submit"
+                class="btn btn-primary"
+                data-module="confirm-action"
+                data-module-content="{{ _('Are you sure you want to clear selected logs?') }}"
+                data-module-with-data=true>
+                {{ _("Clear selected logs") }}
             </button>
         </form>
         {% snippet "admin_panel/config/snippets/sortable_table.html", items=page.items, columns=columns, empty_msg=_("No log messages available"), order_by=order_by, sort=sort %}
@@ -61,5 +68,5 @@
 
 
 {% block page_pagination %}
-    {{ page.pager(q=q, order_by=order_by, sort=sort) }}
+    {{ page.pager(q=q, order_by=order_by, sort=sort, type=types, level=levels) }}
 {% endblock %}

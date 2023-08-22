@@ -6,9 +6,11 @@ admin_panel-js:
     - js/ap-theme-switcher.js
     - js/ap-nested-dropdown.js
     - js/ap-toggle-state.js
+    - js/ap-confirm-action.js
   extra:
     preload:
       - base/main
+      - base/ckan
 
 admin_panel-css:
   filter: cssrewrite
