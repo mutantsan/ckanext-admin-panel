@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, Any
+from typing import Any, Callable
 
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk

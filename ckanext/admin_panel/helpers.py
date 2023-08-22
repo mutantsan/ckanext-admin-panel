@@ -148,7 +148,8 @@ def table_column(
         "date",
         "user_link",
         "actions",
-        "debug_level",
+        "log_level",
+        "text_safe",
     )
 
     if type_ not in supported_types:
@@ -221,7 +222,6 @@ def log_list_level_options() -> list[dict[str, str | int]]:
 @lru_cache(maxsize=None)
 def get_log_level_label(level: int) -> str:
     """Return a list of options for a log list level multi select"""
-    print("*" * 50)
     levels: dict[int, str] = {
         int(opt["value"]): str(opt["text"]) for opt in tk.h.ap_log_list_level_options()
     }
