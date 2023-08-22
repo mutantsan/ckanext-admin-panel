@@ -92,6 +92,7 @@ def ap_add_url_param(key: str, value: str) -> str:
 
 
 def ap_user_list_state_options() -> list[dict[str, str]]:
+    """Return a list of options for a user list state select"""
     return [
         {"value": "any", "text": "Any"},
         {"value": model.State.DELETED, "text": "Deleted"},
@@ -100,6 +101,7 @@ def ap_user_list_state_options() -> list[dict[str, str]]:
 
 
 def ap_user_list_role_options() -> list[dict[str, str]]:
+    """Return a list of options for a user list role select"""
     return [
         {"value": "any", "text": "Any"},
         {"value": "sysadmin", "text": "Sysadmin"},
@@ -115,6 +117,20 @@ def ap_table_column(
     width: Optional[str] = "fit-content",
     actions: Optional[list[dict[str, Any]]] = None,
 ) -> dict[str, Any]:
+    """Create a structure for a sorted table column item.
+
+    TODO: There's no way to expand the list of allowed types yet, as they are all
+    hardcoded inside the `sortable_table.html` snippet. Think about it, probably
+    implement it like display_snippets.
+
+    Args:
+        name: A column name will be used as a sorting GET param.
+        label (optional): A human-readable column label. Defaults to None.
+        sortable (optional): add column sort. Defaults to True.
+        type_ (optional): defines column cell display. Defaults to "text".
+        width (optional): width of the column. Defaults to "fit-content".
+        actions (optional): A list of actions. Defaults to None.
+    """
     supported_types = ("text", "bool", "date", "user_link", "actions")
 
     if type_ not in supported_types:
@@ -130,7 +146,36 @@ def ap_table_column(
     }
 
 
+def ap_table_action(
+    endpoint: str,
+    label: str,
+    params: Optional[dict[str, str]] = None,
+    attributes: Optional[dict[str, str]] = None,
+) -> dict[str, Any]:
+    """Create a structure for a sorted table action item.
+
+    Params must be a dict, where key is a field name and value could be a arbitrary
+    value or an attribute of a table row item. To refer the actual attribute,
+    use $ sign at the beggining of the value. E.g.
+
+    ap_action("user.edit", tk._("Edit"), {"id": "$name"})
+
+    Args:
+        endpoint: an endpoint to build an action URL
+        label: label for a button text
+        params (optional): params dict. Defaults to None.
+        attributes (optional): attributes dict. Defaults to None.
+    """
+    return {
+        "endpoint": endpoint,
+        "label": label,
+        "params": params or {},
+        "attributes": attributes or {},
+    }
+
+
 def ap_log_list_type_options() -> list[dict[str, str | int]]:
+    """Return a list of options for a log list type multi select"""
     return [
         {"value": log_name, "text": log_name}
         for log_name in sorted({log["name"] for log in ap_model.ApLogs.all()})
@@ -138,6 +183,7 @@ def ap_log_list_type_options() -> list[dict[str, str | int]]:
 
 
 def ap_log_list_level_options() -> list[dict[str, str | int]]:
+    """Return a list of options for a log list level multi select"""
     return [
         {"value": ap_model.ApLogs.Level.NOTSET, "text": "NOTSET"},
         {"value": ap_model.ApLogs.Level.DEBUG, "text": "DEBUG"},
