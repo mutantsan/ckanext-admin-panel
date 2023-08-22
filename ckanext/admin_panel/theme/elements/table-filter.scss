@@ -6,14 +6,12 @@
     gap: 16px;
 
     input {
-        height: $input-height;
         &[type="checkbox"] {
             height: auto;
         }
     }
 
     select {
-        height: $input-height;
         appearance: auto;
 
         &[multiple] {
