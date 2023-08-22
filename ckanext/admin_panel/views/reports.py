@@ -17,6 +17,11 @@ ap_report.before_request(ap_before_request)
 
 class ReportLogsView(MethodView):
     def get(self) -> Union[str, Response]:
+        if not ApLogs.table_initialized():
+            return tk.render(
+                "admin_panel/config/reports/logs_disabled.html",
+            )
+
         return tk.render(
             "admin_panel/config/reports/logs.html",
             extra_vars=self._prepare_data_dict(),
