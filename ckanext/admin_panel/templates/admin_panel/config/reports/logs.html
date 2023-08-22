@@ -51,16 +51,6 @@
                 data-module-with-data=true>
                 {{ _("Clear logs") }}
             </button>
-            <button
-                id="clear-logs-btn"
-                name="clear_logs_partially"
-                type="submit"
-                class="btn btn-primary"
-                data-module="confirm-action"
-                data-module-content="{{ _('Are you sure you want to clear selected logs?') }}"
-                data-module-with-data=true>
-                {{ _("Clear selected logs") }}
-            </button>
         </form>
         {% snippet "admin_panel/config/snippets/sortable_table.html", items=page.items, columns=columns, empty_msg=_("No log messages available"), order_by=order_by, sort=sort %}
     </div> <!-- row -->

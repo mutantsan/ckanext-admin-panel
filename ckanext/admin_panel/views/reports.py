@@ -116,9 +116,6 @@ class ReportLogsView(MethodView):
             ApLogs.clear_logs()
             tk.h.flash_success(tk._("Logs have been cleared."))
 
-        if "clear_logs_partially" in tk.request.form:
-            tk.h.flash_success(tk._("Selected logs have been cleared."))
-
         return tk.redirect_to("ap_report.logs")
 
 
