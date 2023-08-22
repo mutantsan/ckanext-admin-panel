@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime
-from typing import Any
+from typing import Any, ClassVar
+from unittest import mock
 
 from sqlalchemy import Column, DateTime, Integer, Text
-from sqlalchemy.orm import Query
+from sqlalchemy.orm import Query, Session
 
-import ckan.model as model
 from ckan.model.types import make_uuid
 from ckan.plugins import toolkit as tk
 
@@ -16,6 +16,7 @@ log = logging.getLogger(__name__)
 
 class ApLogs(tk.BaseModel):
     __tablename__ = "ap_logs"
+    session: ClassVar[Session] = mock.MagicMock()
 
     class Level:
         NOTSET = 0
@@ -36,22 +37,22 @@ class ApLogs(tk.BaseModel):
 
     @classmethod
     def all(cls) -> list[dict[str, Any]]:
-        query: Query = model.Session.query(cls).order_by(cls.timestamp.desc())
+        query: Query = cls.get_session().query(cls).order_by(cls.timestamp.desc())
 
         return [log.dictize({}) for log in query.all()]
 
     @classmethod
     def save_log(cls, record: logging.LogRecord, message_formatted: str) -> None:
-        log = cls(
-            name=record.name,
-            path=record.pathname,
-            level=record.levelno,
-            message=record.msg,
-            message_formatted=message_formatted,
+        cls.get_session().add(
+            cls(
+                name=record.name,
+                path=record.pathname,
+                level=record.levelno,
+                message=record.msg,
+                message_formatted=message_formatted,
+            )
         )
-
-        model.Session.add(log)
-        model.Session.commit()
+        cls.get_session().commit()
 
     def dictize(self, context):
         return {
@@ -65,7 +66,23 @@ class ApLogs(tk.BaseModel):
 
     @classmethod
     def clear_logs(cls) -> int:
-        rows_deleted = model.Session.query(cls).delete()
-        model.Session.commit()
+        rows_deleted = cls.get_session().query(cls).delete()
+        cls.get_session().commit()
 
         return rows_deleted
+
+    @classmethod
+    def set_session(cls, session: Session):
+        cls.session = session
+
+    @classmethod
+    def get_session(cls) -> Session:
+        return cls.session
+
+    @classmethod
+    def table_initialized(cls) -> bool:
+        if not cls.session:
+            return False
+
+        engine = cls.session.get_bind()
+        return engine.has_table(cls.__table__)

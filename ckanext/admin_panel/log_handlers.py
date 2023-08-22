@@ -1,27 +1,37 @@
+from __future__ import annotations
+
 import logging
 
-from sqlalchemy import engine_from_config, inspect
-from sqlalchemy.exc import UnboundExecutionError
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-from ckan import model
 from ckan.plugins import toolkit as tk
 
 from ckanext.admin_panel.model import ApLogs
 
+log = logging.getLogger(__name__)
+
 
 class DatabaseHandler(logging.Handler):
-    def emit(self, record):
-        log_message = self.format(record)
+    not_ready = False
 
+    def __init__(self, db_uri: str):
+        super().__init__()
+
+        engine = create_engine(db_uri)
+
+        if not engine.has_table(ApLogs.__tablename__):
+            self.not_ready = True
+            log.error("The ApLogs table is not initialized")
+
+        Session = sessionmaker(bind=engine)
+        ApLogs.set_session(Session())
+
+    def emit(self, record):
         if not tk.config:
             return
 
-        engine = engine_from_config(tk.config)
-
-        if not inspect(engine).has_table(ApLogs.__tablename__):
+        if self.not_ready:
             return
 
-        try:
-            ApLogs.save_log(record, log_message)
-        except UnboundExecutionError:
-            model.Session.rollback()
+        ApLogs.save_log(record, self.format(record))
