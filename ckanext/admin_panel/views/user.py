@@ -15,7 +15,10 @@ from ckan import types, model
 from ckan.lib.helpers import Page
 
 from ckanext.admin_panel.utils import ap_before_request
-from ckanext.admin_panel.helpers import ap_table_column as ap_column
+from ckanext.admin_panel.helpers import (
+    ap_table_column as ap_column,
+    ap_table_action as ap_action
+)
 
 
 UserList: TypeAlias = "list[dict[str, Any]]"
@@ -112,11 +115,7 @@ class UserListView(MethodView):
                 type_="actions",
                 width="10%",
                 actions=[
-                    {
-                        "endpoint": "user.edit",
-                        "params": {"id": "$id"},
-                        "label": tk._("Edit"),
-                    }
+                    ap_action("user.edit", tk._("Edit"), {"id": "$name"}),
                 ],
             ),
         ]

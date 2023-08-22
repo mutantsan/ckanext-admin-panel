@@ -20,6 +20,7 @@ Examples:
 {{ macro.sortable_table('title') }}
 
 #}
+{% from "macros/form/attributes.html" import attributes %}
 
 <table class="table table-light table-primary table-striped table-scrollable table-sortable table-{{ name }}">
     <colgroup>
@@ -84,7 +85,7 @@ Examples:
                                     {% endif %}
                                 {% endfor %}
 
-                                <a class="btn btn-primary" href="{{  h.url_for(action.endpoint, **params) }}">
+                                <a class="btn btn-primary" href="{{  h.url_for(action.endpoint, **params) }}" {{ attributes(action.attributes) }}>
                                     {{ action.label }}
                                 </a>
                             {% endfor %}
