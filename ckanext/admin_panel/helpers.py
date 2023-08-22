@@ -1,19 +1,25 @@
 from __future__ import annotations
 
-from urllib.parse import urlencode
+from functools import lru_cache
 from typing import Any, Optional
+from urllib.parse import urlencode
 
-import ckan.plugins.toolkit as tk
 import ckan.lib.munge as munge
-import ckan.plugins as p
 import ckan.model as model
+import ckan.plugins as p
+import ckan.plugins.toolkit as tk
 
 import ckanext.admin_panel.model as ap_model
-from ckanext.admin_panel.types import SectionConfig, ConfigurationItem
 from ckanext.admin_panel.interfaces import IAdminPanel
+from ckanext.admin_panel.types import ConfigurationItem, SectionConfig
+from ckanext.toolbelt.decorators import Collector
+
+helper, get_helpers = Collector("ap").split()
 
 
-def ap_get_config_sections() -> list[SectionConfig]:
+@helper
+def get_config_sections() -> list[SectionConfig]:
+    """Prepare a config section structure for render"""
     default_sections = [
         SectionConfig(
             name=tk._("Basic site settings"),
@@ -65,11 +71,13 @@ def ap_get_config_sections() -> list[SectionConfig]:
     return default_sections
 
 
-def ap_munge_string(value: str) -> str:
+@helper
+def munge_string(value: str) -> str:
     return munge.munge_name(value)
 
 
-def ap_add_url_param(key: str, value: str) -> str:
+@helper
+def add_url_param(key: str, value: str) -> str:
     """Add a GET param to URL."""
     blueprint, view = p.toolkit.get_endpoint()
 
@@ -91,7 +99,8 @@ def ap_add_url_param(key: str, value: str) -> str:
     )
 
 
-def ap_user_list_state_options() -> list[dict[str, str]]:
+@helper
+def user_list_state_options() -> list[dict[str, str]]:
     """Return a list of options for a user list state select"""
     return [
         {"value": "any", "text": "Any"},
@@ -100,7 +109,8 @@ def ap_user_list_state_options() -> list[dict[str, str]]:
     ]
 
 
-def ap_user_list_role_options() -> list[dict[str, str]]:
+@helper
+def user_list_role_options() -> list[dict[str, str]]:
     """Return a list of options for a user list role select"""
     return [
         {"value": "any", "text": "Any"},
@@ -109,7 +119,8 @@ def ap_user_list_role_options() -> list[dict[str, str]]:
     ]
 
 
-def ap_table_column(
+@helper
+def table_column(
     name: str,
     label: Optional[str] = None,
     sortable: Optional[bool] = True,
@@ -131,7 +142,14 @@ def ap_table_column(
         width (optional): width of the column. Defaults to "fit-content".
         actions (optional): A list of actions. Defaults to None.
     """
-    supported_types = ("text", "bool", "date", "user_link", "actions")
+    supported_types = (
+        "text",
+        "bool",
+        "date",
+        "user_link",
+        "actions",
+        "debug_level",
+    )
 
     if type_ not in supported_types:
         raise tk.ValidationError("Column type {type_} is not supported")
@@ -146,7 +164,8 @@ def ap_table_column(
     }
 
 
-def ap_table_action(
+@helper
+def table_action(
     endpoint: str,
     label: str,
     params: Optional[dict[str, str]] = None,
@@ -155,7 +174,7 @@ def ap_table_action(
     """Create a structure for a sorted table action item.
 
     Params must be a dict, where key is a field name and value could be a arbitrary
-    value or an attribute of a table row item. To refer the actual attribute,
+    value or an attribute of a table row item. To refer the actual attribute,ap_def
     use $ sign at the beggining of the value. E.g.
 
     ap_action("user.edit", tk._("Edit"), {"id": "$name"})
@@ -174,15 +193,19 @@ def ap_table_action(
     }
 
 
-def ap_log_list_type_options() -> list[dict[str, str | int]]:
+@helper
+def log_list_type_options() -> list[dict[str, str | int]]:
     """Return a list of options for a log list type multi select"""
     return [
-        {"value": log_name, "text": log_name}
-        for log_name in sorted({log["name"] for log in ap_model.ApLogs.all()})
+        {"value": idx, "text": log_name}
+        for idx, log_name in enumerate(
+            sorted({log["name"] for log in ap_model.ApLogs.all()})
+        )
     ]
 
 
-def ap_log_list_level_options() -> list[dict[str, str | int]]:
+@helper
+def log_list_level_options() -> list[dict[str, str | int]]:
     """Return a list of options for a log list level multi select"""
     return [
         {"value": ap_model.ApLogs.Level.NOTSET, "text": "NOTSET"},
@@ -192,3 +215,15 @@ def ap_log_list_level_options() -> list[dict[str, str | int]]:
         {"value": ap_model.ApLogs.Level.ERROR, "text": "ERROR"},
         {"value": ap_model.ApLogs.Level.ERROR, "text": "CRITICAL"},
     ]
+
+
+@helper
+@lru_cache(maxsize=None)
+def get_log_level_label(level: int) -> str:
+    """Return a list of options for a log list level multi select"""
+    print("*" * 50)
+    levels: dict[int, str] = {
+        int(opt["value"]): str(opt["text"]) for opt in tk.h.ap_log_list_level_options()
+    }
+
+    return levels.get(level, levels[0])

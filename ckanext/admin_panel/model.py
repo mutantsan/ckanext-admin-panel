@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
 from datetime import datetime
+from typing import Any
 
 from sqlalchemy import Column, DateTime, Integer, Text
 from sqlalchemy.orm import Query
@@ -10,7 +10,6 @@ from sqlalchemy.orm import Query
 import ckan.model as model
 from ckan.model.types import make_uuid
 from ckan.plugins import toolkit as tk
-
 
 log = logging.getLogger(__name__)
 

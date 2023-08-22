@@ -1,7 +1,7 @@
 import logging
 
-from sqlalchemy.exc import UnboundExecutionError
 from sqlalchemy import engine_from_config, inspect
+from sqlalchemy.exc import UnboundExecutionError
 
 from ckan import model
 from ckan.plugins import toolkit as tk
