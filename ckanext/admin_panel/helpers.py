@@ -8,6 +8,7 @@ import ckan.lib.munge as munge
 import ckan.plugins as p
 import ckan.model as model
 
+import ckanext.admin_panel.model as ap_model
 from ckanext.admin_panel.types import SectionConfig, ConfigurationItem
 from ckanext.admin_panel.interfaces import IAdminPanel
 
@@ -125,5 +126,23 @@ def ap_table_column(
         "sortable": sortable,
         "type": type_,
         "width": width,
-        "actions": actions
+        "actions": actions,
     }
+
+
+def ap_log_list_type_options() -> list[dict[str, str | int]]:
+    return [
+        {"value": log_name, "text": log_name}
+        for log_name in sorted({log["name"] for log in ap_model.ApLogs.all()})
+    ]
+
+
+def ap_log_list_level_options() -> list[dict[str, str | int]]:
+    return [
+        {"value": ap_model.ApLogs.Level.NOTSET, "text": "NOTSET"},
+        {"value": ap_model.ApLogs.Level.DEBUG, "text": "DEBUG"},
+        {"value": ap_model.ApLogs.Level.INFO, "text": "INFO"},
+        {"value": ap_model.ApLogs.Level.WARNING, "text": "WARNING"},
+        {"value": ap_model.ApLogs.Level.ERROR, "text": "ERROR"},
+        {"value": ap_model.ApLogs.Level.ERROR, "text": "CRITICAL"},
+    ]

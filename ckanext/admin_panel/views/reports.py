@@ -22,8 +22,8 @@ class ReportLogsView(MethodView):
         self.q = tk.request.args.get("q", "").strip()
         self.order_by = tk.request.args.get("order_by", "name")
         self.sort = tk.request.args.get("sort", "desc")
-        self.type = tk.request.args.get("type", "")
-        self.level = tk.request.args.get("level", "")
+        self.type = tk.request.args.getlist("type")
+        self.level = tk.request.args.getlist("level")
 
         return tk.render(
             "admin_panel/config/reports/logs.html",
@@ -37,8 +37,8 @@ class ReportLogsView(MethodView):
             "q": self.q,
             "order_by": self.order_by,
             "sort": self.sort,
-            "state": self.type,
-            "role": self.level,
+            "type": self.type,
+            "level": self.level,
         }
 
     def _get_pager(self, log_list: list[dict[str, Any]]) -> Page:

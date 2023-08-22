@@ -16,6 +16,13 @@
         height: $input-height;
         appearance: auto;
 
+        &[multiple] {
+            height: auto;
+            option[selected] {
+                background-color: #19b3e6;
+            }
+        }
+
         &#bulk-action {
             max-width: 500px;
         }
