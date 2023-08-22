@@ -75,7 +75,7 @@ def ap_add_url_param(key: str, value: str) -> str:
 
     url = tk.h.url_for(f"{blueprint}.{view}")
 
-    params_items = tk.request.args.items(multi=False)
+    params_items = tk.request.args.items(multi=True)
     params = [(k, v) for k, v in params_items if k != "page" and k != key]
     params.append((key, value))
 
