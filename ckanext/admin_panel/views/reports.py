@@ -112,9 +112,12 @@ class ReportLogsView(MethodView):
         ]
 
     def post(self) -> Response:
-        if tk.request.form.get("clear_logs"):
+        if "clear_logs" in tk.request.form:
             ApLogs.clear_logs()
-            tk.h.flash_success(tk._("Logs has been cleared."))
+            tk.h.flash_success(tk._("Logs have been cleared."))
+
+        if "clear_logs_partially" in tk.request.form:
+            tk.h.flash_success(tk._("Selected logs have been cleared."))
 
         return tk.redirect_to("ap_report.logs")
 
