@@ -77,7 +77,7 @@ def user_list(context: Context, data_dict: DataDict) -> ActionResult.UserList:
                 _and_(
                     model.Package.creator_user_id == model.User.id,
                     model.Package.state == "active",
-                    model.Package.private == False,
+                    model.Package.private is False,
                 ),
             ).label("number_created_packages"),
         )
@@ -108,7 +108,7 @@ def user_list(context: Context, data_dict: DataDict) -> ActionResult.UserList:
             _case(
                 [
                     (
-                        _or_(model.User.fullname == None, model.User.fullname == ""),
+                        _or_(model.User.fullname is None, model.User.fullname == ""),
                         model.User.name,
                     )
                 ],

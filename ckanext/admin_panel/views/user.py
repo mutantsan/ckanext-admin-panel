@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from functools import partial
 from typing import Any, Callable, Optional, Union
 
@@ -20,6 +21,8 @@ UserList: TypeAlias = "list[dict[str, Any]]"
 
 ap_user = Blueprint("ap_user", __name__, url_prefix="/admin-panel")
 ap_user.before_request(ap_before_request)
+
+log = logging.getLogger(__name__)
 
 
 class UserListView(MethodView):
@@ -113,9 +116,8 @@ class UserListView(MethodView):
                     tk.h.ap_table_action(
                         "user.edit",
                         tk._("Edit"),
-                        {"id": "$name"},
-                        {"hx-target": ".test"},
-                    ),
+                        {"id": "$name", "came_from": "/test"},
+                    )
                 ],
             ),
         ]
@@ -228,6 +230,7 @@ class UserAddView(MethodView):
         tk.h.flash_success(
             tk._(f"Created a new user account for {link}"), allow_html=True
         )
+        log.info(tk._(f"Created a new user account for {link}"))
 
         return tk.redirect_to("ap_user.create")
 

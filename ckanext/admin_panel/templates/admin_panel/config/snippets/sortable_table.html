@@ -73,7 +73,7 @@ Examples:
                         <td>{{ h.linked_user(item[col.name], maxlength=20) }}</td>
                     {% elif col.type == "bool" %}
                         <td>{{ "Yes" if item[col.name] else "No" }}</td>
-                    {% elif col.type == "debug_level" %}
+                    {% elif col.type == "log_level" %}
                         <td>{{ h.ap_get_log_level_label(item[col.name]) }}</td>
                     {% elif col.type == "actions" %}
                         <td>
@@ -93,6 +93,8 @@ Examples:
                                 </a>
                             {% endfor %}
                         </td>
+                    {% elif col.type == "text_safe" %}
+                        <td>{{ item[col.name] | safe }}</td>
                     {% else %}
                         <td>{{ item[col.name] }}</td>
                     {% endif %}

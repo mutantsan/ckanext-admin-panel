@@ -73,7 +73,7 @@ class ReportLogsView(MethodView):
         ]
 
     def _sort_items(self, item_list: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        self.order_by = tk.request.args.get("order_by", "name")
+        self.order_by = tk.request.args.get("order_by", "timestamp")
         self.sort = tk.request.args.get("sort", "desc")
 
         return sorted(
@@ -99,13 +99,19 @@ class ReportLogsView(MethodView):
         return [
             tk.h.ap_table_column("name", width="10%"),
             tk.h.ap_table_column("path", width="20%"),
-            tk.h.ap_table_column("level", type_="debug_level", width="5%"),
+            tk.h.ap_table_column("level", type_="log_level", width="5%"),
             tk.h.ap_table_column("timestamp", type_="date", width="10%"),
-            tk.h.ap_table_column("message", sortable=False, width="55%"),
+            tk.h.ap_table_column(
+                "message", type_="text_safe", sortable=False, width="55%"
+            ),
         ]
 
     def post(self) -> Response:
-        return tk.redirect_to("ap_user.list")
+        if tk.request.form.get("clear_logs"):
+            ApLogs.clear_logs()
+            tk.h.flash_success(tk._("Logs has been cleared."))
+
+        return tk.redirect_to("ap_report.logs")
 
 
 ap_report.add_url_rule("/reports/logs", view_func=ReportLogsView.as_view("logs"))
