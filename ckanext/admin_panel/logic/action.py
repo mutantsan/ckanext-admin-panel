@@ -8,13 +8,9 @@ from typing import Any
 
 import sqlalchemy
 
-
-import ckan.logic as logic
 import ckan.lib.dictization.model_dictize as model_dictize
-from ckan.common import config, asbool
-
-
-from ckan.common import _
+import ckan.logic as logic
+from ckan.common import asbool, config
 from ckan.types import ActionResult, Context, DataDict, Query
 
 log = logging.getLogger("ckan.logic")
@@ -30,11 +26,6 @@ _or_ = sqlalchemy.or_
 _and_ = sqlalchemy.and_
 _func = sqlalchemy.func
 _case = sqlalchemy.case
-
-
-from ckan.plugins import toolkit as tk
-
-from ckan.types import Context, DataDict, ActionResult
 
 
 def user_list(context: Context, data_dict: DataDict) -> ActionResult.UserList:

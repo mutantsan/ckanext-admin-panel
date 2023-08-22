@@ -1,17 +1,15 @@
 from __future__ import annotations
 
-from typing import Union, Any
+from typing import Any, Union
 
 from flask import Blueprint, Response
 from flask.views import MethodView
 
 import ckan.plugins.toolkit as tk
-
-from ckanext.admin_panel.utils import ap_before_request
-from ckanext.admin_panel.model import ApLogs
 from ckan.lib.helpers import Page
 
-from ckanext.admin_panel.helpers import ap_table_column as ap_column
+from ckanext.admin_panel.model import ApLogs
+from ckanext.admin_panel.utils import ap_before_request
 
 ap_report = Blueprint("ap_report", __name__, url_prefix="/admin-panel")
 ap_report.before_request(ap_before_request)
@@ -19,27 +17,70 @@ ap_report.before_request(ap_before_request)
 
 class ReportLogsView(MethodView):
     def get(self) -> Union[str, Response]:
-        self.q = tk.request.args.get("q", "").strip()
-        self.order_by = tk.request.args.get("order_by", "name")
-        self.sort = tk.request.args.get("sort", "desc")
-        self.type = tk.request.args.getlist("type")
-        self.level = tk.request.args.getlist("level")
-
         return tk.render(
             "admin_panel/config/reports/logs.html",
             extra_vars=self._prepare_data_dict(),
         )
 
     def _prepare_data_dict(self) -> dict[str, Any]:
+        self.q = tk.request.args.get("q", "").strip()
+        self.order_by = tk.request.args.get("order_by", "name")
+        self.sort = tk.request.args.get("sort", "desc")
+        self.types = tk.request.args.getlist("type", int)
+        self.levels = tk.request.args.getlist("level", int)
+
+        # TODO: replace with action log_list
+        item_list = self._filter_items(ApLogs.all())
+        item_list = self._search_items(item_list)
+        item_list = self._sort_items(item_list)
+
         return {
-            "page": self._get_pager(ApLogs.all()),
+            "page": self._get_pager(item_list),
             "columns": self._get_table_columns(),
             "q": self.q,
             "order_by": self.order_by,
             "sort": self.sort,
-            "type": self.type,
-            "level": self.level,
+            "types": self.types,
+            "levels": self.levels,
         }
+
+    def _filter_items(self, item_list: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        if self.types:
+            type_options = {
+                opt["value"]: opt["text"] for opt in tk.h.ap_log_list_type_options()
+            }
+
+            item_list = [
+                item
+                for item in item_list
+                if item["name"]
+                in [type_options.get(type_, type_) for type_ in self.types]
+            ]
+
+        if self.levels:
+            item_list = [item for item in item_list if item["level"] in self.levels]
+
+        return item_list
+
+    def _search_items(self, item_list: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        if not self.q:
+            return item_list
+
+        return [
+            item
+            for item in item_list
+            if self.q.lower() in item["message_formatted"].lower()
+        ]
+
+    def _sort_items(self, item_list: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        self.order_by = tk.request.args.get("order_by", "name")
+        self.sort = tk.request.args.get("sort", "desc")
+
+        return sorted(
+            item_list,
+            key=lambda x: x.get(self.order_by, ""),
+            reverse=self.sort == "desc",
+        )
 
     def _get_pager(self, log_list: list[dict[str, Any]]) -> Page:
         page_number = tk.h.get_page_number(tk.request.args)
@@ -56,11 +97,11 @@ class ReportLogsView(MethodView):
 
     def _get_table_columns(self) -> list[dict[str, Any]]:
         return [
-            ap_column("name", width="10%"),
-            ap_column("path", width="20%"),
-            ap_column("level",width="5%"),
-            ap_column("timestamp", type_="date", width="10%"),
-            ap_column("message", sortable=False, width="55%"),
+            tk.h.ap_table_column("name", width="10%"),
+            tk.h.ap_table_column("path", width="20%"),
+            tk.h.ap_table_column("level", type_="debug_level", width="5%"),
+            tk.h.ap_table_column("timestamp", type_="date", width="10%"),
+            tk.h.ap_table_column("message", sortable=False, width="55%"),
         ]
 
     def post(self) -> Response:

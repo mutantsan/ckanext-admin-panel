@@ -24,11 +24,11 @@
             </div>
 
             <div class="form-field">
-                {{ ap_form.multi_select('type', label=_("Type"), options=h.ap_log_list_type_options(), selected=type, error='') }}
+                {{ ap_form.multi_select('type', label=_("Type"), options=h.ap_log_list_type_options(), selected=types, error='') }}
             </div>
 
             <div class="form-field">
-                {{ ap_form.multi_select('level', label=_("Level"), options=h.ap_log_list_level_options(), selected=level, error='') }}
+                {{ ap_form.multi_select('level', label=_("Level"), options=h.ap_log_list_level_options(), selected=levels, error='') }}
             </div>
 
             <div class="form-buttons">

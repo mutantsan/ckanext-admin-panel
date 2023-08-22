@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from ckan.plugins.interfaces import Interface
 
-from ckanext.admin_panel.helpers import SectionConfig
+from ckanext.admin_panel.types import SectionConfig
 
 
 class IAdminPanel(Interface):

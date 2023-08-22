@@ -6,16 +6,15 @@ from flask import Blueprint, Response
 from flask.views import MethodView
 
 import ckan.lib.app_globals as app_globals
+import ckan.lib.navl.dictization_functions as dict_fns
+import ckan.logic as logic
 import ckan.model as model
 import ckan.plugins.toolkit as tk
-import ckan.logic as logic
-import ckan.lib.navl.dictization_functions as dict_fns
-from ckan.types import Query
 from ckan.logic.schema import update_configuration_schema
+from ckan.types import Query
 from ckan.views.home import CACHE_PARAMETERS
 
 from ckanext.admin_panel.utils import ap_before_request
-
 
 ap_basic = Blueprint("ap_basic", __name__, url_prefix="/admin-panel")
 ap_basic.before_request(ap_before_request)

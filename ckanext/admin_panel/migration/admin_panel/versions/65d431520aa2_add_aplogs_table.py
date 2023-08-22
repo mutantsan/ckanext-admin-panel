@@ -5,9 +5,8 @@ Revises:
 Create Date: 2023-08-21 10:18:49.128929
 
 """
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "65d431520aa2"
@@ -30,7 +29,7 @@ def upgrade():
             server_default=sa.func.current_timestamp(),
         ),
         sa.Column("message", sa.Text),
-        sa.Column("message_formatted", sa.Text)
+        sa.Column("message_formatted", sa.Text),
     )
 
 

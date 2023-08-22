@@ -1,4 +1,5 @@
 import pytest
+
 from ckan.plugins import plugin_loaded
 
 

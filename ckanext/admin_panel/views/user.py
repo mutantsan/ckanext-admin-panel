@@ -1,25 +1,20 @@
 from __future__ import annotations
-from functools import partial
 
-from typing import Any, Union, Callable, Optional
-from typing_extensions import TypeAlias
+from functools import partial
+from typing import Any, Callable, Optional, Union
 
 from flask import Blueprint, Response
 from flask.views import MethodView
+from typing_extensions import TypeAlias
 
-import ckan.plugins.toolkit as tk
-import ckan.logic as logic
 import ckan.lib.navl.dictization_functions as df
+import ckan.logic as logic
 import ckan.logic.schema as schema
-from ckan import types, model
+import ckan.plugins.toolkit as tk
+from ckan import model, types
 from ckan.lib.helpers import Page
 
 from ckanext.admin_panel.utils import ap_before_request
-from ckanext.admin_panel.helpers import (
-    ap_table_column as ap_column,
-    ap_table_action as ap_action
-)
-
 
 UserList: TypeAlias = "list[dict[str, Any]]"
 
@@ -104,18 +99,23 @@ class UserListView(MethodView):
 
     def _get_table_columns(self) -> list[dict[str, Any]]:
         return [
-            ap_column("name", "Username", type_="user_link", width="23%"),
-            ap_column("display_name", "Full Name", width="25%"),
-            ap_column("email", "Email", width="20%"),
-            ap_column("state", "State", width="10%"),
-            ap_column("sysadmin", "Sysadmin", type_="bool", width="10%"),
-            ap_column(
+            tk.h.ap_table_column("name", "Username", type_="user_link", width="23%"),
+            tk.h.ap_table_column("display_name", "Full Name", width="25%"),
+            tk.h.ap_table_column("email", "Email", width="20%"),
+            tk.h.ap_table_column("state", "State", width="10%"),
+            tk.h.ap_table_column("sysadmin", "Sysadmin", type_="bool", width="10%"),
+            tk.h.ap_table_column(
                 "actions",
                 sortable=False,
                 type_="actions",
                 width="10%",
                 actions=[
-                    ap_action("user.edit", tk._("Edit"), {"id": "$name"}),
+                    tk.h.ap_table_action(
+                        "user.edit",
+                        tk._("Edit"),
+                        {"id": "$name"},
+                        {"hx-target": ".test"},
+                    ),
                 ],
             ),
         ]

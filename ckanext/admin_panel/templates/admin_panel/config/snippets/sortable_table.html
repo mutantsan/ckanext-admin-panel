@@ -22,6 +22,7 @@ Examples:
 #}
 {% from "macros/form/attributes.html" import attributes %}
 
+{% if items %}
 <table class="table table-light table-primary table-striped table-scrollable table-sortable table-{{ name }}">
     <colgroup>
         {% if bulk_check %}
@@ -72,6 +73,8 @@ Examples:
                         <td>{{ h.linked_user(item[col.name], maxlength=20) }}</td>
                     {% elif col.type == "bool" %}
                         <td>{{ "Yes" if item[col.name] else "No" }}</td>
+                    {% elif col.type == "debug_level" %}
+                        <td>{{ h.ap_get_log_level_label(item[col.name]) }}</td>
                     {% elif col.type == "actions" %}
                         <td>
                             {% for action in col.actions %}
@@ -95,8 +98,9 @@ Examples:
                     {% endif %}
                 {% endfor %}
             </tr>
-        {% else %}
-            {{ empty_msg or _("No items found for this query.") }}
         {% endfor %}
     </tbody>
 </table>
+{% else %}
+    <p>{{ empty_msg or _("No items found for this query.") }} <a href="{{ h.url_for('ap_report.logs') }}">{{ _("Clear?") }}</a></p>
+{% endif %}
