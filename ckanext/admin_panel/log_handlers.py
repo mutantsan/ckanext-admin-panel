@@ -8,6 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from ckan.plugins import toolkit as tk
 
 from ckanext.admin_panel.model import ApLogs
+from ckanext.admin_panel.utils import add_log_type
 
 log = logging.getLogger(__name__)
 
@@ -15,7 +16,7 @@ log = logging.getLogger(__name__)
 class DatabaseHandler(logging.Handler):
     not_ready = False
 
-    def __init__(self, db_uri: str):
+    def __init__(self, db_uri: str, redis_uri: str):
         super().__init__()
 
         engine = create_engine(db_uri)
@@ -26,6 +27,7 @@ class DatabaseHandler(logging.Handler):
 
         Session = sessionmaker(bind=engine)
         ApLogs.set_session(Session())
+        ApLogs.set_redis_uri(redis_uri)
 
     def emit(self, record):
         if not tk.config:
@@ -33,5 +35,7 @@ class DatabaseHandler(logging.Handler):
 
         if self.not_ready:
             return
+
+        add_log_type(record.name)
 
         ApLogs.save_log(record, self.format(record))

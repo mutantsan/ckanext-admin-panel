@@ -31,6 +31,40 @@
                 {{ ap_form.multi_select('level', label=_("Level"), options=h.ap_log_list_level_options(), selected=levels, error='') }}
             </div>
 
+            <div class="form-field">
+                <div class="form-group">
+                    <label class="form-label" for="start_time">
+                        {{ _("Start date") }}
+                    </label>
+                    <div class="controls">
+                        <input
+                            class="form-control"
+                            type="datetime-local"
+                            id="start_time"
+                            name="start_time"
+                            value="{{ start_time }}"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-field">
+                <div class="form-group">
+                    <label class="form-label" for="end_time">
+                        {{ _("End date") }}
+                    </label>
+                    <div class="controls">
+                        <input
+                            class="form-control"
+                            type="datetime-local"
+                            id="end_time"
+                            name="end_time"
+                            value="{{ end_time }}"
+                        />
+                    </div>
+                </div>
+            </div>
+
             <div class="form-buttons">
                 <button type="submit" class="btn btn-primary">{{ _("Filter") }}</button>
                 <a href="{{ h.url_for('ap_report.logs') }}" class="btn btn-primary">{{ _("Clear") }}</a>
@@ -52,11 +86,31 @@
                 {{ _("Clear logs") }}
             </button>
         </form>
-        {% snippet "admin_panel/config/snippets/sortable_table.html", items=page.items, columns=columns, empty_msg=_("No log messages available"), order_by=order_by, sort=sort %}
+        {% snippet "admin_panel/config/snippets/sortable_table.html", items=item_list, columns=columns, empty_msg=_("No log messages available"), order_by=order_by, sort=sort %}
     </div> <!-- row -->
 {% endblock ap_content %}
 
 
 {% block page_pagination %}
-    {{ page.pager(q=q, order_by=order_by, sort=sort, type=types, level=levels) }}
+    <div class="ap-pager">
+        {% if has_prev %}
+            {% set first_item_id = item_list[0].id if item_list else "" %}
+            <a href="{{ h.url_for('ap_report.logs', first_item_id=first_item_id, type=types, level=levels, order_by=order_by, sort=sort, start_time=start_time, end_time=end_time) }}" class="prev-page" title="prev page">
+                {% snippet 'snippets/svg/arrow-left.svg' %}
+            </a>
+        {% else %}
+            <span class="prev-page disabled">
+                {% snippet 'snippets/svg/arrow-left.svg' %}
+            </span>
+        {% endif %}
+
+        <span class="current-page">{{ current_page }}</span>
+
+        {% if has_next %}
+            {% set last_item_id = item_list[-1].id if item_list else "" %}
+            <a href="{{ h.url_for('ap_report.logs', last_item_id=last_item_id, type=types, level=levels, order_by=order_by, sort=sort, start_time=start_time, end_time=end_time) }}" class="next-page" title="next page">
+                {% snippet 'snippets/svg/arrow-left.svg' %}
+            </a>
+        {% endif %}
+    </div>
 {% endblock %}

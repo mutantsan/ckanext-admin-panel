@@ -10,6 +10,7 @@ import sqlalchemy
 
 import ckan.lib.dictization.model_dictize as model_dictize
 import ckan.logic as logic
+import ckan.plugins.toolkit as tk
 from ckan.common import asbool, config
 from ckan.types import ActionResult, Context, DataDict, Query
 
@@ -140,3 +141,7 @@ def user_list(context: Context, data_dict: DataDict) -> ActionResult.UserList:
             users_list.append(user[0])
 
     return users_list
+
+
+def log_list(context: Context, data_dict: DataDict) -> list[ActionResult.AnyDict]:
+    return []

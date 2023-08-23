@@ -12,6 +12,7 @@ import ckan.plugins.toolkit as tk
 import ckanext.admin_panel.model as ap_model
 from ckanext.admin_panel.interfaces import IAdminPanel
 from ckanext.admin_panel.types import ConfigurationItem, SectionConfig
+from ckanext.admin_panel.utils import get_log_types
 from ckanext.toolbelt.decorators import Collector
 
 helper, get_helpers = Collector("ap").split()
@@ -198,10 +199,8 @@ def table_action(
 def log_list_type_options() -> list[dict[str, str | int]]:
     """Return a list of options for a log list type multi select"""
     return [
-        {"value": idx, "text": log_name}
-        for idx, log_name in enumerate(
-            sorted({log["name"] for log in ap_model.ApLogs.all()})
-        )
+        {"value": log_name, "text": log_name}
+        for log_name in get_log_types()
     ]
 
 

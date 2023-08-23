@@ -1,0 +1,43 @@
+.ap-pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    .current-page,
+    .prev-page,
+    .next-page {
+        border-radius: 50%;
+        height: 30px;
+        width: 30px;
+        text-align: center;
+        line-height: 30px;
+        background-color: var(--ap-primary-btn-bg);
+        color: var(--ap-primary-btn-color);
+    }
+
+    .prev-page,
+    .next-page {
+        background-color: unset;
+
+        &:hover, &:focus, &:active {
+            background-color: var(--ap-primary-btn-bg);
+            svg path {
+                stroke: white;
+            }
+        }
+
+        &.disabled {
+            opacity: .5;
+            pointer-events: none;
+        }
+    }
+
+    .next-page {
+        transform: rotate(180deg);
+        svg {
+            position: relative;
+            top: -2px;
+        }
+    }
+}

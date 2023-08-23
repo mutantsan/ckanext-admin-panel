@@ -18,7 +18,7 @@ depends_on = None
 def upgrade():
     op.create_table(
         "ap_logs",
-        sa.Column("id", sa.Text, primary_key=True, unique=True),
+        sa.Column("id", sa.Integer, primary_key=True, unique=True, autoincrement=True, index=True),
         sa.Column("name", sa.Text),
         sa.Column("path", sa.Text),
         sa.Column("level", sa.Integer),
@@ -27,6 +27,7 @@ def upgrade():
             sa.DateTime,
             nullable=False,
             server_default=sa.func.current_timestamp(),
+            index=True
         ),
         sa.Column("message", sa.Text),
         sa.Column("message_formatted", sa.Text),
