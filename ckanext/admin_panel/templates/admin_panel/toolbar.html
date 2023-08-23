@@ -1,4 +1,7 @@
-<div id="admin-panel" data-module="ap-main ap-nested-dropdown ap-theme-switcher">
+<div
+    id="admin-panel"
+    data-module="ap-main ap-nested-dropdown
+    {% if h.ap_show_toolbar_theme_switcher() %}ap-theme-switcher{% endif %}">
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             {% block ap_toolbar_logo %}
@@ -19,7 +22,9 @@
                 {% endblock %}
 
                 {% block ap_toolbar_search %}
-                    {% snippet 'admin_panel/panel_search.html' %}
+                    {% if h.ap_show_toolbar_search() %}
+                        {% snippet 'admin_panel/panel_search.html' %}
+                    {% endif %}
                 {% endblock %}
             </div>
         </div>

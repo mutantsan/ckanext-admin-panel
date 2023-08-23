@@ -10,9 +10,9 @@ import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 
 import ckanext.admin_panel.model as ap_model
+import ckanext.admin_panel.config as ap_config
 from ckanext.admin_panel.interfaces import IAdminPanel
-from ckanext.admin_panel.types import (ConfigurationItem, SectionConfig,
-                                       ToolbarButton)
+from ckanext.admin_panel.types import ConfigurationItem, SectionConfig, ToolbarButton
 from ckanext.toolbelt.decorators import Collector
 
 helper, get_helpers = Collector("ap").split()
@@ -295,3 +295,13 @@ def get_log_level_label(level: int) -> str:
     }
 
     return levels.get(level, levels[0])
+
+
+@helper
+def show_toolbar_search() -> bool:
+    return ap_config.show_toolbar_search()
+
+
+@helper
+def show_toolbar_theme_switcher() -> bool:
+    return ap_config.show_toolbar_theme_switcher()
