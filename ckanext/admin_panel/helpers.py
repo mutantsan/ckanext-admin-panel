@@ -11,7 +11,8 @@ import ckan.plugins.toolkit as tk
 
 import ckanext.admin_panel.model as ap_model
 from ckanext.admin_panel.interfaces import IAdminPanel
-from ckanext.admin_panel.types import ConfigurationItem, SectionConfig
+from ckanext.admin_panel.types import (ConfigurationItem, SectionConfig,
+                                       ToolbarButton)
 from ckanext.toolbelt.decorators import Collector
 
 helper, get_helpers = Collector("ap").split()
@@ -69,6 +70,73 @@ def get_config_sections() -> list[SectionConfig]:
         default_sections = plugin.register_config_sections(default_sections)
 
     return default_sections
+
+
+@helper
+def get_toolbar_structure() -> list[ToolbarButton]:
+    configuration_subitems = [
+        ToolbarButton(
+            label=section["name"],
+            subitems=[
+                ToolbarButton(
+                    label=config_item["name"], url=tk.url_for(config_item["blueprint"])
+                )
+                for config_item in section["configs"]
+            ],
+        )
+        for section in get_config_sections()
+    ]
+
+    default_structure = [
+        ToolbarButton(label=tk._("Content"), icon="fa fa-folder"),
+        ToolbarButton(
+            label=tk._("Appearance"),
+            icon="fa fa-wand-magic-sparkles",
+        ),
+        ToolbarButton(
+            label=tk._("Extensions"),
+            icon="fa fa-gem",
+            url=tk.url_for(
+                "api.action", ver=3, logic_function="status_show", qualified=True
+            ),
+        ),
+        ToolbarButton(
+            label=tk._("Configuration"),
+            icon="fa fa-gear",
+            url=tk.url_for("ap_config_list.index"),
+            subitems=configuration_subitems,
+        ),
+        ToolbarButton(
+            label=tk._("Users"),
+            icon="fa fa-user-friends",
+            url=tk.url_for("ap_user.list"),
+            subitems=[
+                ToolbarButton(
+                    label=tk._("Add user"),
+                    url=tk.url_for("ap_user.create"),
+                    icon="fa fa-user-plus",
+                )
+            ],
+        ),
+        ToolbarButton(
+            label=tk._("Reports"),
+            icon="fa fa-chart-bar",
+            url=tk.url_for("ap_user.list"),
+            subitems=[
+                ToolbarButton(label=tk._("Available updates")),
+                ToolbarButton(
+                    label=tk._("Recent log messages"),
+                    url=tk.url_for("ap_report.logs"),
+                ),
+            ],
+        ),
+        ToolbarButton(label=tk._("Help"), icon="fa fa-circle-info"),
+    ]
+
+    for plugin in reversed(list(p.PluginImplementations(IAdminPanel))):
+        default_structure = plugin.register_toolbar_button(default_structure)
+
+    return default_structure
 
 
 @helper

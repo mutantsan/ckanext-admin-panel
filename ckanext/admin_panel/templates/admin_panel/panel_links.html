@@ -1,98 +1,37 @@
-<li class="nav-item">
-    <a class="nav-link" href="#">
-        <i class="fa-solid fa-folder"></i>
-        {{ _('Content') }}
-    </a>
-</li>
+{% from "macros/form/attributes.html" import attributes %}
 
-<li class="nav-item">
-    <a class="nav-link" href="#">
-        <i class="fa-solid fa-wand-magic-sparkles"></i>
-        {{ _('Appearance') }}
-    </a>
-</li>
+{% macro toolbar_button(button, nested=false) %}
+    <li class="{% if not nested %}nav-item {% if button.subitems %}dropdown{% endif %}{% endif %}">
+        <a class="{% if nested %}dropdown-item {{ 'with-subitems' if button.subitems }}{% else %}nav-link{% endif %}" href="{{ button.url or '#' }}" {{ attributes(button.attributes or {}) }}>
+            {% if button.icon %}
+                <i class="{{ button.icon }}"></i>
+            {% endif %}
+            {{ button.label }}
+        </a>
 
-<li class="nav-item">
-    <a class="nav-link" href="{{ h.url_for('api.action', ver=3, logic_function='status_show', qualified=True) }}">
-        <i class="fa-solid fa-gem"></i>
-        {{ _('Extensions') }}
-    </a>
-</li>
+        {% if button.subitems %}
+            {% set dropdown_id = "dropdown-" ~ h.ap_munge_string(button.label) %}
 
-<li class="nav-item dropdown">
-    <a class="nav-link main-link" href="{{ h.url_for('ap_config_list.index') }}">
-        <i class="fa-solid fa-gear"></i>
-        {{ _('Configuration') }}
-    </a>
-    <a class="nav-link dropdown-toggle" href="#" id="configDropdown" role="button" data-bs-toggle="dropdown"
-        aria-expanded="false">
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="configDropdown">
-        {% for section in h.ap_get_config_sections() %}
-            {% set accordion_id = "accordion-" + h.ap_munge_string(section.name) %}
-            {% set with_subitems = section.configs | length > 1 %}
-            {% set conf_url = '#' if with_subitems else h.url_for(section.configs[0].blueprint) %}
-            <li>
-                <a class="dropdown-item {% if with_subitems %}with-subitems{% endif %}" href="{{ conf_url }}">
-                    {{ section.name }}
+            {% if not nested %}
+                <a
+                    class="nav-link dropdown-toggle"
+                    href="#"
+                    id="{{ dropdown_id }}"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
                 </a>
+            {% endif %}
 
-                {% if with_subitems %}
-                    <ul class="submenu dropdown-menu">
-                        {% for config in section.configs %}
-                            <li>
-                                <a class="dropdown-item" href="{{ h.url_for(config.blueprint) }}">
-                                    {{ config.name }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
-</li>
+            <ul class="dropdown-menu {% if nested %}submenu{% endif %}" aria-labelledby="{{ dropdown_id }}">
+                {% for item in button.subitems %}
+                    {{ toolbar_button(item, nested=True) }}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </li>
+{% endmacro %}
 
-<li class="nav-item dropdown">
-    <a class="nav-link" href="{{ h.url_for('ap_user.list') }}">
-        <i class="fa-solid fa-person"></i>
-        {{ _('Users') }}
-    </a>
-    <a class="nav-link dropdown-toggle" href="#" id="configUsers" role="button" data-bs-toggle="dropdown"
-    aria-expanded="false">
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="configUsers">
-        <li>
-            <a class="dropdown-item" href="{{ h.url_for('ap_user.create') }}">
-                {{ _("Add user") }}
-            </a>
-        </li>
-    </ul>
-</li>
-
-<li class="nav-item dropdown">
-    <a class="nav-link" href="#">
-        <i class="fa-regular fa-chart-bar"></i>
-        {{ _('Reports') }}
-    </a>
-    <a class="nav-link dropdown-toggle" href="#" id="configReports" role="button" data-bs-toggle="dropdown"
-    aria-expanded="false">
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="configReports">
-        <li>
-            <a class="dropdown-item" href="#">
-                {{ _("Available updates") }}
-            </a>
-            <a class="dropdown-item" href="{{ h.url_for('ap_report.logs') }}">
-                {{ _("Recent log messages") }}
-            </a>
-        </li>
-    </ul>
-</li>
-
-<li class="nav-item">
-    <a class="nav-link" href="#">
-        <i class="fa-solid fa-circle-info"></i>
-        {{ _('Help') }}
-    </a>
-</li>
+{% for button in h.ap_get_toolbar_structure() %}
+    {{ toolbar_button(button) }}
+{% endfor %}
