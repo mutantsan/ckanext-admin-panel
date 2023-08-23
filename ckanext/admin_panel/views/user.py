@@ -16,6 +16,7 @@ from ckan import model, types
 from ckan.lib.helpers import Page
 
 from ckanext.admin_panel.utils import ap_before_request
+from ckanext.admin_panel.logic import schema as ap_schema
 
 UserList: TypeAlias = "list[dict[str, Any]]"
 
@@ -222,9 +223,12 @@ class UserAddView(MethodView):
             error_summary = e.error_summary
             return self.get(data_dict, errors, error_summary)
 
+        if data_dict.get("role") == "sysadmin":
+            self._make_user_sysadmin(user_dict)
+
         link = (
             tk.h.literal(f"<a href='{tk.url_for('user.read', id=user_dict['name'])}'>")
-            + "testuser_1"
+            + user_dict['name']
             + tk.h.literal("</a>")
         )
         tk.h.flash_success(
@@ -238,7 +242,7 @@ class UserAddView(MethodView):
         context: types.Context = {
             "user": tk.current_user.name,
             "auth_user_obj": tk.current_user,
-            "schema": schema.user_new_form_schema(),
+            "schema": ap_schema.ap_user_new_form_schema(),
             "save": "save" in tk.request.form,
         }
 
@@ -256,6 +260,14 @@ class UserAddView(MethodView):
         )
 
         return data_dict
+
+    def _make_user_sysadmin(self, user_dict: dict[str, Any]) -> None:
+        try:
+            logic.get_action("user_patch")(
+                {"ignore_auth": True}, {"id": user_dict["id"], "sysadmin": True}
+            )
+        except tk.ObjectNotFound:
+            pass
 
 
 ap_user.add_url_rule("/user/list", view_func=UserListView.as_view("list"))

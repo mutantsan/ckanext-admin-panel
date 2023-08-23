@@ -34,6 +34,7 @@
             {% endblock %}
 
             {% block extra_fields %}
+                {{ form.select('role', label=_('Role'), options=h.ap_user_add_role_options(), selected=data.role, error=errors.role) }}
             {% endblock %}
 
             {% block captcha %}

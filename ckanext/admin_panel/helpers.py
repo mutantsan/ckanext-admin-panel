@@ -305,3 +305,12 @@ def show_toolbar_search() -> bool:
 @helper
 def show_toolbar_theme_switcher() -> bool:
     return ap_config.show_toolbar_theme_switcher()
+
+
+@helper
+def user_add_role_options() -> list[dict[str, str | int]]:
+    """Return a list of options for a user add form"""
+    return [
+        {"value": "user", "text": "Regular user"},
+        {"value": "sysadmin", "text": "Sysadmin"},
+    ]
