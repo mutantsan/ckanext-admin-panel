@@ -88,7 +88,11 @@ def get_toolbar_structure() -> list[ToolbarButton]:
     ]
 
     default_structure = [
-        ToolbarButton(label=tk._("Content"), icon="fa fa-folder"),
+        ToolbarButton(
+            label=tk._("Content"),
+            icon="fa fa-folder",
+            url=tk.url_for("ap_content.list"),
+        ),
         ToolbarButton(
             label=tk._("Appearance"),
             icon="fa fa-wand-magic-sparkles",
@@ -313,4 +317,15 @@ def user_add_role_options() -> list[dict[str, str | int]]:
     return [
         {"value": "user", "text": "Regular user"},
         {"value": "sysadmin", "text": "Sysadmin"},
+    ]
+
+
+@helper
+def content_list_type_options() -> list[dict[str, str | int]]:
+    """Return a list of options for a content list type filter"""
+    return [
+        {"value": "", "text": "Any"},
+        {"value": "dataset", "text": "Dataset"},
+        {"value": "group", "text": "Group"},
+        {"value": "organization", "text": "Organization"},
     ]

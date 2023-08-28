@@ -13,5 +13,8 @@ DEFAULT_SHOW_TB_THEME_SWITCHER = True
 def show_toolbar_search() -> bool:
     return tk.asbool(tk.config.get(CONFIG_SHOW_TB_SEARCH, DEFAULT_SHOW_TB_SEARCH))
 
+
 def show_toolbar_theme_switcher() -> bool:
-    return tk.asbool(tk.config.get(CONFIG_SHOW_TB_THEME_SWITCHER, DEFAULT_SHOW_TB_THEME_SWITCHER))
+    return tk.asbool(
+        tk.config.get(CONFIG_SHOW_TB_THEME_SWITCHER, DEFAULT_SHOW_TB_THEME_SWITCHER)
+    )

@@ -117,7 +117,7 @@ class UserListView(MethodView):
                     tk.h.ap_table_action(
                         "user.edit",
                         tk._("Edit"),
-                        {"id": "$name", "came_from": "/test"},
+                        {"id": "$name"},
                     )
                 ],
             ),
@@ -228,7 +228,7 @@ class UserAddView(MethodView):
 
         link = (
             tk.h.literal(f"<a href='{tk.url_for('user.read', id=user_dict['name'])}'>")
-            + user_dict['name']
+            + user_dict["name"]
             + tk.h.literal("</a>")
         )
         tk.h.flash_success(
