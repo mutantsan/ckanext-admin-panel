@@ -37,8 +37,8 @@ Examples:
     <tbody>
         <tr>
             {% if bulk_check %}
-                <th class="checkbox-cell">
-                    <input type="checkbox" name="bulk_check" id="bulk_check">
+                <th class="checkbox-cell checkbox-cell-bulk">
+                    <input type="checkbox" name="bulk_check" id="bulk_check" data-module="ap-bulk-check">
                 </th>
             {% endif %}
 
@@ -61,7 +61,7 @@ Examples:
         {% for item in items %}
             <tr>
                 {% if bulk_check %}
-                    <td class="checkbox-cell">
+                    <td class="checkbox-cell checkbox-cell-row">
                         <input type="checkbox" name="entity_id" id="entity_id" value="{{ item.id }}">
                     </td>
                 {% endif %}
