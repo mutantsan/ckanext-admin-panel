@@ -64,24 +64,29 @@ class ContentListView(MethodView):
         }
 
     def _fake_content_list(self) -> list[dict[str, Any]]:
-        return [
-            {
-                "id": "123",
-                "title": "Test content 1",
-                "state": "active",
-                "type": "dataset",
-                "author": "Oleksandr Cherniavskyi",
-                "modified_at": "2022-02-02",
-            },
-            {
-                "id": "123",
-                "title": "Test content 2",
-                "state": "active",
-                "type": "group",
-                "author": "John Carter",
-                "modified_at": "2022-02-02",
-            },
-        ]
+        result_pkgs = tk.get_action("package_search")(
+            {"ignore_auth": True}, {"include_private": True}
+        )["results"]
+
+        result_orgs = tk.get_action("organization_list")(
+            {"ignore_auth": True}, {"all_fields": True}
+        )
+
+        for org in result_orgs:
+            org["metadata_created"] = org["created"]
+            org["metadata_modified"] = org["created"]
+            org["notes"] = org["description"]
+
+        result_groups = tk.get_action("group_list")(
+            {"ignore_auth": True}, {"all_fields": True}
+        )
+
+        for group in result_groups:
+            group["metadata_created"] = group["created"]
+            group["metadata_modified"] = group["created"]
+            group["notes"] = group["description"]
+
+        return result_pkgs + result_orgs + [grp for grp in result_groups]
 
     def post(self) -> Response:
         bulk_action = tk.request.form.get("bulk-action")
@@ -116,12 +121,16 @@ class ContentListView(MethodView):
 
     def _get_table_columns(self) -> list[dict[str, Any]]:
         return [
-            tk.h.ap_table_column("title", "Title", width="18%"),
-            tk.h.ap_table_column("type", "Type", width="20%"),
-            tk.h.ap_table_column("author", "Author", width="20%"),
-            tk.h.ap_table_column("state", "State", type_="bool", width="20%"),
+            tk.h.ap_table_column("title", "Title", width="10%"),
+            tk.h.ap_table_column("notes", "Notes", width="30%", sortable=False),
+            tk.h.ap_table_column("type", "Type", width="10%", sortable=False),
+            tk.h.ap_table_column("creator_user_id", "Author", type_="user_link", width="10%"),
+            tk.h.ap_table_column("state", "State", width="10%"),
             tk.h.ap_table_column(
-                "modified_at", "Modified at", type_="date", width="10%"
+                "metadata_created", "Create at", type_="date", width="10%"
+            ),
+            tk.h.ap_table_column(
+                "metadata_modified", "Modified at", type_="date", width="10%"
             ),
             tk.h.ap_table_column(
                 "actions",
@@ -130,10 +139,15 @@ class ContentListView(MethodView):
                 sortable=False,
                 actions=[
                     tk.h.ap_table_action(
-                        "ap_content.edit",
+                        "ap_content.entity_proxy",
                         tk._("Edit"),
-                        {"entity_id": "$id", "entity_type": "$type"},
-                    )
+                        {"entity_id": "$id", "entity_type": "$type", "view": "edit"},
+                    ),
+                    tk.h.ap_table_action(
+                        "ap_content.entity_proxy",
+                        tk._("View"),
+                        {"entity_id": "$id", "entity_type": "$type", "view": "read"},
+                    ),
                 ],
             ),
         ]
@@ -142,17 +156,12 @@ class ContentListView(MethodView):
         return [
             {
                 "value": "1",
-                "text": tk._("Add the sysadmin role to the selected user(s)"),
+                "text": tk._("Purge selected entities(s)"),
             },
             {
                 "value": "2",
-                "text": tk._("Remove the sysadmin role from the selected user(s)"),
+                "text": tk._("Restore selected user(s)"),
             },
-            {
-                "value": "3",
-                "text": tk._("Block the selected user(s)"),
-            },
-            {"value": "4", "text": tk._("Unblock the selected user(s)")},
         ]
 
     def _get_bulk_action(self, value: str) -> Callable[[list[str]], None] | None:
@@ -217,6 +226,7 @@ class ContentListView(MethodView):
             entity
             for entity in content_list
             if self.q.lower() in entity["title"].lower()
+            or self.q.lower() in entity["notes"].lower()
         ]
 
     def _sort_items(self, content_list: ContentList) -> ContentList:
@@ -230,15 +240,13 @@ class ContentListView(MethodView):
         )
 
 
-class ContentEditView(MethodView):
-    def get(self, entity_type: str, entity_id: str) -> Union[str, Response]:
-        pass
-
-    def post(self) -> Response:
-        pass
+class ContentProxyView(MethodView):
+    def get(self, view: str, entity_type: str, entity_id: str) -> Union[str, Response]:
+        return tk.redirect_to(f"{entity_type}.{view}", id=entity_id)
 
 
 ap_content.add_url_rule("/content/list", view_func=ContentListView.as_view("list"))
 ap_content.add_url_rule(
-    "/content/edit/<entity_type>/<entity_id>", view_func=ContentEditView.as_view("edit")
+    "/content/<view>/<entity_type>/<entity_id>",
+    view_func=ContentProxyView.as_view("entity_proxy"),
 )
