@@ -32,10 +32,12 @@
             .nav-link {
                 padding: 10px;
                 color: $color;
+                display: flex;
+                gap: 5px;
+                align-items: center;
 
                 i {
                     width: 15px;
-                    margin-right: 2px;
                 }
             }
 

@@ -135,6 +135,11 @@ def get_toolbar_structure() -> list[ToolbarButton]:
             ],
         ),
         ToolbarButton(label=tk._("Help"), icon="fa fa-circle-info"),
+        ToolbarButton(
+            icon="fa fa-gavel",
+            url=tk.url_for("admin.index"),
+            attributes={"title": tk._("Old admin")},
+        ),
     ]
 
     for plugin in reversed(list(p.PluginImplementations(IAdminPanel))):
