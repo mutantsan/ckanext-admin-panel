@@ -6,7 +6,21 @@ body[admin-panel="true"],
         height: $input-height;
     }
 
+    input[type=checkbox] {
+        height: auto;
+    }
+
     select {
         height: $input-height;
+    }
+
+    #bulk-action {
+        appearance: auto;
+    }
+
+    @media (min-width: $screen-sm-min) {
+        #bulk-action {
+            max-width: 600px;
+        }
     }
 }

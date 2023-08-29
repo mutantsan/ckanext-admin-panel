@@ -61,9 +61,13 @@ Examples:
         {% for item in items %}
             <tr>
                 {% if bulk_check %}
-                    <td class="checkbox-cell checkbox-cell-row">
-                        <input type="checkbox" name="entity_id" id="entity_id" value="{{ item.id }}">
-                    </td>
+                    {% if name == "content-list" %}
+                        {% snippet "admin_panel/config/snippets/bulk_column_user.html", item=item %}
+                    {% else %}
+                        <td class="checkbox-cell checkbox-cell-row">
+                            <input type="checkbox" name="entity_id" id="entity_id" value="{{ item.id }}">
+                        </td>
+                    {% endif %}
                 {% endif %}
 
                 {% for col in columns %}
