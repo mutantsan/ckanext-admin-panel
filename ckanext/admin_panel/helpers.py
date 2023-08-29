@@ -33,12 +33,7 @@ def get_config_sections() -> list[SectionConfig]:
                         if p.plugin_loaded("editable_config")
                         else "ap_basic.config"
                     ),
-                ),
-                ConfigurationItem(
-                    name=tk._("Trash bin"),
-                    info=tk._("Purge deleted entities"),
-                    blueprint="ap_basic.trash",
-                ),
+                )
             ],
         ),
         SectionConfig(

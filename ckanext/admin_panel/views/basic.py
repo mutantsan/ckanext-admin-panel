@@ -14,10 +14,10 @@ from ckan.logic.schema import update_configuration_schema
 from ckan.types import Query
 from ckan.views.home import CACHE_PARAMETERS
 
-from ckanext.admin_panel.utils import ap_before_request
+import ckanext.admin_panel.utils as ap_utils
 
 ap_basic = Blueprint("ap_basic", __name__, url_prefix="/admin-panel")
-ap_basic.before_request(ap_before_request)
+ap_basic.before_request(ap_utils.ap_before_request)
 
 
 class ResetView(MethodView):
@@ -173,127 +173,8 @@ class EditableConfigView(MethodView):
         return tk.redirect_to("ap_basic.editable_config")
 
 
-class TrashView(MethodView):
-    def __init__(self):
-        self.deleted_packages = self._get_deleted_datasets()
-        self.deleted_orgs = model.Session.query(model.Group).filter_by(
-            state=model.State.DELETED, is_organization=True
-        )
-        self.deleted_groups = model.Session.query(model.Group).filter_by(
-            state=model.State.DELETED, is_organization=False
-        )
-
-        self.deleted_entities = {
-            "package": self.deleted_packages,
-            "organization": self.deleted_orgs,
-            "group": self.deleted_groups,
-        }
-        self.messages = {
-            "confirm": {
-                "all": tk._("Are you sure you want to purge everything?"),
-                "package": tk._("Are you sure you want to purge datasets?"),
-                "organization": tk._("Are you sure you want to purge organizations?"),
-                "group": tk._("Are you sure you want to purge groups?"),
-            },
-            "success": {
-                "package": tk._("{number} datasets have been purged"),
-                "organization": tk._("{number} organizations have been purged"),
-                "group": tk._("{number} groups have been purged"),
-            },
-            "empty": {
-                "package": tk._("There are no datasets to purge"),
-                "organization": tk._("There are no organizations to purge"),
-                "group": tk._("There are no groups to purge"),
-            },
-        }
-
-    def _get_deleted_datasets(self) -> Union["Query[model.Package]", list[Any]]:
-        if tk.config.get("ckan.search.remove_deleted_packages"):
-            return self._get_deleted_datasets_from_db()
-        else:
-            return self._get_deleted_datasets_from_search_index()
-
-    def _get_deleted_datasets_from_db(self) -> "Query[model.Package]":
-        return model.Session.query(model.Package).filter_by(state=model.State.DELETED)
-
-    def _get_deleted_datasets_from_search_index(self) -> list[Any]:
-        results = tk.get_action("package_search")(
-            {"ignore_auth": True},
-            {
-                "fq": "+state:deleted",
-                "include_private": True,
-            },
-        )
-
-        return results["results"]
-
-    def get(self) -> str:
-        ent_type: str | None = tk.request.args.get("name")
-
-        if ent_type:
-            return tk.render(
-                "admin_panel/config/snippets/confirm_delete.html",
-                extra_vars={"ent_type": ent_type, "messages": self.messages},
-            )
-
-        return tk.render(
-            "admin_panel/config/trash.html",
-            extra_vars={"data": self.deleted_entities, "messages": self.messages},
-        )
-
-    def post(self) -> Response:
-        if "cancel" in tk.request.form:
-            return tk.h.redirect_to("ap_basic.trash")
-
-        req_action: str = tk.request.form.get("action", "")
-
-        if req_action == "all":
-            self.purge_all()
-        elif req_action in ("package", "organization", "group"):
-            self.purge_entity(req_action)
-        else:
-            tk.h.flash_error(tk._("Action not implemented."))
-
-        return tk.h.redirect_to("ap_basic.trash")
-
-    def purge_all(self):
-        actions = ("dataset_purge", "group_purge", "organization_purge")
-        entities = (self.deleted_packages, self.deleted_groups, self.deleted_orgs)
-
-        for action, deleted_entities in zip(actions, entities):
-            for entity in deleted_entities:
-                ent_id: str = entity.id if hasattr(entity, "id") else entity["id"]
-                tk.get_action(action)({"user": tk.current_user.name}, {"id": ent_id})
-            model.Session.remove()
-        tk.h.flash_success(tk._("Massive purge complete"))
-
-    def purge_entity(self, ent_type: str):
-        entities = self.deleted_entities[ent_type]
-        number = len(entities) if type(entities) == list else entities.count()
-
-        for ent in entities:
-            entity_id: str = ent.id if hasattr(ent, "id") else ent["id"]
-            tk.get_action(self._get_purge_action(ent_type))(
-                {"user": tk.current_user.name}, {"id": entity_id}
-            )
-
-        model.Session.remove()
-        tk.h.flash_success(self.messages["success"][ent_type].format(number=number))
-
-    @staticmethod
-    def _get_purge_action(ent_type: str) -> str:
-        actions = {
-            "package": "dataset_purge",
-            "organization": "organization_purge",
-            "group": "group_purge",
-        }
-
-        return actions[ent_type]
-
-
 ap_basic.add_url_rule("/config/basic", view_func=ConfigView.as_view("config"))
 ap_basic.add_url_rule(
     "/config/editable-config", view_func=EditableConfigView.as_view("editable_config")
 )
 ap_basic.add_url_rule("/config/basic/reset", view_func=ResetView.as_view("reset"))
-ap_basic.add_url_rule("/config/basic/trash", view_func=TrashView.as_view("trash"))
