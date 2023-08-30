@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import Any, Optional
+from typing import Any, Optional, Callable
 from urllib.parse import urlencode
 
 import ckan.lib.munge as munge
@@ -199,6 +199,7 @@ def table_column(
     type_: Optional[str] = "text",
     width: Optional[str] = "fit-content",
     actions: Optional[list[dict[str, Any]]] = None,
+    func: Optional[Callable[[Any], Any]] = None
 ) -> dict[str, Any]:
     """Create a structure for a sorted table column item.
 
@@ -234,6 +235,7 @@ def table_column(
         "type": type_,
         "width": width,
         "actions": actions,
+        "func": func
     }
 
 

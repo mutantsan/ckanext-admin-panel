@@ -71,7 +71,11 @@ Examples:
                 {% endif %}
 
                 {% for col in columns %}
-                    {% if col.type == "date" %}
+                    {% if col.func %}
+                        <td>
+                            {{ col.func(items, item, item[col.name]) }}
+                        </td>
+                    {% elif col.type == "date" %}
                         <td>{{ h.render_datetime(item[col.name], date_format='%d/%m/%Y - %H:%M') }}</td>
                     {% elif col.type == "user_link" %}
                         <td>{{ h.linked_user(item[col.name], maxlength=20) }}</td>
@@ -92,7 +96,11 @@ Examples:
                                     {% endif %}
                                 {% endfor %}
 
-                                <a class="btn btn-primary" href="{{  h.url_for(action.endpoint, **params) }}" {{ attributes(action.attributes) }}>
+                                {% if "class" not in action.attributes %}
+                                    {% do action.attributes.update(class="btn btn-primary") %}
+                                {% endif %}
+
+                                <a href="{{  h.url_for(action.endpoint, **params) }}" {{ attributes(action.attributes) }}>
                                     {{ action.label }}
                                 </a>
                             {% endfor %}
