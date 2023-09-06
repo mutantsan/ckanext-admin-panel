@@ -6,13 +6,29 @@ Next generation admin interface for CKAN.
 
 ## Content
 
+* [Todo](#todo)
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [Config settings](#installation)
 * [Developer installation](#developer-installation)
 * [Tests](#tests)
-* [Releasing a new version](#releasing-a-new-version)
 * [License](#license)
+
+## TODO
+This extension is under development, so there are many things to do:
+
+- Recent log messages:
+ - We have  some types, that we don't want to include in list. E.g xloader resources. Research what is better to do with them.
+ - Rework the pagination approach, because the current naive one will work very slow on big amount of data
+- Rewrite `user_list` action. Currently it's just a copy of contrib one with one small change. Maybe it's a good idea to write
+  our own versatile version.
+- Think about configuration section pages. Do we need a separate page for a section?
+- Work on `Extensions` page. What do we want: replace `status_show`. This page should be more informative. Show here what
+  extensions we are using with the respective versions. For now we don't have a standartized mechanism to retrieve versions
+  from extensions, think about it.
+- Work on `Available updates?` page. Show user if he could upgrade an extension or CKAN to a new version.
+- Work on `Appearance` page. TODO
+- Work on `Help` page. TODO
 
 ## Requirements
 
@@ -71,49 +87,6 @@ To run the tests, do:
 
     pytest --ckan-ini=test.ini
 
-
-## Releasing a new version
-
-If ckanext-admin-panel should be available on PyPI you can follow these steps to publish a new version:
-
-1. Update the version number in the `setup.py` file. See [PEP 440](http://legacy.python.org/dev/peps/pep-0440/#public-version-identifiers) for how to choose version numbers.
-
-1. Make sure you have the latest version of necessary packages:
-   ```sh
-   pip install --upgrade build twine
-   ```
-
-
-1. Tag the new release of the project on GitHub with the version number from
-   the `setup.py` file. For example if the version number in `setup.py` is
-   0.0.1 then do:
-   ```sh
-   git tag v0.0.1
-   git push --tags
-   ```
-
-1. Update changelog:
-   ```sh
-   make changelog
-   ```
-
-1. Create a source and binary distributions of the new version:
-   ```sh
-   python -m build && twine check dist/*
-   ```
-
-   Fix any errors you get.
-
-1. Upload the source distribution to PyPI:
-   ```sh
-   twine upload dist/*
-   ```
-
-1. Commit any outstanding changes:
-   ```sh
-   git commit -a
-   git push
-   ```
 
 ## License
 
