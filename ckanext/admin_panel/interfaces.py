@@ -18,7 +18,7 @@ class IAdminPanel(Interface):
         """Extension will receive the list of toolbar button objects."""
         return toolbar_buttons_list
 
-    def register_col_renderer(self) -> dict[str, ap_types.ColRenderer]:
+    def get_col_renderers(self) -> dict[str, ap_types.ColRenderer]:
         """Allows an extension to register its own col renderers
 
         Return a dictionary mapping renderes names (strings) to renderer

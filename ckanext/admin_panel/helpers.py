@@ -11,10 +11,9 @@ import ckan.plugins.toolkit as tk
 
 import ckanext.admin_panel.config as ap_config
 import ckanext.admin_panel.model as ap_model
-from ckanext.admin_panel.column_display import get_renderers
+import ckanext.admin_panel.utils as ap_utils
 from ckanext.admin_panel.interfaces import IAdminPanel
-from ckanext.admin_panel.types import (ConfigurationItem, SectionConfig,
-                                       ToolbarButton)
+from ckanext.admin_panel.types import ConfigurationItem, SectionConfig, ToolbarButton
 from ckanext.toolbelt.decorators import Collector
 
 helper, get_helpers = Collector("ap").split()
@@ -205,10 +204,6 @@ def table_column(
 ) -> dict[str, Any]:
     """Create a structure for a sorted table column item.
 
-    TODO: There's no way to expand the list of allowed types yet, as they are all
-    hardcoded inside the `sortable_table.html` snippet. Think about it, probably
-    implement it like display_snippets.
-
     Args:
         name: A column name will be used as a sorting GET param.
         label (optional): A human-readable column label. Defaults to None.
@@ -217,7 +212,7 @@ def table_column(
         width (optional): width of the column. Defaults to "fit-content".
         actions (optional): A list of actions. Defaults to None.
     """
-    col_renderers = get_renderers()
+    col_renderers = ap_utils.get_all_renderers()
 
     if column_renderer not in col_renderers:
         raise tk.ValidationError(f"Column renderer {column_renderer} is not supported")

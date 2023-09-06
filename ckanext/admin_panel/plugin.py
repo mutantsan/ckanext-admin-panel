@@ -5,7 +5,10 @@ from typing import Any, Callable
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 
+import ckanext.admin_panel.types as ap_types
 from ckanext.admin_panel import helpers
+from ckanext.admin_panel.column_display import get_renderers
+from ckanext.admin_panel.interfaces import IAdminPanel
 
 
 @tk.blanket.blueprints
@@ -15,6 +18,7 @@ class AdminPanelPlugin(p.SingletonPlugin):
     p.implements(p.IConfigurer)
     p.implements(p.IBlueprint)
     p.implements(p.ITemplateHelpers)
+    p.implements(IAdminPanel, inherit=True)
 
     # IConfigurer
 
@@ -27,3 +31,8 @@ class AdminPanelPlugin(p.SingletonPlugin):
 
     def get_helpers(self) -> dict[str, Callable[..., Any]]:
         return helpers.get_helpers()
+
+    # IAdminPanel
+
+    def get_col_renderers(self) -> dict[str, ap_types.ColRenderer]:
+        return get_renderers()
