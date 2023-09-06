@@ -104,8 +104,11 @@ class ContentListView(MethodView):
         for entity_type, entity_ids in self._group_entity_ids_by_types(
             content_ids_to_types
         ).items():
-            if action_func(entity_ids, entity_type):
-                tk.h.flash_success(tk._("Done."))
+            try:
+                if action_func(entity_ids, entity_type):
+                    tk.h.flash_success(tk._("Done."))
+            except tk.ValidationError as e:
+                tk.h.flash_error(str(e))
 
         return tk.redirect_to("ap_content.list")
 
