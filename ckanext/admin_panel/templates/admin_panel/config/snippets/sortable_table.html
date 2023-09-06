@@ -71,20 +71,10 @@ Examples:
                 {% endif %}
 
                 {% for col in columns %}
-                    {% if col.func %}
-                        <td>
-                            {{ col.func(items, item, item[col.name]) }}
-                        </td>
-                    {% elif col.type == "date" %}
-                        <td>{{ h.render_datetime(item[col.name], date_format='%d/%m/%Y - %H:%M') }}</td>
-                    {% elif col.type == "user_link" %}
-                        <td>{{ h.linked_user(item[col.name], maxlength=20) }}</td>
-                    {% elif col.type == "bool" %}
-                        <td>{{ "Yes" if item[col.name] else "No" }}</td>
-                    {% elif col.type == "log_level" %}
-                        <td>{{ h.ap_get_log_level_label(item[col.name]) }}</td>
-                    {% elif col.type == "actions" %}
-                        <td>
+                    <td>
+                        {% if col.column_renderer.__name__ != "action_render" %}
+                            {{ col.column_renderer(items, item, item[col.name], **col.renderer_kwargs) }}
+                        {% else %}
                             {% for action in col.actions %}
                                 {% set params = {} %}
 
@@ -104,12 +94,8 @@ Examples:
                                     {{ action.label }}
                                 </a>
                             {% endfor %}
-                        </td>
-                    {% elif col.type == "text_safe" %}
-                        <td>{{ item[col.name] | safe }}</td>
-                    {% else %}
-                        <td>{{ item[col.name] }}</td>
-                    {% endif %}
+                        {% endif %}
+                    </td>
                 {% endfor %}
             </tr>
         {% endfor %}

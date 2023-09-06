@@ -31,8 +31,6 @@ class ContentListView(MethodView):
         self.state = tk.request.args.get("state", "")
         self.type = tk.request.args.get("type", "")
 
-        data_dict = {"q": self.q, "order_by": self.order_by}
-
         # TODO: write custom user_list action to make it more flexible
         self.content_list = self._fake_content_list()
         self.content_list = self._filter_by_state(self.content_list)
@@ -146,18 +144,24 @@ class ContentListView(MethodView):
             tk.h.ap_table_column("notes", "Notes", width="30%", sortable=False),
             tk.h.ap_table_column("type", "Type", width="10%", sortable=False),
             tk.h.ap_table_column(
-                "creator_user_id", "Author", type_="user_link", width="10%"
+                "creator_user_id", "Author", column_renderer="ap_user_link", width="10%"
             ),
             tk.h.ap_table_column("state", "State", width="10%"),
             tk.h.ap_table_column(
-                "metadata_created", "Create at", type_="date", width="10%"
+                "metadata_created",
+                "Create at",
+                column_renderer="ap_date",
+                width="10%",
             ),
             tk.h.ap_table_column(
-                "metadata_modified", "Modified at", type_="date", width="10%"
+                "metadata_modified",
+                "Modified at",
+                column_renderer="ap_date",
+                width="10%",
             ),
             tk.h.ap_table_column(
                 "actions",
-                type_="actions",
+                column_renderer="ap_action_render",
                 width="10%",
                 sortable=False,
                 actions=[

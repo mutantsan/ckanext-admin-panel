@@ -1,6 +1,14 @@
 from __future__ import annotations
 
-from typing import Any, Optional, TypedDict
+from typing import Any, Optional, TypedDict, Union
+
+from typing_extensions import TypeAlias
+
+ItemList: TypeAlias = "list[dict[str, Any]]"
+Item: TypeAlias = "dict[str, Any]"
+ItemValue: TypeAlias = Any
+
+ColRenderer = Union[ItemList, Item, ItemValue, "dict[str, Any]"]
 
 
 class SectionConfig(TypedDict):

@@ -10,13 +10,12 @@ from typing_extensions import TypeAlias
 
 import ckan.lib.navl.dictization_functions as df
 import ckan.logic as logic
-import ckan.logic.schema as schema
 import ckan.plugins.toolkit as tk
 from ckan import model, types
 from ckan.lib.helpers import Page
 
-from ckanext.admin_panel.utils import ap_before_request
 from ckanext.admin_panel.logic import schema as ap_schema
+from ckanext.admin_panel.utils import ap_before_request
 
 UserList: TypeAlias = "list[dict[str, Any]]"
 
@@ -103,15 +102,23 @@ class UserListView(MethodView):
 
     def _get_table_columns(self) -> list[dict[str, Any]]:
         return [
-            tk.h.ap_table_column("name", "Username", type_="user_link", width="23%"),
+            tk.h.ap_table_column(
+                "name",
+                "Username",
+                column_renderer="ap_user_link",
+                width="23%",
+                renderer_kwargs={"maxlength": 36},
+            ),
             tk.h.ap_table_column("display_name", "Full Name", width="25%"),
             tk.h.ap_table_column("email", "Email", width="20%"),
             tk.h.ap_table_column("state", "State", width="10%"),
-            tk.h.ap_table_column("sysadmin", "Sysadmin", type_="bool", width="10%"),
+            tk.h.ap_table_column(
+                "sysadmin", "Sysadmin", column_renderer="ap_bool", width="10%"
+            ),
             tk.h.ap_table_column(
                 "actions",
                 sortable=False,
-                type_="actions",
+                column_renderer="ap_action_render",
                 width="10%",
                 actions=[
                     tk.h.ap_table_action(

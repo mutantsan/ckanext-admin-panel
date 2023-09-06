@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
-from ckan.logic.schema import validator_args, default_user_schema
+from ckan.logic.schema import default_user_schema, validator_args
 
 Schema = Dict[str, Any]
 

@@ -104,11 +104,9 @@ class ReportLogsView(MethodView):
         return [
             tk.h.ap_table_column("name", width="10%"),
             tk.h.ap_table_column("path", width="20%"),
-            tk.h.ap_table_column("level", type_="log_level", width="5%"),
-            tk.h.ap_table_column("timestamp", type_="date", width="10%"),
-            tk.h.ap_table_column(
-                "message", type_="text_safe", sortable=False, width="55%"
-            ),
+            tk.h.ap_table_column("level", column_renderer="ap_log_level", width="5%"),
+            tk.h.ap_table_column("timestamp", column_renderer="ap_date", width="10%"),
+            tk.h.ap_table_column("message", sortable=False, width="55%"),
         ]
 
     def post(self) -> Response:

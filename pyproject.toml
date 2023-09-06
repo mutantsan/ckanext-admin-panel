@@ -8,7 +8,7 @@ target-version = "py38"
 [tool.isort]
 known_ckan = "ckan"
 known_ckanext = "ckanext"
-known_self = "ckanext.nwg"
+known_self = "ckanext.admin_panel"
 sections = "FUTURE,STDLIB,FIRSTPARTY,THIRDPARTY,CKAN,CKANEXT,SELF,LOCALFOLDER"
 
 [tool.pytest.ini_options]

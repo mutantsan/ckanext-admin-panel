@@ -11,7 +11,6 @@ import ckan.logic as logic
 import ckan.model as model
 import ckan.plugins.toolkit as tk
 from ckan.logic.schema import update_configuration_schema
-from ckan.types import Query
 from ckan.views.home import CACHE_PARAMETERS
 
 import ckanext.admin_panel.utils as ap_utils

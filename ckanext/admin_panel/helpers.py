@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import Any, Optional, Callable
+from typing import Any, Optional
 from urllib.parse import urlencode
 
 import ckan.lib.munge as munge
@@ -9,10 +9,12 @@ import ckan.model as model
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 
-import ckanext.admin_panel.model as ap_model
 import ckanext.admin_panel.config as ap_config
+import ckanext.admin_panel.model as ap_model
+from ckanext.admin_panel.column_display import get_renderers
 from ckanext.admin_panel.interfaces import IAdminPanel
-from ckanext.admin_panel.types import ConfigurationItem, SectionConfig, ToolbarButton
+from ckanext.admin_panel.types import (ConfigurationItem, SectionConfig,
+                                       ToolbarButton)
 from ckanext.toolbelt.decorators import Collector
 
 helper, get_helpers = Collector("ap").split()
@@ -196,10 +198,10 @@ def table_column(
     name: str,
     label: Optional[str] = None,
     sortable: Optional[bool] = True,
-    type_: Optional[str] = "text",
     width: Optional[str] = "fit-content",
     actions: Optional[list[dict[str, Any]]] = None,
-    func: Optional[Callable[[Any], Any]] = None
+    column_renderer: Optional[str] = "ap_text_render",
+    renderer_kwargs: Optional[dict[str, Any]] = None,
 ) -> dict[str, Any]:
     """Create a structure for a sorted table column item.
 
@@ -211,31 +213,23 @@ def table_column(
         name: A column name will be used as a sorting GET param.
         label (optional): A human-readable column label. Defaults to None.
         sortable (optional): add column sort. Defaults to True.
-        type_ (optional): defines column cell display. Defaults to "text".
+        column_renderer (optional): defines how column will be rendered. Defaults to "ap_text".
         width (optional): width of the column. Defaults to "fit-content".
         actions (optional): A list of actions. Defaults to None.
     """
-    supported_types = (
-        "text",
-        "bool",
-        "date",
-        "user_link",
-        "actions",
-        "log_level",
-        "text_safe",
-    )
+    col_renderers = get_renderers()
 
-    if type_ not in supported_types:
-        raise tk.ValidationError("Column type {type_} is not supported")
+    if column_renderer not in col_renderers:
+        raise tk.ValidationError(f"Column renderer {column_renderer} is not supported")
 
     return {
         "name": name,
         "label": label or name.title(),
         "sortable": sortable,
-        "type": type_,
         "width": width,
         "actions": actions,
-        "func": func
+        "column_renderer": col_renderers[column_renderer],
+        "renderer_kwargs": renderer_kwargs or {},
     }
 
 
