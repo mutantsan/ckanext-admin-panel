@@ -17,6 +17,10 @@ Next generation admin interface for CKAN.
 ## TODO
 This extension is under development, so there are many things to do:
 
+- CKAN forms:
+ - What do we want to do, if we are editing an entity from admin panel? Use default form or replace it with an admin version?
+- Users:
+ - Add `User edit` page
 - Recent log messages:
  - We have  some types, that we don't want to include in list. E.g xloader resources. Research what is better to do with them.
  - Rework the pagination approach, because the current naive one will work very slow on big amount of data
