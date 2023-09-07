@@ -121,7 +121,6 @@ def get_toolbar_structure() -> list[ToolbarButton]:
         ToolbarButton(
             label=tk._("Reports"),
             icon="fa fa-chart-bar",
-            url=tk.url_for("ap_user.list"),
             subitems=[
                 ToolbarButton(label=tk._("Available updates")),
                 ToolbarButton(

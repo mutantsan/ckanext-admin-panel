@@ -1,8 +1,12 @@
 {% from "macros/form/attributes.html" import attributes %}
 
 {% macro toolbar_button(button, nested=false) %}
-    <li class="{% if not nested %}nav-item {% if button.subitems %}dropdown{% endif %}{% endif %}">
-        <a class="{% if nested %}dropdown-item {{ 'with-subitems' if button.subitems }}{% else %}nav-link{% endif %}" href="{{ button.url or '#' }}" {{ attributes(button.attributes or {}) }}>
+    {% set is_active = request.path == button.url %}
+    <li class="{% if not nested %}nav-item {% if button.subitems %}dropdown{% endif %}{% endif %} {{ 'active' if is_active }}">
+        <a
+            class="{% if nested %}dropdown-item {{ 'with-subitems' if button.subitems }}{% else %}nav-link{% endif %}"
+            href="{{ button.url or '#' }}"
+            {{ attributes(button.attributes or {}) }}>
             {% if button.icon %}
                 <i class="{{ button.icon }}"></i>
             {% endif %}

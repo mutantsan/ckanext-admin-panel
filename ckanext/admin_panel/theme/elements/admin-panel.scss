@@ -76,6 +76,10 @@
                 background: $nav-item-bg-hover;
             }
 
+            &.active {
+                background-color: var(--ap-nav-item-bg-hover);
+            }
+
             &.dropdown {
                 .dropdown-toggle:after {
                     margin-left: 0;
