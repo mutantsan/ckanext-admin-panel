@@ -3,7 +3,10 @@
  *
  * @param {Event} e
  */
-ckan.module.registry["confirm-action"].prototype._onConfirmSuccess = function (e) {
+
+var extendedModule = $.extend({}, ckan.module.registry["confirm-action"].prototype);
+
+extendedModule._onConfirmSuccess = function (e) {
     if (this.el.attr("type") === "submit") {
         this.el.closest("form").append(
             $('<input>').attr({
@@ -17,3 +20,9 @@ ckan.module.registry["confirm-action"].prototype._onConfirmSuccess = function (e
 
     this.performAction();
 }
+
+ckan.module("ap-confirm-action", function ($, _) {
+    "use strict";
+
+    return extendedModule;
+});
