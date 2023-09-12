@@ -37,29 +37,6 @@ def get_config_sections() -> list[SectionConfig]:
                 )
             ],
         ),
-        SectionConfig(
-            name=tk._("Schema engine config"),
-            configs=[
-                ConfigurationItem(
-                    name=tk._("SOLR config"),
-                    info=tk._("SOLR configuration options"),
-                    blueprint="ap_basic.config",
-                )
-            ],
-        ),
-        SectionConfig(
-            name=tk._("User settings"),
-            configs=[
-                ConfigurationItem(
-                    name=tk._("User permissions"),
-                    blueprint="user.index",
-                ),
-                ConfigurationItem(
-                    name=tk._("User permissions"),
-                    blueprint="user.index",
-                ),
-            ],
-        ),
     ]
 
     for plugin in reversed(list(p.PluginImplementations(IAdminPanel))):
@@ -89,17 +66,17 @@ def get_toolbar_structure() -> list[ToolbarButton]:
             icon="fa fa-folder",
             url=tk.url_for("ap_content.list"),
         ),
-        ToolbarButton(
-            label=tk._("Appearance"),
-            icon="fa fa-wand-magic-sparkles",
-        ),
-        ToolbarButton(
-            label=tk._("Extensions"),
-            icon="fa fa-gem",
-            url=tk.url_for(
-                "api.action", ver=3, logic_function="status_show", qualified=True
-            ),
-        ),
+        # ToolbarButton(
+        #     label=tk._("Appearance"),
+        #     icon="fa fa-wand-magic-sparkles",
+        # ),
+        # ToolbarButton(
+        #     label=tk._("Extensions"),
+        #     icon="fa fa-gem",
+        #     url=tk.url_for(
+        #         "api.action", ver=3, logic_function="status_show", qualified=True
+        #     ),
+        # ),
         ToolbarButton(
             label=tk._("Configuration"),
             icon="fa fa-gear",
@@ -122,14 +99,14 @@ def get_toolbar_structure() -> list[ToolbarButton]:
             label=tk._("Reports"),
             icon="fa fa-chart-bar",
             subitems=[
-                ToolbarButton(label=tk._("Available updates")),
+                # ToolbarButton(label=tk._("Available updates")),
                 ToolbarButton(
                     label=tk._("Recent log messages"),
                     url=tk.url_for("ap_report.logs"),
                 ),
             ],
         ),
-        ToolbarButton(label=tk._("Help"), icon="fa fa-circle-info"),
+        # ToolbarButton(label=tk._("Help"), icon="fa fa-circle-info"),
         ToolbarButton(
             icon="fa fa-gavel",
             url=tk.url_for("admin.index"),
