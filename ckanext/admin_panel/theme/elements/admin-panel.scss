@@ -24,6 +24,12 @@
             color: $color;
             margin-right: 0;
             padding: 0 10px;
+
+            svg {
+                #svg_1 {
+                    fill: var(--ap-color);
+                }
+            }
         }
 
         .nav-item {
