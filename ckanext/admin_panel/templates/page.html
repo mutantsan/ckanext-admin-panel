@@ -1,10 +1,11 @@
 {% ckan_extends %}
 
+{% block wrapper_class %} {{ h.ap_generate_page_unique_class() }} {% endblock %}
+
 {%- block page %}
     {% snippet 'snippets/apply_color_schema.html' %}
     {{ super() }}
 {% endblock page %}
-
 
 {%- block scripts %}
     {% asset 'admin_panel/admin_panel-js' %}

@@ -9,12 +9,14 @@ import ckan.model as model
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 
+from ckanext.toolbelt.decorators import Collector
+
 import ckanext.admin_panel.config as ap_config
 import ckanext.admin_panel.model as ap_model
 import ckanext.admin_panel.utils as ap_utils
 from ckanext.admin_panel.interfaces import IAdminPanel
-from ckanext.admin_panel.types import ConfigurationItem, SectionConfig, ToolbarButton
-from ckanext.toolbelt.decorators import Collector
+from ckanext.admin_panel.types import (ConfigurationItem, SectionConfig,
+                                       ToolbarButton)
 
 helper, get_helpers = Collector("ap").split()
 
@@ -117,7 +119,6 @@ def get_toolbar_structure() -> list[ToolbarButton]:
             url=tk.url_for("user.read", id=tk.current_user.name),
             attributes={"title": tk._("View profile")},
         ),
-
         ToolbarButton(
             icon="fa fa-tachometer",
             url=tk.url_for("dashboard.datasets"),
@@ -132,7 +133,7 @@ def get_toolbar_structure() -> list[ToolbarButton]:
             icon="fa fa-sign-out",
             url=tk.url_for("user.logout"),
             attributes={"title": tk._("Log out")},
-        )
+        ),
     ]
 
     for plugin in reversed(list(p.PluginImplementations(IAdminPanel))):
@@ -317,3 +318,16 @@ def content_list_type_options() -> list[dict[str, str | int]]:
         {"value": "group", "text": "Group"},
         {"value": "organization", "text": "Organization"},
     ]
+
+
+@helper
+def generate_page_unique_class() -> str:
+    """Build a unique css class for each page"""
+    args_hash = (
+        hash(frozenset(tk.request.view_args.items())) if tk.request.view_args else 0
+    )
+
+    if args_hash:
+        return tk.h.ap_munge_string((f"ap-{tk.request.endpoint}-{args_hash}"))
+
+    return tk.h.ap_munge_string((f"ap-{tk.request.endpoint}"))
