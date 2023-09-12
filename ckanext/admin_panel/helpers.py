@@ -112,6 +112,27 @@ def get_toolbar_structure() -> list[ToolbarButton]:
             url=tk.url_for("admin.index"),
             attributes={"title": tk._("Old admin")},
         ),
+        ToolbarButton(
+            label=tk.h.user_image((tk.current_user.name), size=22),
+            url=tk.url_for("user.read", id=tk.current_user.name),
+            attributes={"title": tk._("View profile")},
+        ),
+
+        ToolbarButton(
+            icon="fa fa-tachometer",
+            url=tk.url_for("dashboard.datasets"),
+            attributes={"title": tk._("View dashboard")},
+        ),
+        ToolbarButton(
+            icon="fa fa-cog",
+            url=tk.url_for("user.edit", id=tk.current_user.name),
+            attributes={"title": tk._("Profile settings")},
+        ),
+        ToolbarButton(
+            icon="fa fa-sign-out",
+            url=tk.url_for("user.logout"),
+            attributes={"title": tk._("Log out")},
+        )
     ]
 
     for plugin in reversed(list(p.PluginImplementations(IAdminPanel))):
