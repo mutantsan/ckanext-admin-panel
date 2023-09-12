@@ -23,9 +23,9 @@
         .navbar-brand {
             color: $color;
             margin-right: 0;
-            padding: 0 10px;
 
             svg {
+                transform: scale(.9);
                 #svg_1 {
                     fill: var(--ap-color);
                 }
