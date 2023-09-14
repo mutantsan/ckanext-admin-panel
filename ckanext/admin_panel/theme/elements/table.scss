@@ -1,4 +1,10 @@
 .table.table-scrollable {
+    table-layout: fixed;
+
+    td {
+        word-break: break-word;
+    }
+
     @media (max-width: $screen-sm-min) {
         display: block;
         overflow-x: auto;
