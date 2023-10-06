@@ -4,6 +4,7 @@ body[admin-panel="true"],
     a.btn {
         border-radius: 0 ;
         box-shadow: none;
+        display: inline-block;
 
         &.btn-primary {
             border: 1px solid var(--ap-primary-btn-border);

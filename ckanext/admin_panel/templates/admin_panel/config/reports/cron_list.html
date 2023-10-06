@@ -7,11 +7,11 @@
 {% block ap_main_class %} ap-log-list {% endblock %}
 
 {% block breadcrumb_content %}
-    <li>{% link_for _("Recent log messages"), named_route='ap_report.cron' %}</li>
+    <li>{% link_for _("Cron jobs"), named_route='ap_report.cron' %}</li>
 {% endblock breadcrumb_content %}
 
 {% block ap_content %}
-    <h1>{{ _("Recent log messages") }}</h1>
+    <h1>{{ _("Cron jobs") }}</h1>
 
     <div class="row g-3">
         <form action="{{ h.url_for('ap_report.cron') }}" method="GET" id="ap-logs-filter" class="ap-table-filter">
@@ -23,14 +23,6 @@
                 </div>
             </div>
 
-            <div class="form-field">
-                {{ ap_form.multi_select('type', label=_("Type"), options=h.ap_log_list_type_options(), selected=types, error='') }}
-            </div>
-
-            <div class="form-field">
-                {{ ap_form.multi_select('level', label=_("Level"), options=h.ap_log_list_level_options(), selected=levels, error='') }}
-            </div>
-
             <div class="form-buttons">
                 <button type="submit" class="btn btn-primary">{{ _("Filter") }}</button>
                 <a href="{{ h.url_for('ap_report.cron') }}" class="btn btn-primary">{{ _("Clear") }}</a>
@@ -40,19 +32,20 @@
             {{ form.hidden("order_by", order_by) }}
         </form>
 
-        <form action="{{ h.url_for('ap_report.cron') }}" method="POST">
-            <button
-                id="clear-logs-btn"
-                name="clear_logs"
-                type="submit"
-                class="btn btn-danger"
-                data-module="ap-confirm-action"
-                data-module-content="{{ _('Are you sure you want to clear all logs?') }}"
-                data-module-with-data=true>
-                {{ _("Clear logs") }}
-            </button>
+        <form action="{{ h.url_for('ap_content.list') }}" method="POST">
+            {{ h.csrf_input() }}
+
+            <div class="bulk-actions">
+                {{ form.select('bulk-action', id='bulk-action', label=_('Action'), options=bulk_options, selected="", error=error) }}
+
+                <button type="submit" id="bulk-submit" class="btn btn-primary mb-3">
+                    {{ _("Apply to selected items") }}
+                </button>
+            </div>
+
+            {% snippet "admin_panel/config/snippets/sortable_table.html", items=page.items, columns=columns, empty_msg=_("No jobs available"), order_by=order_by, sort=sort, bulk_check=1 %}
         </form>
-        {% snippet "admin_panel/config/snippets/sortable_table.html", items=page.items, columns=columns, empty_msg=_("No log messages available"), order_by=order_by, sort=sort %}
+
     </div> <!-- row -->
 {% endblock ap_content %}
 

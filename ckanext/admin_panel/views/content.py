@@ -170,13 +170,13 @@ class ContentListView(MethodView):
                 actions=[
                     tk.h.ap_table_action(
                         "ap_content.entity_proxy",
-                        tk._("Edit"),
-                        {"entity_id": "$id", "entity_type": "$type", "view": "edit"},
+                        label=tk._("Edit"),
+                        params={"entity_id": "$id", "entity_type": "$type", "view": "edit"},
                     ),
                     tk.h.ap_table_action(
                         "ap_content.entity_proxy",
-                        tk._("View"),
-                        {"entity_id": "$id", "entity_type": "$type", "view": "read"},
+                        label=tk._("View"),
+                        params={"entity_id": "$id", "entity_type": "$type", "view": "read"},
                     ),
                 ],
             ),

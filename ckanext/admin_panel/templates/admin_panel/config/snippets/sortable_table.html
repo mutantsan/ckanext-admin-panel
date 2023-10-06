@@ -91,7 +91,10 @@ Examples:
                                 {% endif %}
 
                                 <a href="{{  h.url_for(action.endpoint, **params) }}" {{ attributes(action.attributes) }}>
-                                    {{ action.label }}
+                                    {{ action.label or "" }}
+                                    {% if action.icon %}
+                                        <i class="{{ action.icon }}"></i>
+                                    {% endif %}
                                 </a>
                             {% endfor %}
                         {% endif %}
@@ -102,5 +105,5 @@ Examples:
     </tbody>
 </table>
 {% else %}
-    <p>{{ empty_msg or _("No items found for this query.") }} <a href="{{ h.url_for('ap_report.logs') }}">{{ _("Clear?") }}</a></p>
+    <p>{{ empty_msg or _("No items found for this query.") }} <a href="{{ request.url_rule }}">{{ _("Clear?") }}</a></p>
 {% endif %}

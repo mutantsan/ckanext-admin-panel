@@ -15,8 +15,7 @@ import ckanext.admin_panel.config as ap_config
 import ckanext.admin_panel.model as ap_model
 import ckanext.admin_panel.utils as ap_utils
 from ckanext.admin_panel.interfaces import IAdminPanel
-from ckanext.admin_panel.types import (ConfigurationItem, SectionConfig,
-                                       ToolbarButton)
+from ckanext.admin_panel.types import ConfigurationItem, SectionConfig, ToolbarButton
 
 helper, get_helpers = Collector("ap").split()
 
@@ -105,6 +104,10 @@ def get_toolbar_structure() -> list[ToolbarButton]:
                 ToolbarButton(
                     label=tk._("Recent log messages"),
                     url=tk.url_for("ap_report.logs"),
+                ),
+                ToolbarButton(
+                    label=tk._("Cron jobs"),
+                    url=tk.url_for("ap_report.cron"),
                 ),
             ],
         ),
@@ -229,7 +232,8 @@ def table_column(
 @helper
 def table_action(
     endpoint: str,
-    label: str,
+    label: Optional[str] = None,
+    icon: Optional[str] = None,
     params: Optional[dict[str, str]] = None,
     attributes: Optional[dict[str, str]] = None,
 ) -> dict[str, Any]:
@@ -250,6 +254,7 @@ def table_action(
     return {
         "endpoint": endpoint,
         "label": label,
+        "icon": icon,
         "params": params or {},
         "attributes": attributes or {},
     }
