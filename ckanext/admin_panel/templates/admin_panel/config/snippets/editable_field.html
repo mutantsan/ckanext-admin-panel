@@ -60,6 +60,4 @@ input_macro
     ) }}
 {% endif %}
 
-<blockquote class="mb-5">
-    {{ h.render_markdown(h.editable_config_option_description(name), allow_html=true) }}
-</blockquote>
+{{ h.render_markdown(h.editable_config_option_description(name), allow_html=true) }}
