@@ -3,7 +3,7 @@ from __future__ import annotations
 from ckanext.toolbelt.decorators import Collector
 
 
-helper, get_helpers = Collector("ap_core").split()
+helper, get_helpers = Collector("ap_cron").split()
 
 
 @helper

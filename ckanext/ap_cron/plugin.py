@@ -6,8 +6,8 @@ import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 
 import ckanext.ap_main.types as ap_types
-from ckanext.ap_main import helpers
 from ckanext.ap_main.interfaces import IAdminPanel
+from ckanext.ap_cron import helpers
 
 
 @tk.blanket.blueprints

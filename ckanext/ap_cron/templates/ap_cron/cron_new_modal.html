@@ -12,7 +12,7 @@
             <div class="modal-body">
                 {{ form.input("job_name", label=_("Name"), attrs={"required": "required", "class": "form-control"}) }}
 
-                {{ form.select('job_action', id='job_action', label=_('Action'), options=h.ap_get_actions_list_options(), selected="", error=error) }}
+                {{ form.select('job_action', id='job_action', label=_('Action'), options=h.ap_cron_get_actions_list_options(), selected="", error=error) }}
 
                 {% call form.textarea("job_data", label=_("Data"), attrs={"data-module": "ap-jsonlint", "data-module-input": "#job_data", "data-module-result":"#validation-result"}) %}
                     <div id="validation-result"></div>

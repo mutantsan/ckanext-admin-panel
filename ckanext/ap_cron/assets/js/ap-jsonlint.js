@@ -19,7 +19,6 @@ ckan.module("ap-jsonlint", function ($, _) {
             inputField.on("input", () => {
                 const jsonData = inputField.val();
 
-                console.log(resultContainer);
                 try {
                     jsonlint.parse(jsonData);
                     resultContainer.text("Valid JSON");

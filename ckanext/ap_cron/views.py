@@ -17,7 +17,7 @@ ap_cron.before_request(ap_before_request)
 class CronManagerView(MethodView):
     def get(self) -> Union[str, Response]:
         return tk.render(
-            "admin_panel/config/reports/cron_list.html",
+            "ap_cron/cron_list.html",
             extra_vars=self._prepare_data_dict(),
         )
 
