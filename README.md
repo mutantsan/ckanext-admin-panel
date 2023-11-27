@@ -61,7 +61,7 @@ To install ckanext-admin-panel:
     pip install -e .
 	pip install -r requirements.txt
 
-3. Add `admin-panel` to the `ckan.plugins` setting in your CKAN
+3. Add `admin_panel admin_panel_cron` to the `ckan.plugins` setting in your CKAN
    config file (by default the config file is located at
    `/etc/ckan/default/ckan.ini`).
 
