@@ -1,0 +1,63 @@
+{#
+name
+option
+data
+errors
+input_macro
+#}
+{% import 'macros/form.html' as form %}
+
+{% set input_macro = input_macro or form.input %}
+
+{% set id = name | replace(".", "-") %}
+
+{% set field_id = "field-value-" ~ id %}
+{% set customize_id = "field-customize-" ~ id %}
+
+{% set attrs = {
+    "class": "form-control",
+    "data-module": "ap-toggle-state",
+    "data-module-control": "#" ~ customize_id,
+} %}
+
+{% if not option.option %}
+    {% do attrs.update(disabled="disabled") %}
+{% endif %}
+
+
+{% call input_macro(
+    name,
+    id=field_id,
+    label=name,
+    value=data[name] or option.value,
+    error=errors[name],
+    attrs=attrs,
+    classes=["mb-1"]
+) %}
+
+{% endcall %}
+
+{% if option.option %}
+    {# option has custom value: enable remove checkbox to reset customization #}
+    {{ form.checkbox(
+        "reset:" ~ name,
+        "field-reset-" ~ id,
+        "Reset",
+        value="1",
+        checked=data["reset:" ~ name],
+        classes=["mb-1"]
+    ) }}
+{% else %}
+    {# option has no custom value: field is disabled unless customize checkbox
+    is turned on to avoid meaningless updates #}
+    {{ form.checkbox(
+        null,
+        customize_id,
+        "Customize",
+        value="1",
+        checked=option.option,
+        classes=["mb-1"]
+    ) }}
+{% endif %}
+
+{{ h.render_markdown(h.editable_config_option_description(name), allow_html=true) }}

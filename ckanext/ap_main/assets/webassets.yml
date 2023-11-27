@@ -1,0 +1,23 @@
+admin_panel-js:
+  filter: rjsmin
+  output: ckanext-admin_panel/%(version)s-admin_panel.js
+  contents:
+    - js/vendor/_hyperscript.min.js
+    - js/vendor/jsonlint.min.js
+
+    - js/ap-main.js
+    - js/ap-theme-switcher.js
+    - js/ap-nested-dropdown.js
+    - js/ap-toggle-state.js
+    - js/ap-confirm-action.js
+    - js/ap-bulk-check.js
+  extra:
+    preload:
+      - base/main
+      - base/ckan
+
+admin_panel-css:
+  filter: cssrewrite
+  output: ckanext-admin_panel/%(version)s-admin_panel.css
+  contents:
+    - css/admin_panel.css

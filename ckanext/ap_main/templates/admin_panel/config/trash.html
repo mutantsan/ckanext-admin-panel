@@ -1,0 +1,31 @@
+{% extends 'admin_panel/base.html' %}
+
+{% import 'macros/autoform.html' as autoform %}
+{% import 'macros/form.html' as form %}
+
+{% block breadcrumb_content %}
+    <li>{% link_for _("Trash"), named_route='ap_basic.trash' %}</li>
+{% endblock breadcrumb_content %}
+
+{% block ap_content %}
+    <h1>{{ _("Trash bin") }}</h1>
+
+    <form method="POST" action="{{ h.url_for('ap_basic.trash') }}" id="form-purge-all">
+        {{ h.csrf_input() }}
+        <div class="form-actions mb-3">
+            <input type="hidden" name="action" value="all">
+            <a class="btn btn-danger purge-all"
+                type="submit"
+                href="{{ h.url_for('ap_basic.trash', name='all') }}"
+                data-module="confirm-action"
+                data-module-with-data=true
+                data-module-content="{{ _('Are you sure you want to purge everything?') }}">
+            {{ _('Purge all') }}
+            </a>
+        </div>
+        </form>
+
+    {% for ent_type, entities in data.items() %}
+        {% snippet "admin/snippets/data_type.html", ent_type=ent_type, entities=entities, messages=messages %}
+    {% endfor %}
+{% endblock ap_content %}

@@ -1,0 +1,64 @@
+{% extends 'admin_panel/base.html' %}
+
+{% import 'macros/autoform.html' as autoform %}
+{% import 'macros/form.html' as form %}
+{% import 'admin_panel/macros/form.html' as ap_form %}
+
+{% block ap_main_class %} ap-log-list {% endblock %}
+
+{% block breadcrumb_content %}
+    <li>{% link_for _("Cron jobs"), named_route='ap_cron.manage' %}</li>
+{% endblock breadcrumb_content %}
+
+{% block ap_content %}
+    <h1>{{ _("Cron jobs") }}</h1>
+
+    <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#add-cron-job">
+        {{ _("Add cron job")}}
+    </button>
+
+
+    <div class="row g-3">
+        <form action="{{ h.url_for('ap_cron.manage') }}" method="GET" id="ap-logs-filter" class="ap-table-filter">
+            <div class="form-field">
+                <div class="search-input-wrapper">
+                    {% call form.input("q", label=_("Search"), value=q, placeholder=_('Search')) %}
+                        <button class="btn-search" type="submit"><i class="fa fa-search"></i></button>
+                    {% endcall %}
+                </div>
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-primary">{{ _("Filter") }}</button>
+                <a href="{{ h.url_for('ap_cron.manage') }}" class="btn btn-primary">{{ _("Clear") }}</a>
+            </div>
+
+            {{ form.hidden("sort", sort) }}
+            {{ form.hidden("order_by", order_by) }}
+        </form>
+
+        <form action="{{ h.url_for('ap_cron.manage') }}" method="POST">
+            {{ h.csrf_input() }}
+
+            <div class="bulk-actions">
+                {{ form.select('bulk-action', id='bulk-action', label=_('Action'), options=bulk_options, selected="", error=error) }}
+
+                <button type="submit" id="bulk-submit" class="btn btn-primary mb-3">
+                    {{ _("Apply to selected items") }}
+                </button>
+            </div>
+
+            {% snippet "admin_panel/config/snippets/sortable_table.html", items=page.items, columns=columns, empty_msg=_("No jobs available"), order_by=order_by, sort=sort, bulk_check=1 %}
+        </form>
+
+    </div> <!-- row -->
+
+    <form action="{{ h.url_for('ap_cron.manage') }}" method="POST" id="ap-cron-add">
+        {% snippet 'admin_panel/config/reports/cron_new_modal.html' %}
+    </form>
+{% endblock ap_content %}
+
+
+{% block page_pagination %}
+    {{ page.pager(q=q, order_by=order_by, sort=sort, type=types, level=levels) }}
+{% endblock %}
