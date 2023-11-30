@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import cast
+from datetime import datetime as dt
 
 from ckan.logic import validate
 from ckan.plugins import toolkit as tk
@@ -61,6 +62,8 @@ def ap_cron_update_cron_job(context, data_dict):
     for key, value in data_dict.items():
         setattr(job, key, value)
 
+    job.last_run = dt.utcnow()
+
     context["session"].commit()
 
     return job.dictize(context)
@@ -77,7 +80,9 @@ def ap_cron_run_cron_job(context, data_dict):
         raise tk.ValidationError({"message": tk._("The cron job is already running.")})
 
     return {
-        "success": enqueue_cron_job(job.id)
+        "job": job.dictize(context),
+        "success": enqueue_cron_job(job.id),
+
     }
 
 

@@ -5,8 +5,8 @@ const sass = require('gulp-sass')(require('sass'));
 const sourcemaps = require("gulp-sourcemaps");
 const with_sourcemaps = () => !!process.env.DEBUG
 
-const themeDir = resolve("ckanext/admin_panel/theme");
-const assetsDir = resolve("ckanext/admin_panel/assets");
+const themeDir = resolve("ckanext/ap_main/theme");
+const assetsDir = resolve("ckanext/ap_main/assets");
 
 const build = () => {
     return src(resolve(themeDir, "admin_panel.scss"))

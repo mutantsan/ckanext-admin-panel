@@ -8,7 +8,7 @@ ckan.module("ap-cron-htmx", function ($) {
             var self = this;
 
             document.body.addEventListener('htmx:confirm', function (evt) {
-                if (evt.detail.path.includes("/reports/cron/delete")) {
+                if (evt.detail.path.includes("/cron/delete")) {
                     evt.preventDefault();
 
                     swal({
@@ -20,6 +20,7 @@ ckan.module("ap-cron-htmx", function ($) {
                         if (confirmed) {
                             evt.detail.issueRequest(true);
                             self._onRemoveCronJob(evt);
+                            self.sandbox.publish("ap:notify", self._("A cron job has been removed"));
                         }
                     });
                 }

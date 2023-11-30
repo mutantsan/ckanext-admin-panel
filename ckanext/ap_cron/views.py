@@ -79,12 +79,12 @@ class CronManagerView(MethodView):
 
     def _get_table_columns(self) -> list[dict[str, Any]]:
         return [
-            tk.h.ap_table_column("name", width="20%"),
-            tk.h.ap_table_column("actions", width="20%"),
+            tk.h.ap_table_column("name", width="15%"),
+            tk.h.ap_table_column("actions", column_renderer="ap_list", width="15%"),
             tk.h.ap_table_column(
                 "data",
                 column_renderer="ap_cron_json_display",
-                width="20%",
+                width="30%",
                 sortable=False,
             ),
             tk.h.ap_table_column(
@@ -97,7 +97,7 @@ class CronManagerView(MethodView):
                 "last_run",
                 label="Last run",
                 column_renderer="ap_cron_last_run",
-                width="5%",
+                width="10%",
                 sortable=False,
             ),
             tk.h.ap_table_column(
@@ -109,7 +109,7 @@ class CronManagerView(MethodView):
             tk.h.ap_table_column(
                 "actions",
                 column_renderer="ap_action_render",
-                width="20%",
+                width="15%",
                 sortable=False,
                 actions=[
                     tk.h.ap_table_action(
@@ -136,14 +136,7 @@ class CronManagerView(MethodView):
                         icon="fa fa-play",
                         params={
                             "job_id": "$id",
-                        },
-                        attributes={
-                            "hx-swap": "none",
-                            "hx-trigger": "click",
-                            "hx-post": lambda item: tk.h.url_for(
-                                "ap_cron.run", job_id=item["id"]
-                            ),
-                        },
+                        }
                     ),
                     tk.h.ap_table_action(
                         "ap_cron.delete",
@@ -241,16 +234,20 @@ class CronDeleteJobView(MethodView):
 
 
 class CronRunJobView(MethodView):
-    def post(self, job_id: str) -> str:
+    """Initially I wanted to make it with HTMX. Having a get endpoint for such
+    an action is a bit wrong."""
+    def get(self, job_id: str) -> Response:
         try:
-            tk.get_action("ap_cron_run_cron_job")(
+            result = tk.get_action("ap_cron_run_cron_job")(
                 {},
                 cast(types.DataDict, {"id": job_id}),
             )
         except tk.ValidationError as e:
-            pass
+            tk.h.flash_error(e.error_dict["message"])
+            return tk.redirect_to("ap_cron.manage")
 
-        return ""
+        tk.h.flash_success(f"The cron job \"{result['job']['name']}\" has been started!")
+        return tk.redirect_to("ap_cron.manage")
 
 
 ap_cron.add_url_rule("/", view_func=CronManagerView.as_view("manage"))

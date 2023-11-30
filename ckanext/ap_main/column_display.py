@@ -49,3 +49,10 @@ def log_level(
     rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue, **kwargs
 ) -> str:
     return tk.h.ap_get_log_level_label(value)
+
+
+@renderer
+def list(
+    rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue, **kwargs
+):
+    return ", ".join(value)

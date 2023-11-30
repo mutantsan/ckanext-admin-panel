@@ -29,6 +29,8 @@ class TestCronJobCreate:
 @pytest.mark.usefixtures("with_plugins", "reset_db_once")
 class TestCronJobUpdate:
     def test_basic_update(self, cron_job: DictizedCronJob):
+        assert cron_job["last_run"] is None
+
         payload = dict(
             id=cron_job["id"],
             name="new name",
@@ -44,6 +46,7 @@ class TestCronJobUpdate:
         for key, value in payload.items():
             assert result[key] == value
 
+        assert result["last_run"] is not None
 
 @pytest.mark.usefixtures("with_plugins", "reset_db_once")
 class TestCronJobGet:
