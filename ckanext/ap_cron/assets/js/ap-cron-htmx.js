@@ -18,9 +18,8 @@ ckan.module("ap-cron-htmx", function ($) {
                         dangerMode: true,
                     }).then((confirmed) => {
                         if (confirmed) {
+                            evt.detail.issueRequest(true);
                             self._onRemoveCronJob(evt);
-                            debugger
-                            evt.detail.issueRequest();
                         }
                     });
                 }

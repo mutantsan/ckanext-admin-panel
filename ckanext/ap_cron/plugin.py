@@ -38,7 +38,7 @@ class AdminPanelCronPlugin(p.SingletonPlugin):
     def configure(self, config: tk.CKANConfig) -> None:
         from ckanext.ap_cron.utils import enqueue_cron_job
 
-        jobs_list = cron_model.CronJob.get_list(cron_model.CronJob.State.active)
+        jobs_list = cron_model.CronJob.get_list(cron_model.CronJob.State.new)
 
         for job in jobs_list:
             if job["schedule"] != CronSchedule.reboot.value:

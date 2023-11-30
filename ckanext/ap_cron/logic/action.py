@@ -8,6 +8,7 @@ from ckan.plugins import toolkit as tk
 
 import ckanext.ap_cron.logic.schema as cron_schema
 from ckanext.ap_cron.model import CronJob
+from ckanext.ap_cron.utils import enqueue_cron_job
 
 
 @tk.side_effect_free
@@ -31,7 +32,6 @@ def ap_cron_get_cron_job(context, data_dict):
 def ap_cron_remove_cron_job(context, data_dict):
     tk.check_access("ap_cron_remove_job", context, data_dict)
 
-    import ipdb; ipdb.set_trace()
     job = cast(CronJob, CronJob.get(data_dict["id"]))
     job.delete()
 
@@ -64,6 +64,21 @@ def ap_cron_update_cron_job(context, data_dict):
     context["session"].commit()
 
     return job.dictize(context)
+
+
+@tk.side_effect_free
+@validate(cron_schema.run_cron_job)
+def ap_cron_run_cron_job(context, data_dict):
+    tk.check_access("ap_cron_update_job", context, data_dict)
+
+    job = cast(CronJob, CronJob.get(data_dict["id"]))
+
+    if job.state == CronJob.State.running:
+        raise tk.ValidationError({"message": tk._("The cron job is already running.")})
+
+    return {
+        "success": enqueue_cron_job(job.id)
+    }
 
 
 def cron_job_callback(context, data_dict):
@@ -152,6 +167,7 @@ def cron_job_callback(context, data_dict):
 def aaa_test_cron(context, data_dict):
     from time import sleep
 
-    print("We are inside a test bg func, waitin for a minute")
-    sleep(60)
+    print("We are inside a test bg func, waitin for a 5 sec")
+    print(data_dict)
+    sleep(5)
     print("Done with waiting")

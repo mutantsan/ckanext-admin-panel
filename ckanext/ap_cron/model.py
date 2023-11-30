@@ -22,11 +22,12 @@ class CronJob(tk.BaseModel):
     __tablename__ = "ap_cron_job"
 
     class State:
-        active = "active"
+        new = "new"
         disabled = "disabled"
         pending = "pending"
         running = "running"
         failed = "failed"
+        finished = "finished"
 
     id = Column(Text, primary_key=True, default=make_uuid)
 
@@ -37,7 +38,7 @@ class CronJob(tk.BaseModel):
     schedule = Column(Text)
     actions = Column(Text)
     data: dict[str, Any] = Column(JSONB, nullable=False)  # type: ignore
-    state = Column(Text, default=State.active)
+    state = Column(Text, default=State.new)
     timeout = Column(Integer, default=cron_conf.get_job_timeout())
 
     @classmethod

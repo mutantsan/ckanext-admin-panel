@@ -10,11 +10,12 @@ from ckanext.ap_cron.model import CronJob
 
 Schema = Dict[str, Any]
 STATES = [
-    CronJob.State.active,
+    CronJob.State.new,
     CronJob.State.disabled,
     CronJob.State.pending,
     CronJob.State.running,
     CronJob.State.failed,
+    CronJob.State.finished,
 ]
 
 
@@ -50,7 +51,7 @@ def add_cron_job(
             is_positive_integer,
         ],
         "data": [not_missing, convert_to_json_if_string, dict_only],
-        "state": [default(CronJob.State.active), unicode_safe, one_of(STATES)],
+        "state": [default(CronJob.State.new), unicode_safe, one_of(STATES)],
     }
 
 
@@ -67,6 +68,11 @@ def remove_cron_job(not_missing, unicode_safe, cron_job_exists) -> Schema:
 @validator_args
 def get_cron_job_list(ignore_missing, unicode_safe, one_of) -> Schema:
     return {"state": [ignore_missing, unicode_safe, one_of(STATES)]}
+
+
+@validator_args
+def run_cron_job(not_missing, unicode_safe, cron_job_exists) -> Schema:
+    return {"id": [not_missing, unicode_safe, cron_job_exists]}
 
 
 @validator_args

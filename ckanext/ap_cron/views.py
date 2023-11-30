@@ -14,7 +14,11 @@ from ckan.lib.helpers import Page
 from ckanext.ap_main.utils import ap_before_request
 from ckanext.ap_cron import types as cron_types
 
-ap_cron = Blueprint("ap_cron", __name__, url_prefix="/admin-panel")
+ap_cron = Blueprint(
+    "ap_cron",
+    __name__,
+    url_prefix="/admin-panel/cron",
+)
 ap_cron.before_request(ap_before_request)
 
 
@@ -128,34 +132,28 @@ class CronManagerView(MethodView):
                         },
                     ),
                     tk.h.ap_table_action(
-                        "ap_content.entity_proxy",
+                        "ap_cron.run",
                         icon="fa fa-play",
                         params={
-                            "entity_id": "$id",
-                            "entity_type": "$type",
-                            "view": "read",
+                            "job_id": "$id",
+                        },
+                        attributes={
+                            "hx-swap": "none",
+                            "hx-trigger": "click",
+                            "hx-post": lambda item: tk.h.url_for(
+                                "ap_cron.run", job_id=item["id"]
+                            ),
                         },
                     ),
                     tk.h.ap_table_action(
-                        "ap_content.entity_proxy",
-                        icon="fa fa-stop",
-                        params={
-                            "entity_id": "$id",
-                            "entity_type": "$type",
-                            "view": "read",
-                        },
-                        attributes={"class": "btn btn-danger"},
-                    ),
-                    tk.h.ap_table_action(
-                        "ap_content.entity_proxy",
+                        "ap_cron.delete",
                         icon="fa fa-trash-alt",
                         params={
-                            "entity_id": "$id",
-                            "entity_type": "$type",
-                            "view": "read",
+                            "job_id": "$id",
                         },
                         attributes={
                             "class": "btn btn-danger",
+                            "hx-swap": "none",
                             "hx-trigger": "click",
                             "hx-post": lambda item: tk.h.url_for(
                                 "ap_cron.delete", job_id=item["id"]
@@ -165,15 +163,6 @@ class CronManagerView(MethodView):
                 ],
             ),
         ]
-
-    #                 <button
-    #     class="remove-step btn btn-danger"
-    #     data-step-id="{{ step_id }}"
-    #     hx-trigger="click"
-    #     hx-post="{{ h.url_for('tour.delete_step', tour_step_id=step_id) }}"
-    #     >
-    #     {{ _("Delete") }}
-    # </button>
 
     def _get_bulk_action_options(self):
         return [
@@ -238,7 +227,7 @@ class CronAddView(MethodView):
         return result, errors
 
 
-class CronDeleteView(MethodView):
+class CronDeleteJobView(MethodView):
     def post(self, job_id: str) -> str:
         try:
             tk.get_action("ap_cron_remove_cron_job")(
@@ -251,8 +240,20 @@ class CronDeleteView(MethodView):
         return ""
 
 
-ap_cron.add_url_rule("/reports/cron", view_func=CronManagerView.as_view("manage"))
-ap_cron.add_url_rule("/reports/cron/add", view_func=CronAddView.as_view("add"))
-ap_cron.add_url_rule(
-    "/reports/cron/delete/<job_id>", view_func=CronDeleteView.as_view("delete")
-)
+class CronRunJobView(MethodView):
+    def post(self, job_id: str) -> str:
+        try:
+            tk.get_action("ap_cron_run_cron_job")(
+                {},
+                cast(types.DataDict, {"id": job_id}),
+            )
+        except tk.ValidationError as e:
+            pass
+
+        return ""
+
+
+ap_cron.add_url_rule("/", view_func=CronManagerView.as_view("manage"))
+ap_cron.add_url_rule("/add", view_func=CronAddView.as_view("add"))
+ap_cron.add_url_rule("/delete/<job_id>", view_func=CronDeleteJobView.as_view("delete"))
+ap_cron.add_url_rule("/run/<job_id>", view_func=CronRunJobView.as_view("run"))

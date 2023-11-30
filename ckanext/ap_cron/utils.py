@@ -35,7 +35,7 @@ def enqueue_cron_job(job_id: str) -> bool:
     data = {
         "api_key": get_site_user_apitoken(),
         "job_type": "ap_cron_job",
-        # "result_url": get_job_callback_url(),
+        "result_url": get_job_callback_url(),
         "data": {
             "cron_job_id": cron_job.id,
             "actions": cron_job.get_actions,
@@ -44,7 +44,7 @@ def enqueue_cron_job(job_id: str) -> bool:
     }
 
     try:
-        job = tk.enqueue_job(
+        tk.enqueue_job(
             cron_job_pipe, [data], rq_kwargs={"timeout": cron_conf.get_job_timeout()}
         )
     except Exception:
@@ -124,18 +124,29 @@ def test_(task: dict[str, Any], cron_job: cron_model.CronJob):
 
 
 def cron_job_pipe(data_dict: dict[str, Any]):
+    """This function runs a list of actions for a specific cron job successively.
+    The result of the action is passed to the next one."""
+
+    cron_job_id: str = data_dict["data"]["cron_job_id"]
+
     tk.get_action("ap_cron_update_cron_job")(
         {"ignore_auth": True},
         {
-            "id": data_dict["data"]["cron_job_id"],
+            "id": cron_job_id,
             "state": cron_model.CronJob.State.running,
         },
     )
 
-    for action in data_dict["actions"]:
-        result = tk.get_action(action)
+    for action in data_dict["data"]["actions"]:
+        data_dict = tk.get_action(action)({}, data_dict["data"]["kwargs"])
 
-    print("ti durak?")
+    tk.get_action("ap_cron_update_cron_job")(
+        {"ignore_auth": True},
+        {
+            "id": cron_job_id,
+            "state": cron_model.CronJob.State.new,
+        },
+    )
 
 
 def get_job_callback_url() -> str:

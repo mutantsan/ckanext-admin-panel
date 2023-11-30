@@ -13,14 +13,23 @@
 {% block ap_content %}
     <h1>{{ _("Cron jobs") }}</h1>
 
-    <button
-        type="button"
-        class="btn btn-success mb-2"
-        data-bs-toggle="modal"
-        data-bs-target="#add-cron-job"
-        _="on click call ckan.newJobForm('#add-cron-job')">
-        {{ _("Add cron job")}}
-    </button>
+    <div class="cron-manage mb-2">
+        <button
+            type="button"
+            class="btn btn-success"
+            data-bs-toggle="modal"
+            data-bs-target="#add-cron-job"
+            _="on click call ckan.newJobForm('#add-cron-job')">
+            {{ _("Add cron job")}}
+        </button>
+
+        <a
+            type="button"
+            class="btn btn-primary">
+            {{ _("Run active jobs")}}
+        </a>
+    </div>
+
 
 
     <div class="row g-3" data-module="ap-cron-htmx">
