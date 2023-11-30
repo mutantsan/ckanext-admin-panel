@@ -14,11 +14,13 @@
 
                 {{ form.select('job_action', id='job_action', label=_('Action'), options=h.ap_cron_get_actions_list_options(), selected="", error=error) }}
 
-                {% call form.textarea("job_data", label=_("Data"), attrs={"data-module": "ap-jsonlint", "data-module-input": "#job_data", "data-module-result":"#validation-result"}) %}
+                {% call form.textarea("job_data", label=_("Data"), value="{}", attrs={"data-module": "ap-jsonlint", "data-module-input": "#job_data", "data-module-result":"#validation-result"}) %}
                     <div id="validation-result"></div>
                 {% endcall %}
 
-                <div class="quick-schedule mb-2">
+                {{ form.input("job_timeout", label=_("Job timeout"), type='number', attrs={"step": "1", "pattern": "\d+", "class": "form-control"}, value=h.ap_cron_get_job_timeout()) }}
+
+                <div class="quick-schedule mb-4">
                     <label style="display: block">{{ _("Quick Schedule") }}</label>
                     <a class="btn btn-primary" _="on click set #job_schedule.value to '@reboot'">{{ _("Startup") }}</a>
                     <a class="btn btn-primary" _="on click set #job_schedule.value to '@hourly'">{{ _("Hourly") }}</a>
@@ -61,7 +63,7 @@
                     <div class="col-md-2"><a class="btn btn-primary" _="on click call ckan.setSchedule('#job_schedule')">Set</a></div>
                 </div>
 
-                {{ form.input("job_schedule", label=_("Schedule"), attrs={"disabled": 1, "class": "form-control"}) }}
+                {{ form.input("job_schedule", label=_("Schedule"), attrs={"readonly": 1, "required": 1, "class": "form-control"}) }}
             </div> <!-- .modal-body -->
 
             <div class="modal-footer">

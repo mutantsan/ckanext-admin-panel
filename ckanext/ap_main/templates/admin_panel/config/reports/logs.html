@@ -14,7 +14,7 @@
     <h1>{{ _("Recent log messages") }}</h1>
 
     <div class="row g-3">
-        <form action="{{ h.url_for('ap_cron.manage') }}" method="GET" id="ap-logs-filter" class="ap-table-filter">
+        <form action="{{ h.url_for('ap_report.logs') }}" method="GET" id="ap-logs-filter" class="ap-table-filter">
             <div class="form-field">
                 <div class="search-input-wrapper">
                     {% call form.input("q", label=_("Search"), value=q, placeholder=_('Search')) %}

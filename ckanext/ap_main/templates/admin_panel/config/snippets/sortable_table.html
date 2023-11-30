@@ -20,7 +20,20 @@ Examples:
 {{ macro.sortable_table('title') }}
 
 #}
-{% from "macros/form/attributes.html" import attributes %}
+{%- macro attributes(item, attrs={}) -%}
+    {%- for k, v in attrs.items() -%}
+        {{ " " }}{{ k }}
+        {%- if v -%}
+            =
+            {%- if v.__call__ -%}
+                "{{ v(item) }}"
+            {%- else -%}
+                "{{ v }}"
+            {%- endif -%}
+        {%- endif -%}
+    {%- endfor -%}
+{%- endmacro -%}
+
 
 {% if items %}
 <table class="table table-light table-primary table-striped table-scrollable table-sortable table-{{ name }}">
@@ -73,7 +86,7 @@ Examples:
                 {% for col in columns %}
                     <td>
                         {% if col.column_renderer.__name__ != "action_render" %}
-                            {{ col.column_renderer(items, item, item[col.name], **col.renderer_kwargs) }}
+                            {{ col.column_renderer(items, item, item[col.name], **col.renderer_kwargs) | safe }}
                         {% else %}
                             {% for action in col.actions %}
                                 {% set params = {} %}
@@ -90,7 +103,7 @@ Examples:
                                     {% do action.attributes.update(class="btn btn-primary") %}
                                 {% endif %}
 
-                                <a href="{{  h.url_for(action.endpoint, **params) }}" {{ attributes(action.attributes) }}>
+                                <a href="{{  h.url_for(action.endpoint, **params) }}" {{ attributes(item, action.attributes) }}>
                                     {{ action.label or "" }}
                                     {% if action.icon %}
                                         <i class="{{ action.icon }}"></i>

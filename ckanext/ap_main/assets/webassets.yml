@@ -8,6 +8,7 @@ admin_panel-js:
     - js/ap-toggle-state.js
     - js/ap-confirm-action.js
     - js/ap-bulk-check.js
+    - js/ap-tooltip.js
   extra:
     preload:
       - base/main

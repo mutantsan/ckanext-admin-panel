@@ -13,12 +13,17 @@
 {% block ap_content %}
     <h1>{{ _("Cron jobs") }}</h1>
 
-    <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#add-cron-job">
+    <button
+        type="button"
+        class="btn btn-success mb-2"
+        data-bs-toggle="modal"
+        data-bs-target="#add-cron-job"
+        _="on click call ckan.newJobForm('#add-cron-job')">
         {{ _("Add cron job")}}
     </button>
 
 
-    <div class="row g-3">
+    <div class="row g-3" data-module="ap-cron-htmx">
         <form action="{{ h.url_for('ap_cron.manage') }}" method="GET" id="ap-logs-filter" class="ap-table-filter">
             <div class="form-field">
                 <div class="search-input-wrapper">
@@ -53,7 +58,7 @@
 
     </div> <!-- row -->
 
-    <form action="{{ h.url_for('ap_cron.manage') }}" method="POST" id="ap-cron-add">
+    <form action="{{ h.url_for('ap_cron.add') }}" method="POST" id="ap-cron-add">
         {% snippet 'ap_cron/cron_new_modal.html' %}
     </form>
 {% endblock ap_content %}

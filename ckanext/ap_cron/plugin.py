@@ -7,14 +7,21 @@ import ckan.plugins.toolkit as tk
 
 import ckanext.ap_main.types as ap_types
 from ckanext.ap_main.interfaces import IAdminPanel
+from ckanext.ap_main.types import ColRenderer
+
+import ckanext.ap_cron.model as cron_model
 from ckanext.ap_cron import helpers
+from ckanext.ap_cron.col_renderers import get_renderers
+from ckanext.ap_cron.const import CronSchedule
 
 
 @tk.blanket.blueprints
 @tk.blanket.actions
 @tk.blanket.auth_functions
+@tk.blanket.validators
 class AdminPanelCronPlugin(p.SingletonPlugin):
     p.implements(p.IConfigurer)
+    # p.implements(p.IConfigurable)
     p.implements(p.IBlueprint)
     p.implements(p.ITemplateHelpers)
     p.implements(IAdminPanel, inherit=True)
@@ -26,10 +33,25 @@ class AdminPanelCronPlugin(p.SingletonPlugin):
         tk.add_public_directory(config_, "public")
         tk.add_resource("assets", "ap_cron")
 
+    # IConfigurable
+
+    def configure(self, config: tk.CKANConfig) -> None:
+        from ckanext.ap_cron.utils import enqueue_cron_job
+
+        jobs_list = cron_model.CronJob.get_list(cron_model.CronJob.State.active)
+
+        for job in jobs_list:
+            if job["schedule"] != CronSchedule.reboot.value:
+                continue
+
+            enqueue_cron_job(job["id"])
+
     # ITemplateHelpers
 
     def get_helpers(self) -> dict[str, Callable[..., Any]]:
         return helpers.get_helpers()
+
+    # IAdminPanel
 
     def register_toolbar_button(
         self, toolbar_buttons_list: list[ap_types.ToolbarButton]
@@ -40,7 +62,7 @@ class AdminPanelCronPlugin(p.SingletonPlugin):
             if button.get("label") == "Reports":
                 button.setdefault("subitems", [])
 
-                button["subitems"].append( # type: ignore
+                button["subitems"].append(  # type: ignore
                     ap_types.ToolbarButton(
                         label=tk._("Cron jobs"),
                         url=tk.url_for("ap_cron.manage"),
@@ -48,3 +70,6 @@ class AdminPanelCronPlugin(p.SingletonPlugin):
                 )
 
         return toolbar_buttons_list
+
+    def get_col_renderers(self) -> dict[str, ColRenderer]:
+        return get_renderers()

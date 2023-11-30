@@ -4,8 +4,10 @@ admin_panel_cron-js:
   contents:
     - js/vendor/_hyperscript.min.js
     - js/vendor/jsonlint.min.js
+    - js/vendor/sweetalert.min.js
     - js/ap-jsonlint.js
     - js/ap-hyperscript.js
+    - js/ap-cron-htmx.js
   extra:
     preload:
       - base/main
