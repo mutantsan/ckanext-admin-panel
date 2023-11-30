@@ -8,3 +8,6 @@ class CronSchedule(Enum):
     weekly = "@weekly"
     monthly = "@monthly"
     yearly = "@yearly"
+
+
+LOG_NAME = "ap_cron"

@@ -53,8 +53,7 @@ def get_toolbar_structure() -> list[ToolbarButton]:
             label=section["name"],
             subitems=[
                 ToolbarButton(
-                    label=config_item["name"], url=tk.url_for(
-                        config_item["blueprint"])
+                    label=config_item["name"], url=tk.url_for(config_item["blueprint"])
                 )
                 for config_item in section["configs"]
             ],
@@ -213,8 +212,7 @@ def table_column(
     col_renderers = ap_utils.get_all_renderers()
 
     if column_renderer not in col_renderers:
-        raise tk.ValidationError(
-            f"Column renderer {column_renderer} is not supported")
+        raise tk.ValidationError(f"Column renderer {column_renderer} is not supported")
 
     return {
         "name": name,
@@ -262,10 +260,8 @@ def table_action(
 def log_list_type_options() -> list[dict[str, str | int]]:
     """Return a list of options for a log list type multi select"""
     return [
-        {"value": idx, "text": log_name}
-        for idx, log_name in enumerate(
-            sorted({log["name"] for log in ap_model.ApLogs.all()})
-        )
+        {"value": log_name, "text": log_name}
+        for log_name in sorted({log["name"] for log in ap_model.ApLogs.all()})
     ]
 
 
@@ -327,8 +323,7 @@ def content_list_type_options() -> list[dict[str, str | int]]:
 def generate_page_unique_class() -> str:
     """Build a unique css class for each page"""
     args_hash = (
-        hash(frozenset(tk.request.view_args.items())
-             ) if tk.request.view_args else 0
+        hash(frozenset(tk.request.view_args.items())) if tk.request.view_args else 0
     )
 
     if args_hash:

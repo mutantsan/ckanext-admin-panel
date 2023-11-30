@@ -5,7 +5,7 @@ import json
 from typing import Any, Union, cast
 from ckan import types
 
-from flask import Blueprint, Response
+from flask import Blueprint, Response, jsonify, make_response
 from flask.views import MethodView
 
 import ckan.plugins.toolkit as tk
@@ -13,6 +13,7 @@ from ckan.lib.helpers import Page
 
 from ckanext.ap_main.utils import ap_before_request
 from ckanext.ap_cron import types as cron_types
+from ckanext.ap_cron.const import LOG_NAME
 
 ap_cron = Blueprint(
     "ap_cron",
@@ -113,12 +114,11 @@ class CronManagerView(MethodView):
                 sortable=False,
                 actions=[
                     tk.h.ap_table_action(
-                        "ap_content.entity_proxy",
+                        "ap_report.logs",
                         label=tk._("Logs"),
                         params={
-                            "entity_id": "$id",
-                            "entity_type": "$type",
-                            "view": "edit",
+                            "type": LOG_NAME,
+                            "q": "$id",
                         },
                         attributes={"class": "btn btn-black"},
                     ),
@@ -136,7 +136,7 @@ class CronManagerView(MethodView):
                         icon="fa fa-play",
                         params={
                             "job_id": "$id",
-                        }
+                        },
                     ),
                     tk.h.ap_table_action(
                         "ap_cron.delete",
@@ -210,11 +210,11 @@ class CronAddView(MethodView):
             return None, errors
 
         result = cron_types.CronJobData(
-            name=tk.request.form.get("job_name", ""),
-            schedule=tk.request.form.get("job_schedule", ""),
-            actions=tk.request.form.get("job_action", ""),
+            name=tk.request.form.get("name", ""),
+            schedule=tk.request.form.get("schedule", ""),
+            actions=tk.request.form.get("actions", ""),
             data={"kwargs": data},
-            timeout=tk.request.form.get("job_timeout", ""),
+            timeout=tk.request.form.get("timeout", ""),
         )
 
         return result, errors
@@ -236,6 +236,7 @@ class CronDeleteJobView(MethodView):
 class CronRunJobView(MethodView):
     """Initially I wanted to make it with HTMX. Having a get endpoint for such
     an action is a bit wrong."""
+
     def get(self, job_id: str) -> Response:
         try:
             result = tk.get_action("ap_cron_run_cron_job")(
@@ -246,11 +247,31 @@ class CronRunJobView(MethodView):
             tk.h.flash_error(e.error_dict["message"])
             return tk.redirect_to("ap_cron.manage")
 
-        tk.h.flash_success(f"The cron job \"{result['job']['name']}\" has been started!")
+        tk.h.flash_success(
+            f"The cron job \"{result['job']['name']}\" has been started!"
+        )
         return tk.redirect_to("ap_cron.manage")
+
+
+def action_autocomplete() -> Response:
+    q = tk.request.args.get("incomplete", "")
+    limit = tk.request.args.get("limit", 10)
+
+    actions: list[dict[str, str]] = []
+
+    if q:
+        from ckan.logic import _actions
+
+        actions = [{"Name": action} for action in _actions if q in action][:limit]
+
+    return make_response(jsonify({"ResultSet": {"Result": actions}}))
 
 
 ap_cron.add_url_rule("/", view_func=CronManagerView.as_view("manage"))
 ap_cron.add_url_rule("/add", view_func=CronAddView.as_view("add"))
 ap_cron.add_url_rule("/delete/<job_id>", view_func=CronDeleteJobView.as_view("delete"))
 ap_cron.add_url_rule("/run/<job_id>", view_func=CronRunJobView.as_view("run"))
+
+
+# API
+ap_cron.add_url_rule("/util/action/autocomplete", view_func=action_autocomplete)

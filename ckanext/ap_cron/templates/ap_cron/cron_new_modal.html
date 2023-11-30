@@ -1,7 +1,7 @@
 {% import 'macros/form.html' as form %}
 
 <!-- Modal -->
-<div class="modal fade" id="add-cron-job" tabindex="-1" aria-labelledby="add-cron-job-label" aria-hidden="true">
+<div class="modal fade" id="add-cron-job" class="add-cron-job-modal" aria-labelledby="add-cron-job-label" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -10,24 +10,24 @@
             </div> <!-- .modal-header -->
 
             <div class="modal-body">
-                {{ form.input("job_name", label=_("Name"), attrs={"required": "required", "class": "form-control"}) }}
+                {{ form.input("name", label=_("Name"), attrs={"required": "required", "class": "form-control"}) }}
 
-                {{ form.select('job_action', id='job_action', label=_('Action'), options=h.ap_cron_get_actions_list_options(), selected="", error=error) }}
+                {{ form.input('actions', label=_('Actions'), error=error, attrs={"multiple": "multiple", "data-module": "autocomplete", "data-module-source": h.url_for('ap_cron.action_autocomplete', incomplete="?"), "data-module-tags": ""}) }}
 
                 {% call form.textarea("job_data", label=_("Data"), value="{}", attrs={"data-module": "ap-jsonlint", "data-module-input": "#job_data", "data-module-result":"#validation-result"}) %}
                     <div id="validation-result"></div>
                 {% endcall %}
 
-                {{ form.input("job_timeout", label=_("Job timeout"), type='number', attrs={"step": "1", "pattern": "\d+", "class": "form-control"}, value=h.ap_cron_get_job_timeout()) }}
+                {{ form.input("timeout", label=_("Job timeout"), type='number', attrs={"step": "1", "pattern": "\d+", "class": "form-control"}, value=h.ap_cron_get_job_timeout()) }}
 
                 <div class="quick-schedule mb-4">
                     <label style="display: block">{{ _("Quick Schedule") }}</label>
-                    <a class="btn btn-primary" _="on click set #job_schedule.value to '@reboot'">{{ _("Startup") }}</a>
-                    <a class="btn btn-primary" _="on click set #job_schedule.value to '@hourly'">{{ _("Hourly") }}</a>
-                    <a class="btn btn-primary" _="on click set #job_schedule.value to '@daily'">{{ _("Daily") }}</a>
-                    <a class="btn btn-primary" _="on click set #job_schedule.value to '@weekly'">{{ _("Weekly") }}</a>
-                    <a class="btn btn-primary" _="on click set #job_schedule.value to '@monthly'">{{ _("Monthly") }}</a>
-                    <a class="btn btn-primary" _="on click set #job_schedule.value to '@yearly'">{{ _("Yearly") }}</a>
+                    <a class="btn btn-primary" _="on click set #schedule.value to '@reboot'">{{ _("Startup") }}</a>
+                    <a class="btn btn-primary" _="on click set #schedule.value to '@hourly'">{{ _("Hourly") }}</a>
+                    <a class="btn btn-primary" _="on click set #schedule.value to '@daily'">{{ _("Daily") }}</a>
+                    <a class="btn btn-primary" _="on click set #schedule.value to '@weekly'">{{ _("Weekly") }}</a>
+                    <a class="btn btn-primary" _="on click set #schedule.value to '@monthly'">{{ _("Monthly") }}</a>
+                    <a class="btn btn-primary" _="on click set #schedule.value to '@yearly'">{{ _("Yearly") }}</a>
 
                 </div>
 
@@ -60,10 +60,10 @@
                         <input type="text" class="form-control" id="job-week" value="*">
                     </div>
 
-                    <div class="col-md-2"><a class="btn btn-primary" _="on click call ckan.setSchedule('#job_schedule')">Set</a></div>
+                    <div class="col-md-2"><a class="btn btn-primary" _="on click call ckan.setSchedule('#schedule')">Set</a></div>
                 </div>
 
-                {{ form.input("job_schedule", label=_("Schedule"), attrs={"readonly": 1, "required": 1, "class": "form-control"}) }}
+                {{ form.input("schedule", label=_("Schedule"), attrs={"readonly": 1, "required": 1, "class": "form-control"}) }}
             </div> <!-- .modal-body -->
 
             <div class="modal-footer">

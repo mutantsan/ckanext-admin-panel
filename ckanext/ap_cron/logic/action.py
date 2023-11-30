@@ -62,7 +62,7 @@ def ap_cron_update_cron_job(context, data_dict):
     for key, value in data_dict.items():
         setattr(job, key, value)
 
-    job.last_run = dt.utcnow()
+    job.last_run = dt.utcnow()  # type: ignore
 
     context["session"].commit()
 
@@ -82,7 +82,6 @@ def ap_cron_run_cron_job(context, data_dict):
     return {
         "job": job.dictize(context),
         "success": enqueue_cron_job(job.id),
-
     }
 
 
@@ -172,7 +171,4 @@ def cron_job_callback(context, data_dict):
 def aaa_test_cron(context, data_dict):
     from time import sleep
 
-    print("We are inside a test bg func, waitin for a 5 sec")
-    print(data_dict)
     sleep(5)
-    print("Done with waiting")

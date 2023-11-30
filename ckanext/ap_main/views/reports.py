@@ -31,7 +31,7 @@ class ReportLogsView(MethodView):
         self.q = tk.request.args.get("q", "").strip()
         self.order_by = tk.request.args.get("order_by", "name")
         self.sort = tk.request.args.get("sort", "desc")
-        self.types = tk.request.args.getlist("type", int)
+        self.types = tk.request.args.getlist("type", str)
         self.levels = tk.request.args.getlist("level", int)
 
         # TODO: replace with action log_list
@@ -117,7 +117,7 @@ class ReportLogsView(MethodView):
             ApLogs.clear_logs()
             tk.h.flash_success(tk._("Logs have been cleared."))
 
-        return tk.redirect_to("ap_cron.manage")
+        return tk.redirect_to("ap_report.logs")
 
 
 ap_report.add_url_rule(

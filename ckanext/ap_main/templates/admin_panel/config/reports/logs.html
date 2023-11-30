@@ -7,7 +7,7 @@
 {% block ap_main_class %} ap-log-list {% endblock %}
 
 {% block breadcrumb_content %}
-    <li>{% link_for _("Recent log messages"), named_route='ap_cron.manage' %}</li>
+    <li>{% link_for _("Recent log messages"), named_route='ap_report.logs' %}</li>
 {% endblock breadcrumb_content %}
 
 {% block ap_content %}
@@ -33,14 +33,14 @@
 
             <div class="form-buttons">
                 <button type="submit" class="btn btn-primary">{{ _("Filter") }}</button>
-                <a href="{{ h.url_for('ap_cron.manage') }}" class="btn btn-primary">{{ _("Clear") }}</a>
+                <a href="{{ h.url_for('ap_report.logs') }}" class="btn btn-primary">{{ _("Clear") }}</a>
             </div>
 
             {{ form.hidden("sort", sort) }}
             {{ form.hidden("order_by", order_by) }}
         </form>
 
-        <form action="{{ h.url_for('ap_cron.manage') }}" method="POST">
+        <form action="{{ h.url_for('ap_report.logs') }}" method="POST">
             <button
                 id="clear-logs-btn"
                 name="clear_logs"
