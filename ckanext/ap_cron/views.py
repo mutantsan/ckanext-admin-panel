@@ -43,6 +43,7 @@ class CronManagerView(MethodView):
         return {
             "page": self._get_pager(cron_jobs),
             "columns": self._get_table_columns(),
+            "table_row_display": "ap_cron/cron_table_row.html",
             "q": self.q,
             "order_by": self.order_by,
             "sort": self.sort,
@@ -112,55 +113,6 @@ class CronManagerView(MethodView):
                 column_renderer="ap_action_render",
                 width="15%",
                 sortable=False,
-                actions=[
-                    tk.h.ap_table_action(
-                        "ap_report.logs",
-                        label=tk._("Logs"),
-                        params={
-                            "type": LOG_NAME,
-                            "q": "$id",
-                        },
-                        attributes={"class": "btn btn-black"},
-                    ),
-                    tk.h.ap_table_action(
-                        "ap_cron.get_edit_form",
-                        label=tk._("Edit"),
-                        params={
-                            "job_id": "$id",
-                        },
-                        attributes={
-                            "data-bs-toggle": "modal",
-                            "data-bs-target": "#edit-cron-job",
-                            "hx-target": "#edit-cron-job .modal-body",
-                            "hx-trigger": "click",
-                            "hx-get": lambda item: tk.h.url_for(
-                                "ap_cron.get_edit_form", job_id=item["id"]
-                            ),
-                        },
-                    ),
-                    tk.h.ap_table_action(
-                        "ap_cron.run",
-                        icon="fa fa-play",
-                        params={
-                            "job_id": "$id",
-                        },
-                    ),
-                    tk.h.ap_table_action(
-                        "ap_cron.delete",
-                        icon="fa fa-trash-alt",
-                        params={
-                            "job_id": "$id",
-                        },
-                        attributes={
-                            "class": "btn btn-danger",
-                            "hx-swap": "none",
-                            "hx-trigger": "click",
-                            "hx-post": lambda item: tk.h.url_for(
-                                "ap_cron.delete", job_id=item["id"]
-                            ),
-                        },
-                    ),
-                ],
             ),
         ]
 
@@ -220,7 +172,7 @@ class CronAddView(MethodView):
             name=tk.request.form.get("name", ""),
             schedule=tk.request.form.get("schedule", ""),
             actions=tk.request.form.get("actions", ""),
-            data={"kwargs": data},
+            data=data,
             timeout=tk.request.form.get("timeout", ""),
         )
 

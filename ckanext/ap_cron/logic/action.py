@@ -16,7 +16,6 @@ from ckanext.ap_cron.const import LOG_NAME
 log = logging.getLogger(LOG_NAME)
 
 
-@tk.side_effect_free
 @validate(cron_schema.add_cron_job)
 def ap_cron_add_cron_job(context, data_dict):
     tk.check_access("ap_cron_add_job", context, data_dict)
@@ -36,7 +35,6 @@ def ap_cron_get_cron_job(context, data_dict):
     return cast(CronJob, CronJob.get(data_dict["id"])).dictize(context)
 
 
-@tk.side_effect_free
 @validate(cron_schema.remove_cron_job)
 def ap_cron_remove_cron_job(context, data_dict):
     tk.check_access("ap_cron_remove_job", context, data_dict)
@@ -62,7 +60,6 @@ def ap_cron_get_cron_job_list(context, data_dict):
     return CronJob.get_list()
 
 
-@tk.side_effect_free
 @validate(cron_schema.update_cron_job)
 def ap_cron_update_cron_job(context, data_dict):
     tk.check_access("ap_cron_update_job", context, data_dict)
@@ -81,14 +78,14 @@ def ap_cron_update_cron_job(context, data_dict):
     return job.dictize(context)
 
 
-@tk.side_effect_free
 @validate(cron_schema.run_cron_job)
 def ap_cron_run_cron_job(context, data_dict):
     tk.check_access("ap_cron_update_job", context, data_dict)
 
     job = cast(CronJob, CronJob.get(data_dict["id"]))
 
-    if job.state == CronJob.State.running:
+    if tk.h.ap_cron_is_job_running(job.dictize({})):
+        log.exception("[id:%s] The cron job is already running.", job.id)
         raise tk.ValidationError({"message": tk._("The cron job is already running.")})
 
     return {
@@ -103,84 +100,10 @@ def cron_job_callback(context, data_dict):
     import ipdb
 
     ipdb.set_trace()
-    pass
-    # metadata, status = _get_or_bust(data_dict, ["metadata", "status"])
-
-    # res_id = _get_or_bust(metadata, "resource_id")
-
-    # # Pass metadata, not data_dict, as it contains the resource id needed
-    # # on the auth checks
-    # p.toolkit.check_access("xloader_submit", context, metadata)
-
-    # task = p.toolkit.get_action("task_status_show")(
-    #     context, {"entity_id": res_id, "task_type": "xloader", "key": "xloader"}
-    # )
-
-    # task["state"] = status
-    # task["last_updated"] = str(datetime.datetime.utcnow())
-    # task["error"] = data_dict.get("error")
-
-    # resubmit = False
-
-    # if status in ("complete", "running_but_viewable"):
-    #     # Create default views for resource if necessary (only the ones that
-    #     # require data to be in the DataStore)
-    #     resource_dict = p.toolkit.get_action("resource_show")(context, {"id": res_id})
-
-    #     dataset_dict = p.toolkit.get_action("package_show")(
-    #         context, {"id": resource_dict["package_id"]}
-    #     )
-
-    #     for plugin in p.PluginImplementations(xloader_interfaces.IXloader):
-    #         plugin.after_upload(context, resource_dict, dataset_dict)
-
-    #     p.toolkit.get_action("resource_create_default_resource_views")(
-    #         context,
-    #         {
-    #             "resource": resource_dict,
-    #             "package": dataset_dict,
-    #             "create_datastore_views": True,
-    #         },
-    #     )
-
-    #     # Check if the uploaded file has been modified in the meantime
-    #     if resource_dict.get("last_modified") and metadata.get("task_created"):
-    #         try:
-    #             last_modified_datetime = parse_date(resource_dict["last_modified"])
-    #             task_created_datetime = parse_date(metadata["task_created"])
-    #             if last_modified_datetime > task_created_datetime:
-    #                 log.debug(
-    #                     "Uploaded file more recent: %s > %s",
-    #                     last_modified_datetime,
-    #                     task_created_datetime,
-    #                 )
-    #                 resubmit = True
-    #         except ValueError:
-    #             pass
-    #     # Check if the URL of the file has been modified in the meantime
-    #     elif (
-    #         resource_dict.get("url")
-    #         and metadata.get("original_url")
-    #         and resource_dict["url"] != metadata["original_url"]
-    #     ):
-    #         log.debug(
-    #             "URLs are different: %s != %s",
-    #             resource_dict["url"],
-    #             metadata["original_url"],
-    #         )
-    #         resubmit = True
-
-    # context["ignore_auth"] = True
-    # p.toolkit.get_action("task_status_update")(context, task)
-
-    # if resubmit:
-    #     log.debug(
-    #         "Resource %s has been modified, " "resubmitting to DataPusher", res_id
-    #     )
-    #     p.toolkit.get_action("xloader_submit")(context, {"resource_id": res_id})
+    # TODO
 
 
 def aaa_test_cron(context, data_dict):
     from time import sleep
 
-    sleep(5)
+    sleep(15)

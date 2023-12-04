@@ -68,7 +68,7 @@ class CronJob(tk.BaseModel):
             name=job_data["name"],
             schedule=job_data["schedule"],
             actions=", ".join(job_data["actions"]),
-            data=job_data["data"],
+            data={"kwargs": job_data["data"]},
             timeout=job_data["timeout"],
         )
 
@@ -94,5 +94,7 @@ class CronJob(tk.BaseModel):
     @property
     def get_actions(self):
         return (
-            self.actions.split(",") if isinstance(self.actions, str) else self.actions
+            [action.strip() for action in self.actions.split(",")]
+            if isinstance(self.actions, str)
+            else self.actions
         )

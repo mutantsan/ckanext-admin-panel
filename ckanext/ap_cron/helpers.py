@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from cron_descriptor import get_description
 
 import ckan.plugins.toolkit as tk
@@ -7,6 +9,9 @@ import ckan.plugins.toolkit as tk
 from ckanext.toolbelt.decorators import Collector
 
 from ckanext.ap_cron import config as cron_conf
+from ckanext.ap_cron import const as cron_const
+from ckanext.ap_cron.types import DictizedCronJob
+from ckanext.ap_cron.model import CronJob
 
 helper, get_helpers = Collector("ap_cron").split()
 
@@ -44,3 +49,13 @@ def explain_cron_schedule(schedule: str) -> str:
         return explanation
 
     return get_description(schedule)
+
+
+@helper
+def is_job_running(job_data: DictizedCronJob) -> bool:
+    return job_data["state"] in [CronJob.State.running, CronJob.State.pending]
+
+
+@helper
+def get_cron_logger_name() -> str:
+    return cron_const.LOG_NAME

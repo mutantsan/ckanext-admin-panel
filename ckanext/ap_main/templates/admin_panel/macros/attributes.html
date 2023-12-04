@@ -1,0 +1,13 @@
+{%- macro attributes(item, attrs={}) -%}
+    {%- for k, v in attrs.items() -%}
+        {{ " " }}{{ k }}
+        {%- if v -%}
+            =
+            {%- if v.__call__ -%}
+                "{{ v(item) }}"
+            {%- else -%}
+                "{{ v }}"
+            {%- endif -%}
+        {%- endif -%}
+    {%- endfor -%}
+{%- endmacro -%}

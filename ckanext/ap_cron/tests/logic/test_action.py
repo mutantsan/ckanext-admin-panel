@@ -48,6 +48,7 @@ class TestCronJobUpdate:
 
         assert result["last_run"] is not None
 
+
 @pytest.mark.usefixtures("with_plugins", "reset_db_once")
 class TestCronJobGet:
     def test_basic_get(self, cron_job: DictizedCronJob):
@@ -92,3 +93,12 @@ class TestCronJobList:
         result = call_action("ap_cron_get_cron_job_list")
 
         assert len(result) == 1
+
+
+@pytest.mark.usefixtures("with_plugins", "reset_db_once")
+class TestCronJobRun:
+    def test_basic_run(self, cron_job: DictizedCronJob):
+        result = call_action("ap_cron_run_cron_job", id=cron_job["id"])
+
+        assert result["job"]
+        assert result["success"]

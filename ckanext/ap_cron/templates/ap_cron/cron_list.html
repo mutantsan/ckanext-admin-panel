@@ -59,7 +59,7 @@
                 </button>
             </div>
 
-            {% snippet "admin_panel/config/snippets/sortable_table.html", items=page.items, columns=columns, empty_msg=_("No jobs available"), order_by=order_by, sort=sort, bulk_check=1 %}
+            {% snippet "admin_panel/config/snippets/sortable_table.html", items=page.items, columns=columns, empty_msg=_("No jobs available"), order_by=order_by, sort=sort, bulk_check=1, table_row_display=table_row_display %}
         </form>
 
     </div> <!-- row -->

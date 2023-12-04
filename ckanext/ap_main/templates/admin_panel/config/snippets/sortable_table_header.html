@@ -1,0 +1,23 @@
+<tr>
+    {% if bulk_check %}
+        <th class="checkbox-cell checkbox-cell-bulk">
+            <input type="checkbox" name="bulk_check" id="bulk_check" data-module="ap-bulk-check">
+        </th>
+    {% endif %}
+
+    {% for col in columns %}
+        {% set sort_active = order_by == col.name %}
+        {% set url = h.ap_add_url_param('order_by', col.name) if not sort_active else h.ap_add_url_param('sort', "asc" if sort == "desc" else "desc") %}
+
+        {% if col.sortable %}
+            <th class="th-sortable {% if sort_active %}th-active{% endif %}">
+                <a href="{{ url }}">
+                    {{ col.label }}
+                    <span class="table-sort {% if sort_active %}table-sort--{{ sort }}{% endif %}"></span>
+                </a>
+            </th>
+        {% else %}
+            <th>{{ col.label }}</th>
+        {% endif %}
+    {% endfor %}
+</tr>
