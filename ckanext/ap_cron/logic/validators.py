@@ -49,3 +49,7 @@ def cron_action_exists(actions: list[str], context: types.Context) -> Any:
             raise tk.Invalid(str(e))
 
     return actions
+
+
+def cron_actions_to_string(actions: list[str], context: types.Context) -> str:
+    return ", ".join(actions)

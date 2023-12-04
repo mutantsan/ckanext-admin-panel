@@ -1,21 +1,20 @@
 {% import 'macros/form.html' as form %}
 
 <!-- Modal -->
-<div class="modal fade" id="add-cron-job" tabindex="-1" class="add-cron-job-modal" aria-labelledby="add-cron-job-label" aria-hidden="true">
+<div class="modal fade" id="edit-cron-job" tabindex="-1" class="edit-cron-job-modal" aria-labelledby="edit-cron-job-label" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="add-cron-job-label">{{ _("Adding a cron job")}}</h5>
+                <h5 class="modal-title" id="edit-cron-job-label">{{ _("Edit a cron job")}}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div> <!-- .modal-header -->
 
             <div class="modal-body">
-                {% snippet 'ap_cron/cron_edit_modal_form.html', data={} %}
             </div> <!-- .modal-body -->
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _("Cancel") }}</button>
-                <button type="submit" class="btn btn-primary">{{ _("Add") }}</button>
+                <button type="submit" class="btn btn-primary">{{ _("Update") }}</button>
             </div> <!-- .modal-footer -->
         </div> <!-- .modal-content -->
     </div> <!-- .modal-dialog -->

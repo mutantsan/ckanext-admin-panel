@@ -87,7 +87,7 @@ def update_cron_job(
     int_validator,
     is_positive_integer,
     json_list_or_string,
-    list_of_strings,
+    cron_actions_to_string,
     ignore,
     one_of,
 ) -> Schema:
@@ -95,7 +95,7 @@ def update_cron_job(
         "id": [not_missing, unicode_safe, cron_job_exists],
         "name": [ignore_missing, unicode_safe],
         "schedule": [ignore_missing, unicode_safe, cron_schedule_validator],
-        "actions": [ignore_missing, unicode_safe, json_list_or_string, list_of_strings],
+        "actions": [ignore_missing, unicode_safe, json_list_or_string, cron_actions_to_string],
         "timeout": [
             ignore_missing,
             int_validator,

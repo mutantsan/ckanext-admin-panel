@@ -123,12 +123,19 @@ class CronManagerView(MethodView):
                         attributes={"class": "btn btn-black"},
                     ),
                     tk.h.ap_table_action(
-                        "ap_content.entity_proxy",
+                        "ap_cron.get_edit_form",
                         label=tk._("Edit"),
                         params={
-                            "entity_id": "$id",
-                            "entity_type": "$type",
-                            "view": "edit",
+                            "job_id": "$id",
+                        },
+                        attributes={
+                            "data-bs-toggle": "modal",
+                            "data-bs-target": "#edit-cron-job",
+                            "hx-target": "#edit-cron-job .modal-body",
+                            "hx-trigger": "click",
+                            "hx-get": lambda item: tk.h.url_for(
+                                "ap_cron.get_edit_form", job_id=item["id"]
+                            ),
                         },
                     ),
                     tk.h.ap_table_action(
@@ -202,7 +209,7 @@ class CronAddView(MethodView):
         errors = {}
 
         try:
-            data = tk.request.form.get("job_data", "{}")
+            data = tk.request.form.get("data", "{}")
             data = json.loads(data)
         except ValueError:
             tk.h.flash_error(errors)
@@ -253,7 +260,44 @@ class CronRunJobView(MethodView):
         return tk.redirect_to("ap_cron.manage")
 
 
+class CronEditJobFormView(MethodView):
+    def get(self, job_id: str) -> str:
+        try:
+            result = tk.get_action("ap_cron_get_cron_job")(
+                {},
+                cast(types.DataDict, {"id": job_id}),
+            )
+        except tk.ValidationError as e:
+            tk.h.flash_error(e.error_dict)
+            return ""
+
+        return tk.render(
+            "ap_cron/cron_edit_modal_form.html",
+            extra_vars={
+                "data": result,
+            },
+        )
+
+
+class CronEditJobView(MethodView):
+    def post(self) -> Response:
+        try:
+            result = tk.get_action("ap_cron_update_cron_job")(
+                {},
+                cast(types.DataDict, dict(tk.request.form)),
+            )
+        except tk.ValidationError as e:
+            tk.h.flash_error(e.error_dict)
+            return tk.redirect_to("ap_cron.manage")
+
+        tk.h.flash_success(f"The cron job \"{result['name']}\" has been updated.")
+
+        return tk.redirect_to("ap_cron.manage")
+
+
 def action_autocomplete() -> Response:
+    """This is an autocomplete for a cron job actions. Cron job could work
+    only with CKAN actions to prevent any non-wanted behaviour."""
     q = tk.request.args.get("incomplete", "")
     limit = tk.request.args.get("limit", 10)
 
@@ -271,7 +315,10 @@ ap_cron.add_url_rule("/", view_func=CronManagerView.as_view("manage"))
 ap_cron.add_url_rule("/add", view_func=CronAddView.as_view("add"))
 ap_cron.add_url_rule("/delete/<job_id>", view_func=CronDeleteJobView.as_view("delete"))
 ap_cron.add_url_rule("/run/<job_id>", view_func=CronRunJobView.as_view("run"))
-
+ap_cron.add_url_rule(
+    "/edit/<job_id>/get_form", view_func=CronEditJobFormView.as_view("get_edit_form")
+)
+ap_cron.add_url_rule("/edit", view_func=CronEditJobView.as_view("edit"))
 
 # API
 ap_cron.add_url_rule("/util/action/autocomplete", view_func=action_autocomplete)

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import cast
 from datetime import datetime as dt
 
@@ -10,6 +11,9 @@ from ckan.plugins import toolkit as tk
 import ckanext.ap_cron.logic.schema as cron_schema
 from ckanext.ap_cron.model import CronJob
 from ckanext.ap_cron.utils import enqueue_cron_job
+from ckanext.ap_cron.const import LOG_NAME
+
+log = logging.getLogger(LOG_NAME)
 
 
 @tk.side_effect_free
@@ -17,7 +21,11 @@ from ckanext.ap_cron.utils import enqueue_cron_job
 def ap_cron_add_cron_job(context, data_dict):
     tk.check_access("ap_cron_add_job", context, data_dict)
 
-    return CronJob.add(data_dict)
+    job = CronJob.add(data_dict)
+
+    log.info("[id:%s] Cron job has been created")
+
+    return job
 
 
 @tk.side_effect_free
@@ -37,6 +45,8 @@ def ap_cron_remove_cron_job(context, data_dict):
     job.delete()
 
     context["session"].commit()
+
+    log.info("[id:%s] Cron job has been removed", job.id)
 
     return True
 
@@ -65,6 +75,8 @@ def ap_cron_update_cron_job(context, data_dict):
     job.last_run = dt.utcnow()  # type: ignore
 
     context["session"].commit()
+
+    log.info("[id:%s] Cron job has been updated: %s", job.id, data_dict)
 
     return job.dictize(context)
 

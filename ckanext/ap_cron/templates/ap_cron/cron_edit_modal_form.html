@@ -1,0 +1,65 @@
+{% import 'macros/form.html' as form %}
+
+{#} If we don't have a data dict, it's a create job modal {#}
+{% set field_data_id = "data" if not data else "data-edit" %}
+{% set field_data_validation_id = "data-validation-result" if not data else "data-edit-validation-result" %}
+{% set field_schedule_id = "schedule" if not data else "edit-schedule" %}
+
+{% if data %}
+    {{ form.hidden("id", value=data.id) }}
+{% endif %}
+
+{{ form.input("name", label=_("Name"), value=data.name, attrs={"required": "required", "class": "form-control"}) }}
+
+{{ form.input('actions', label=_('Actions'), value=data.actions|join(",") if data.actions else "", error=error, attrs={"multiple": "multiple", "data-module": "autocomplete", "data-module-source": h.url_for('ap_cron.action_autocomplete', incomplete="?"), "data-module-tags": ""}) }}
+
+{% call form.textarea("data", id=field_data_id, label=_("Data"), value=data.data|tojson if data else "{}", attrs={"data-module": "ap-jsonlint", "data-module-input": "#" + field_data_id, "data-module-result":"#" + field_data_validation_id}) %}
+    <div id="{{ field_data_validation_id }}"></div>
+{% endcall %}
+
+{{ form.input("timeout", label=_("Job timeout"), value=data.timeout or h.ap_cron_get_job_timeout(), type='number', attrs={"step": "1", "pattern": "\d+", "class": "form-control"}) }}
+
+<div class="quick-schedule mb-4">
+    <label style="display: block">{{ _("Quick Schedule") }}</label>
+    <a class="btn btn-primary" _="{{ 'on click set #' ~ field_schedule_id ~ '.value to \'@reboot\'' }}">{{ _("Startup") }}</a>
+    <a class="btn btn-primary" _="{{ 'on click set #' ~ field_schedule_id ~ '.value to \'@hourly\'' }}">{{ _("Hourly") }}</a>
+    <a class="btn btn-primary" _="{{ 'on click set #' ~ field_schedule_id ~ '.value to \'@daily\'' }}">{{ _("Daily") }}</a>
+    <a class="btn btn-primary" _="{{ 'on click set #' ~ field_schedule_id ~ '.value to \'@weekly\'' }}">{{ _("Weekly") }}</a>
+    <a class="btn btn-primary" _="{{ 'on click set #' ~ field_schedule_id ~ '.value to \'@monthly\'' }}">{{ _("Monthly") }}</a>
+    <a class="btn btn-primary" _="{{ 'on click set #' ~ field_schedule_id ~ '.value to \'@yearly\'' }}">{{ _("Yearly") }}</a>
+
+</div>
+
+<div class="row">
+    <div class="col-md-2">{{ _("Minute") }}</div>
+    <div class="col-md-2">{{ _("Hour") }}</div>
+    <div class="col-md-2">{{ _("Day") }}</div>
+    <div class="col-md-2">{{ _("Month") }}</div>
+    <div class="col-md-2">{{ _("Week") }}</div>
+</div>
+
+<div class="row">
+    <div class="col-md-2">
+        <input type="text" class="form-control" id="job-minute" value="*">
+    </div>
+
+    <div class="col-md-2">
+        <input type="text" class="form-control" id="job-hour" value="*">
+    </div>
+
+    <div class="col-md-2">
+        <input type="text" class="form-control" id="job-day" value="*">
+    </div>
+
+    <div class="col-md-2">
+        <input type="text" class="form-control" id="job-month" value="*">
+    </div>
+
+    <div class="col-md-2">
+        <input type="text" class="form-control" id="job-week" value="*">
+    </div>
+
+    <div class="col-md-2"><a class="btn btn-primary" _="{{ 'on click call ckan.setSchedule(#' ~ field_schedule_id ~ ')' }}">Set</a></div>
+</div>
+
+{{ form.input("schedule", id=field_schedule_id, value=data.schedule, label=_("Schedule"), attrs={"readonly": 1, "required": 1, "class": "form-control"}) }}

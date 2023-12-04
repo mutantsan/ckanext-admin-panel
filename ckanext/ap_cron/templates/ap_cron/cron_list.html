@@ -67,6 +67,11 @@
     <form action="{{ h.url_for('ap_cron.add') }}" method="POST" id="ap-cron-add">
         {% snippet 'ap_cron/cron_new_modal.html' %}
     </form>
+
+    <form action="{{ h.url_for('ap_cron.edit') }}" method="POST" id="ap-cron-add">
+        {% snippet 'ap_cron/cron_edit_modal.html' %}
+    </form>
+
 {% endblock ap_content %}
 
 
