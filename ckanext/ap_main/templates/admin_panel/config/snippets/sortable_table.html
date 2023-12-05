@@ -34,13 +34,13 @@ Examples:
     </colgroup>
 
     <tbody>
-        {% snippet "admin_panel/config/snippets/sortable_table_header.html", item=item, columns=columns, bulk_check=bulk_check %}
+        {% snippet "admin_panel/config/snippets/sortable_table_header.html", item=item, columns=columns, bulk_check=bulk_check, sort=sort, order_by=order_by %}
 
         {% for item in items %}
             {% if table_row_display %}
                 {% snippet table_row_display, item=item, columns=columns, bulk_check=bulk_check %}
             {% else %}
-                {% snippet "admin_panel/config/snippets/sortable_table_row.html", item=item, columns=columns, bulk_check=bulk_check %}
+                {% snippet "admin_panel/config/snippets/sortable_table_row.html", item=item, columns=columns, bulk_check=bulk_check, empty_msg %}
             {% endif %}
         {% endfor %}
     </tbody>

@@ -86,7 +86,7 @@ class CronManagerView(MethodView):
             tk.h.ap_table_column(
                 "data",
                 column_renderer="ap_cron_json_display",
-                width="30%",
+                width="26%",
                 sortable=False,
             ),
             tk.h.ap_table_column(
@@ -96,18 +96,20 @@ class CronManagerView(MethodView):
                 sortable=False,
             ),
             tk.h.ap_table_column(
-                "last_run",
-                label="Last run",
-                column_renderer="ap_cron_last_run",
-                width="10%",
+                "updated_at",
+                label="Updated at",
+                column_renderer="ap_date",
+                width="7%",
                 sortable=False,
             ),
             tk.h.ap_table_column(
-                "state",
-                label="State",
-                width="5%",
+                "last_run",
+                label="Last run",
+                column_renderer="ap_cron_last_run",
+                width="7%",
                 sortable=False,
             ),
+            tk.h.ap_table_column("state", label="State", width="5%"),
             tk.h.ap_table_column(
                 "actions",
                 column_renderer="ap_action_render",
