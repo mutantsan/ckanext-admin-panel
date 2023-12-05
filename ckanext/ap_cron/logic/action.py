@@ -55,9 +55,11 @@ def ap_cron_get_cron_job_list(context, data_dict):
     tk.check_access("ap_cron_get_job_list", context, data_dict)
 
     if data_dict.get("state"):
-        return CronJob.get_list(data_dict["state"])
+        result = CronJob.get_list(states=[data_dict["state"]])
+    else:
+        result = CronJob.get_list()
 
-    return CronJob.get_list()
+    return [job.dictize(context) for job in result]
 
 
 @validate(cron_schema.update_cron_job)
@@ -69,7 +71,7 @@ def ap_cron_update_cron_job(context, data_dict):
     for key, value in data_dict.items():
         setattr(job, key, value)
 
-    job.last_run = dt.utcnow()  # type: ignore
+    job.updated_at = dt.utcnow()  # type: ignore
 
     context["session"].commit()
 
@@ -90,20 +92,11 @@ def ap_cron_run_cron_job(context, data_dict):
 
     return {
         "job": job.dictize(context),
-        "success": enqueue_cron_job(job.id),
+        "success": enqueue_cron_job(job),
     }
-
-
-def cron_job_callback(context, data_dict):
-    """Update cron job task state. This action is typically called whenever the status of a job changes."""
-
-    import ipdb
-
-    ipdb.set_trace()
-    # TODO
 
 
 def aaa_test_cron(context, data_dict):
     from time import sleep
 
-    sleep(15)
+    sleep(5)

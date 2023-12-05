@@ -13,6 +13,7 @@ from ckan.model.types import make_uuid
 from ckan.plugins import toolkit as tk
 
 from ckanext.ap_cron.types import CronJobData, DictizedCronJob
+from ckanext.ap_cron.const import KWARGS
 from ckanext.ap_cron import config as cron_conf
 
 log = logging.getLogger(__name__)
@@ -41,6 +42,12 @@ class CronJob(tk.BaseModel):
     state = Column(Text, default=State.new)
     timeout = Column(Integer, default=cron_conf.get_job_timeout())
 
+    def __str__(self):
+        return (
+            f"[Job id: {self.id}, name: {self.name} "
+            f"actions: {self.actions}, schedule: {self.schedule}]"
+        )
+
     @classmethod
     def get(cls, job_id: str) -> Self | None:
         query = model.Session.query(cls).filter(cls.id == job_id)
@@ -48,15 +55,20 @@ class CronJob(tk.BaseModel):
         return query.one_or_none()
 
     @classmethod
-    def get_list(cls, state: Optional[str] = None) -> list[DictizedCronJob]:
+    def get_list(cls, states: Optional[list[str]] = None) -> list[Self]:
+        """Get a list of cron jobs.
+
+        Args:
+            states (Optional[list[str]], optional): Filter by job state.
+        """
         query = model.Session.query(cls)
 
-        if state:
-            query = query.filter(cls.state == state)
+        if states:
+            query = query.filter(cls.state.in_(states))
 
         query = query.order_by(cls.last_run.desc())
 
-        return [job.dictize({}) for job in query.all()]
+        return query.all()
 
     def delete(self) -> None:
         model.Session().autoflush = False
@@ -68,7 +80,7 @@ class CronJob(tk.BaseModel):
             name=job_data["name"],
             schedule=job_data["schedule"],
             actions=", ".join(job_data["actions"]),
-            data={"kwargs": job_data["data"]},
+            data={KWARGS: job_data["data"]},
             timeout=job_data["timeout"],
         )
 
@@ -98,3 +110,7 @@ class CronJob(tk.BaseModel):
             if isinstance(self.actions, str)
             else self.actions
         )
+
+    @property
+    def kwargs(self):
+        return self.data.get(KWARGS, {})

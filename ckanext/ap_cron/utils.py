@@ -1,19 +1,16 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
-from datetime import datetime as dt, timedelta as td
+from typing import Any, Optional
+from datetime import datetime as dt
 
 from croniter import croniter
-from dateutil.parser import isoparse as parse_iso_date
 
 import ckan.plugins.toolkit as tk
-from ckan.lib.jobs import get_queue as get_jobs_queue
 
-from ckanext.ap_cron import config as cron_conf
-from ckanext.ap_cron import model as cron_model
-from ckanext.ap_cron.const import LOG_NAME
-
+from ckanext.ap_cron.model import CronJob
+from ckanext.ap_cron.const import LOG_NAME, ERRORS, KWARGS
+from ckanext.ap_cron.types import DictizedCronJob
 
 log = logging.getLogger(LOG_NAME)
 
@@ -23,110 +20,94 @@ def get_next_run_datetime(date: dt, schedule: str) -> dt:
     return croniter(schedule, date).get_next(dt)
 
 
-def enqueue_cron_job(job_id: str) -> bool:
-    cron_job = cron_model.CronJob.get(job_id)
-
-    if not cron_job:
-        log.exception("[id:%s] Unable to find a cron job", job_id)
+def enqueue_cron_job(job: CronJob) -> bool:
+    if not job:
+        log.exception("[id:%s] Unable to find a cron job", job.id)
         return False
 
-    data = {
-        "api_key": get_site_user_apitoken(),
-        "job_type": "ap_cron_job",
-        "result_url": get_job_callback_url(),
-        "data": {
-            "cron_job": cron_job,
-            "actions": cron_job.get_actions,
-            "kwargs": cron_job.data["kwargs"],
-        },
-    }
+    # throw away old errors on a new run
+    job.data.pop(ERRORS, None)
+
+    _update_job_state(job.id, CronJob.State.pending, job.data)
+
+    log.info("[id:%s] The job %s has been added to the queue", job.id, job)
 
     try:
         tk.enqueue_job(
-            cron_job_pipe, [data], rq_kwargs={"timeout": cron_conf.get_job_timeout()}
+            cron_job_pipe,
+            [
+                {
+                    "job_type": "ap_cron_job",
+                    "data": {
+                        "cron_job": job,
+                        "actions": job.get_actions,
+                        "kwargs": job.data.get(KWARGS, {}),
+                    },
+                }
+            ],
+            rq_kwargs={
+                "timeout": job.timeout,
+                "on_failure": job_failure_callback,
+            },
         )
     except Exception:
-        log.exception("[id:%s] Unable to enqueued cron job", job_id)
+        log.exception("[id:%s] Unable to enqueued cron job", job.id)
         return False
 
-    log.info("[id:%s] Cron job has been enququed", job_id)
+    log.info("[id:%s] Cron job has been enququed", job.id)
 
     return True
 
 
-def get_existing_task(cron_job: cron_model.CronJob) -> dict[str, Any] | None:
-    """Check if the specified cron job is already in progress"""
+def job_failure_callback(rq_job, connection, type, value, traceback):
+    """Mark a cron job as failed if the rq throw an exception"""
+    job: CronJob = rq_job.args[0]["data"]["cron_job"]
+    job.data[ERRORS] = str(value)
 
-    task_id = cron_job.data.get("task_id")
-
-    if not task_id:
-        return None
-
-    try:
-        existing_task = tk.get_action("task_status_show")(
-            {"ignore_auth": True}, {"entity_id": task_id}
-        )
-
-    except tk.ObjectNotFound:
-        return None
-
-    return existing_task
+    _update_job_state(job.id, CronJob.State.failed, job.data)
 
 
-def cron_job_pipe(data_dict: dict[str, Any]):
+def cron_job_pipe(data_dict: dict[str, Any]) -> DictizedCronJob:
     """This function runs a list of actions for a specific cron job successively.
     The result of the action is passed to the next one."""
 
-    job: cron_model.CronJob = data_dict["data"]["cron_job"]
+    job: CronJob = data_dict["data"]["cron_job"]
 
-    log.info("[id:%s] starting to piping a cron job", job.id)
+    log.info("[id:%s] the cron job has been started", job.id)
 
-    tk.get_action("ap_cron_update_cron_job")(
-        {"ignore_auth": True},
-        {
-            "id": job.id,
-            "state": cron_model.CronJob.State.running,
-        },
-    )
+    _update_job_state(job.id, CronJob.State.running)
 
     for action in data_dict["data"]["actions"]:
         log.info("[id:%s] starting to run an action %s", job.id, action)
 
         try:
-            data_dict = tk.get_action(action)({}, data_dict["data"]["kwargs"])
+            data_dict = tk.get_action(action)({}, data_dict["data"].get(KWARGS, {}))
         except tk.ValidationError as e:
-            job.data["errors"] = e.error_dict
+            job.data[ERRORS] = e.error_dict
 
             log.exception(
                 "[id:%s] An action %s has failed. Terminating...", job.id, action
             )
             log.exception("[id:%s] Error dict %s", job.id, e.error_dict)
 
-            return tk.get_action("ap_cron_update_cron_job")(
-                {"ignore_auth": True},
-                {
-                    "id": job.id,
-                    "state": cron_model.CronJob.State.failed,
-                    "data": job.data,
-                },
-            )
+            return _update_job_state(job.id, CronJob.State.failed, job.data)
 
         log.info("[id:%s] the action %s was executed successfully...", job.id, action)
 
     log.info("[id:%s] cron job has successfuly finished", job.id)
 
-    tk.get_action("ap_cron_update_cron_job")(
-        {"ignore_auth": True},
-        {
-            "id": job.id,
-            "state": cron_model.CronJob.State.finished,
-        },
-    )
+    return _update_job_state(job.id, CronJob.State.finished, job.data)
 
 
-def get_job_callback_url() -> str:
-    return tk.url_for("api.action", logic_function="cron_job_callback", qualified=True)
+def _update_job_state(
+    job_id: str, state: str, data: Optional[dict[str, Any]] = None
+) -> DictizedCronJob:
+    payload: dict[str, Any] = {
+        "id": job_id,
+        "state": state,
+    }
 
+    if data is not None:
+        payload["data"] = data
 
-def get_site_user_apitoken() -> str:
-    return tk.get_action("get_site_user")({"ignore_auth": True}, {})["apikey"]
+    return tk.get_action("ap_cron_update_cron_job")({"ignore_auth": True}, payload)

@@ -13,6 +13,7 @@ import ckanext.ap_cron.model as cron_model
 from ckanext.ap_cron import helpers
 from ckanext.ap_cron.col_renderers import get_renderers
 from ckanext.ap_cron.const import CronSchedule
+from ckanext.ap_cron.cli import get_commands
 
 
 @tk.blanket.blueprints
@@ -24,6 +25,7 @@ class AdminPanelCronPlugin(p.SingletonPlugin):
     # p.implements(p.IConfigurable)
     p.implements(p.IBlueprint)
     p.implements(p.ITemplateHelpers)
+    p.implements(p.IClick)
     p.implements(IAdminPanel, inherit=True)
 
     # IConfigurer
@@ -38,13 +40,13 @@ class AdminPanelCronPlugin(p.SingletonPlugin):
     def configure(self, config: tk.CKANConfig) -> None:
         from ckanext.ap_cron.utils import enqueue_cron_job
 
-        jobs_list = cron_model.CronJob.get_list(cron_model.CronJob.State.new)
+        jobs_list = cron_model.CronJob.get_list(states=[cron_model.CronJob.State.new])
 
         for job in jobs_list:
-            if job["schedule"] != CronSchedule.reboot.value:
+            if job.schedule != CronSchedule.reboot.value:
                 continue
 
-            enqueue_cron_job(job["id"])
+            enqueue_cron_job(job)
 
     # ITemplateHelpers
 
@@ -73,3 +75,7 @@ class AdminPanelCronPlugin(p.SingletonPlugin):
 
     def get_col_renderers(self) -> dict[str, ColRenderer]:
         return get_renderers()
+
+    # IClick
+    def get_commands(self) -> list[Any]:
+        return get_commands()

@@ -9,6 +9,7 @@ from ckan.logic import get_action
 from ckan import types
 
 from ckanext.ap_cron import model as cron_model
+from ckanext.ap_cron.const import KWARGS
 
 
 def cron_schedule_validator(value: str, context: types.Context) -> Any:
@@ -53,3 +54,12 @@ def cron_action_exists(actions: list[str], context: types.Context) -> Any:
 
 def cron_actions_to_string(actions: list[str], context: types.Context) -> str:
     return ", ".join(actions)
+
+
+def cron_kwargs_provided(
+    data: dict[str, Any], context: types.Context
+) -> dict[str, Any]:
+    if KWARGS not in data:
+        raise tk.Invalid("The cron job data must contain `kwargs` dictionary.")
+
+    return data

@@ -11,3 +11,6 @@ class CronSchedule(Enum):
 
 
 LOG_NAME = "ap_cron"
+
+ERRORS = "errors"
+KWARGS = "kwargs"

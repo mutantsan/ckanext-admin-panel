@@ -1,4 +1,5 @@
 import pytest
+import unittest.mock as mock
 
 import ckan.plugins.toolkit as tk
 from ckan.tests.helpers import call_action
@@ -38,7 +39,7 @@ class TestCronJobUpdate:
             actions=["ap_cron_test_action", "ap_cron_test_action_2"],
             timeout=999,
             state=CronJob.State.running,
-            data={"new_data": 1},
+            data={"kwargs": {"new_data": 1}},
         )
 
         result: DictizedCronJob = call_action("ap_cron_update_cron_job", **payload)
@@ -46,7 +47,7 @@ class TestCronJobUpdate:
         for key, value in payload.items():
             assert result[key] == value
 
-        assert result["last_run"] is not None
+        assert result["updated_at"] != cron_job["updated_at"]
 
 
 @pytest.mark.usefixtures("with_plugins", "reset_db_once")
@@ -88,7 +89,8 @@ class TestCronJobList:
         assert len(result) == 1
 
     def test_basic_list_filter_state(self, cron_job_factory):
-        cron_job_factory(state=CronJob.State.running)
+        """You can pass a list of states to sort by them"""
+        cron_job_factory(states=[CronJob.State.running])
 
         result = call_action("ap_cron_get_cron_job_list")
 
@@ -97,8 +99,11 @@ class TestCronJobList:
 
 @pytest.mark.usefixtures("with_plugins", "reset_db_once")
 class TestCronJobRun:
-    def test_basic_run(self, cron_job: DictizedCronJob):
-        result = call_action("ap_cron_run_cron_job", id=cron_job["id"])
+    @mock.patch("ckanext.ap_cron.logic.action.enqueue_cron_job")
+    def test_basic_run(self, enqueue_mock, cron_job: DictizedCronJob):
+        enqueue_mock.return_value = True
+        assert enqueue_mock.call_count == 0
 
-        assert result["job"]
-        assert result["success"]
+        call_action("ap_cron_run_cron_job", id=cron_job["id"])
+
+        assert enqueue_mock.call_count == 1

@@ -79,17 +79,18 @@ def run_cron_job(not_missing, unicode_safe, cron_job_exists) -> Schema:
 def update_cron_job(
     not_missing,
     ignore_missing,
-    cron_job_exists,
     unicode_safe,
     convert_to_json_if_string,
     dict_only,
-    cron_schedule_validator,
     int_validator,
     is_positive_integer,
     json_list_or_string,
-    cron_actions_to_string,
     ignore,
     one_of,
+    cron_job_exists,
+    cron_schedule_validator,
+    cron_actions_to_string,
+    cron_kwargs_provided
 ) -> Schema:
     return {
         "id": [not_missing, unicode_safe, cron_job_exists],
@@ -101,7 +102,7 @@ def update_cron_job(
             int_validator,
             is_positive_integer,
         ],
-        "data": [ignore_missing, convert_to_json_if_string, dict_only],
+        "data": [ignore_missing, convert_to_json_if_string, dict_only, cron_kwargs_provided],
         "state": [ignore_missing, unicode_safe, one_of(STATES)],
         "__extras": [ignore],
         "__junk": [ignore],

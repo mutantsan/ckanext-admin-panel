@@ -16,7 +16,7 @@
             {% else %}
                 <a class="btn btn-black" href="{{ h.url_for('ap_report.logs', type=h.ap_cron_get_cron_logger_name(), q=item.id) }}">{{ _("Logs") }}</a>
 
-                <div style="display:inline-block; cursor:pointer;" {% if job_running %}data-module="ap-tooltip" title="{{ _('You can\'t edit a running job.') }}"{% endif %}>
+                <div style="display:inline-block; cursor:pointer;" {% if job_running %}data-module="ap-tooltip" title="{{ _('You can\'t edit a ' ~ item.state ~ ' job.') }}"{% endif %}>
                     <a
                         class="btn btn-primary {{ 'disabled' if job_running }}"
                         href="{{ '#' if job_running else h.url_for('ap_cron.get_edit_form', job_id=item.id) }}"
@@ -33,13 +33,13 @@
                     </a>
                 </div>
 
-                <div style="display:inline-block; cursor:pointer;" {% if job_running %}data-module="ap-tooltip" title="{{ _('You can\'t start a running job.') }}"{% endif %}>
+                <div style="display:inline-block; cursor:pointer;" {% if job_running %}data-module="ap-tooltip" title="{{ _('You can\'t start a ' ~ item.state ~ ' job.') }}"{% endif %}>
                     <a class="btn btn-primary {{ 'disabled' if job_running }}" href="{{ '#' if job_running else h.url_for('ap_cron.run', job_id=item.id) }}">
                         <i class="fa fa-play"></i>
                     </a>
                 </div>
 
-                <div style="display:inline-block; cursor:pointer;" {% if job_running %}data-module="ap-tooltip" title="{{ _('You can\'t remove a running job.') }}"{% endif %}>
+                <div style="display:inline-block; cursor:pointer;" {% if job_running %}data-module="ap-tooltip" title="{{ _('You can\'t remove a ' ~ item.state ~ ' job.') }}"{% endif %}>
                     <a
                     class="btn btn-danger {{ 'disabled' if job_running }}"
                     href="{{ '#' if job_running else h.url_for('ap_cron.run', job_id=item.id) }}"
