@@ -22,11 +22,11 @@
             {{ _("Add cron job")}}
         </button>
 
-        <a
-            type="button"
-            class="btn btn-primary">
-            {{ _("Run active jobs")}}
-        </a>
+        <form class="d-inline-block" action="{{ h.url_for('ap_cron.run_active') }}" method="POST">
+            <button type="submit" class="btn btn-primary">
+                {{ _("Run active jobs")}}
+            </button>
+        </form>
     </div>
 
     <div class="row g-3" data-module="ap-cron-htmx">
@@ -53,9 +53,6 @@
 
             <div class="bulk-actions">
                 {{ form.select('bulk-action', id='bulk-action', label=_('Action'), options=bulk_options, selected="", error=error) }}
-
-
-
 
                 <button
                     type="submit" id="bulk-submit"

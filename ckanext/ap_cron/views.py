@@ -13,6 +13,7 @@ from flask.views import MethodView
 import ckan.plugins.toolkit as tk
 from ckan.lib.helpers import Page
 
+import ckanext.ap_cron.utils as cron_utils
 from ckanext.ap_main.utils import ap_before_request
 from ckanext.ap_cron import types as cron_types
 
@@ -287,6 +288,30 @@ class CronEditJobView(MethodView):
         return tk.redirect_to("ap_cron.manage")
 
 
+class CronRunActiveView(MethodView):
+    """Schedule all the cron jobs that are not pending or running. The current
+    cron job schedule will be ignored."""
+
+    def post(self) -> Response:
+        jobs_list = CronJob.get_list(
+            states=[
+                CronJob.State.failed,
+                CronJob.State.finished,
+                CronJob.State.active,
+                CronJob.State.pending,
+            ]
+        )
+
+        for job in jobs_list:
+            cron_utils.enqueue_cron_job(job)
+
+        tk.h.flash_success(
+            f"All active cron jobs have been scheduled: {len(jobs_list)}."
+        )
+
+        return tk.redirect_to("ap_cron.manage")
+
+
 def action_autocomplete() -> Response:
     """This is an autocomplete for a cron job actions. Cron job could work
     only with CKAN actions to prevent any non-wanted behaviour."""
@@ -311,6 +336,7 @@ ap_cron.add_url_rule(
     "/edit/<job_id>/get_form", view_func=CronEditJobFormView.as_view("get_edit_form")
 )
 ap_cron.add_url_rule("/edit", view_func=CronEditJobView.as_view("edit"))
+ap_cron.add_url_rule("/run_active", view_func=CronRunActiveView.as_view("run_active"))
 
 # API
 ap_cron.add_url_rule("/util/action/autocomplete", view_func=action_autocomplete)
