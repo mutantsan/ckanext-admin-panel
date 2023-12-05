@@ -10,7 +10,7 @@ from ckanext.ap_cron.model import CronJob
 
 Schema = Dict[str, Any]
 STATES = [
-    CronJob.State.new,
+    CronJob.State.active,
     CronJob.State.disabled,
     CronJob.State.pending,
     CronJob.State.running,
@@ -51,7 +51,7 @@ def add_cron_job(
             is_positive_integer,
         ],
         "data": [not_missing, convert_to_json_if_string, dict_only],
-        "state": [default(CronJob.State.new), unicode_safe, one_of(STATES)],
+        "state": [default(CronJob.State.active), unicode_safe, one_of(STATES)],
     }
 
 

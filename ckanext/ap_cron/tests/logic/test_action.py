@@ -21,7 +21,7 @@ class TestCronJobCreate:
         assert job["last_run"] is None
         assert job["schedule"] == "* * * * *"
         assert job["timeout"] == cron_conf.get_job_timeout()
-        assert job["state"] == CronJob.State.new
+        assert job["state"] == CronJob.State.active
 
         assert isinstance(job["data"], dict)
         assert isinstance(job["actions"], list)

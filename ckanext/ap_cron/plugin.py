@@ -37,16 +37,16 @@ class AdminPanelCronPlugin(p.SingletonPlugin):
 
     # IConfigurable
 
-    def configure(self, config: tk.CKANConfig) -> None:
-        from ckanext.ap_cron.utils import enqueue_cron_job
+    # def configure(self, config: tk.CKANConfig) -> None:
+    #     from ckanext.ap_cron.utils import enqueue_cron_job
 
-        jobs_list = cron_model.CronJob.get_list(states=[cron_model.CronJob.State.new])
+    #     jobs_list = cron_model.CronJob.get_list(states=[cron_model.CronJob.State.new])
 
-        for job in jobs_list:
-            if job.schedule != CronSchedule.reboot.value:
-                continue
+    #     for job in jobs_list:
+    #         if job.schedule != CronSchedule.reboot.value:
+    #             continue
 
-            enqueue_cron_job(job)
+    #         enqueue_cron_job(job)
 
     # ITemplateHelpers
 

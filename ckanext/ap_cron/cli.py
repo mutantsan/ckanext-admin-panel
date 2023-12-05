@@ -21,7 +21,7 @@ def trigger_jobs():
         states=[
             CronJob.State.failed,
             CronJob.State.finished,
-            CronJob.State.new,
+            CronJob.State.active,
             CronJob.State.pending,
         ]
     )

@@ -23,7 +23,8 @@ class CronJob(tk.BaseModel):
     __tablename__ = "ap_cron_job"
 
     class State:
-        new = "new"
+        # new = "new"
+        active = "active"
         disabled = "disabled"
         pending = "pending"
         running = "running"
@@ -39,7 +40,7 @@ class CronJob(tk.BaseModel):
     schedule = Column(Text)
     actions = Column(Text)
     data: dict[str, Any] = Column(JSONB, nullable=False)  # type: ignore
-    state = Column(Text, default=State.new)
+    state = Column(Text, default=State.active)
     timeout = Column(Integer, default=cron_conf.get_job_timeout())
 
     def __str__(self):

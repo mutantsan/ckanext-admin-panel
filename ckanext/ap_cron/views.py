@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import json
+from typing import Any, Union, cast, Callable
+from functools import partial
 
-from typing import Any, Union, cast
 from ckan import types
+from ckanext.ap_cron.model import CronJob
 
 from flask import Blueprint, Response, jsonify, make_response
 from flask.views import MethodView
@@ -13,7 +15,6 @@ from ckan.lib.helpers import Page
 
 from ckanext.ap_main.utils import ap_before_request
 from ckanext.ap_cron import types as cron_types
-from ckanext.ap_cron.const import LOG_NAME
 
 ap_cron = Blueprint(
     "ap_cron",
@@ -133,6 +134,43 @@ class CronManagerView(MethodView):
                 "text": tk._("Delete selected job"),
             },
         ]
+
+    def post(self) -> Response:
+        bulk_action = tk.request.form.get("bulk-action")
+        entity_ids = tk.request.form.getlist("entity_id")
+
+        action_func = self._get_bulk_action(bulk_action) if bulk_action else None
+
+        if not action_func:
+            tk.h.flash_error(tk._("The bulk action is not implemented"))
+            return tk.redirect_to("ap_cron.manage")
+
+        for entity_id in entity_ids:
+            try:
+                action_func(entity_id)
+            except tk.ValidationError as e:
+                tk.h.flash_error(str(e))
+
+        return tk.redirect_to("ap_cron.manage")
+
+    def _get_bulk_action(self, value: str) -> Callable[[str], None] | None:
+        return {
+            "1": partial(self._change_job_state, state=CronJob.State.disabled),
+            "2": partial(self._change_job_state, state=CronJob.State.active),
+            "3": self._remove_job,
+        }.get(value)
+
+    def _change_job_state(self, job_id: str, state: str) -> None:
+        tk.get_action("ap_cron_update_cron_job")(
+            {"ignore_auth": True},
+            {
+                "id": job_id,
+                "state": state,
+            },
+        )
+
+    def _remove_job(self, job_id: str) -> None:
+        tk.get_action("ap_cron_remove_cron_job")({"ignore_auth": True}, {"id": job_id})
 
 
 class CronAddView(MethodView):

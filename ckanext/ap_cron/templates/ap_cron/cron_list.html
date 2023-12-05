@@ -54,7 +54,15 @@
             <div class="bulk-actions">
                 {{ form.select('bulk-action', id='bulk-action', label=_('Action'), options=bulk_options, selected="", error=error) }}
 
-                <button type="submit" id="bulk-submit" class="btn btn-primary mb-3">
+
+
+
+                <button
+                    type="submit" id="bulk-submit"
+                    class="btn btn-primary mb-3"
+                    data-module="ap-confirm-action"
+                    data-module-content="{{ _('Are you sure you want to perform a bulk action?') }}"
+                    data-module-with-data=true>
                     {{ _("Apply to selected items") }}
                 </button>
             </div>
