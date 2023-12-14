@@ -7,7 +7,6 @@ from ckan.logic.schema import validator_args
 from ckanext.ap_cron import config as cron_conf
 from ckanext.ap_cron.model import CronJob
 
-
 Schema = Dict[str, Any]
 STATES = [
     CronJob.State.active,
@@ -90,19 +89,29 @@ def update_cron_job(
     cron_job_exists,
     cron_schedule_validator,
     cron_actions_to_string,
-    cron_kwargs_provided
+    cron_kwargs_provided,
 ) -> Schema:
     return {
         "id": [not_missing, unicode_safe, cron_job_exists],
         "name": [ignore_missing, unicode_safe],
         "schedule": [ignore_missing, unicode_safe, cron_schedule_validator],
-        "actions": [ignore_missing, unicode_safe, json_list_or_string, cron_actions_to_string],
+        "actions": [
+            ignore_missing,
+            unicode_safe,
+            json_list_or_string,
+            cron_actions_to_string,
+        ],
         "timeout": [
             ignore_missing,
             int_validator,
             is_positive_integer,
         ],
-        "data": [ignore_missing, convert_to_json_if_string, dict_only, cron_kwargs_provided],
+        "data": [
+            ignore_missing,
+            convert_to_json_if_string,
+            dict_only,
+            cron_kwargs_provided,
+        ],
         "state": [ignore_missing, unicode_safe, one_of(STATES)],
         "__extras": [ignore],
         "__junk": [ignore],

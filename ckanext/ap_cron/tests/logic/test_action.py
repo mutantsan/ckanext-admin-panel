@@ -1,5 +1,6 @@
-import pytest
 import unittest.mock as mock
+
+import pytest
 
 import ckan.plugins.toolkit as tk
 from ckan.tests.helpers import call_action

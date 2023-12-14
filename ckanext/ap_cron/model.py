@@ -3,18 +3,18 @@ from __future__ import annotations
 import logging
 from datetime import datetime
 from typing import Any, Optional
-from typing_extensions import Self
 
 from sqlalchemy import Column, DateTime, Integer, Text
 from sqlalchemy.dialects.postgresql import JSONB
+from typing_extensions import Self
 
 import ckan.model as model
 from ckan.model.types import make_uuid
 from ckan.plugins import toolkit as tk
 
-from ckanext.ap_cron.types import CronJobData, DictizedCronJob
-from ckanext.ap_cron.const import KWARGS
 from ckanext.ap_cron import config as cron_conf
+from ckanext.ap_cron.const import KWARGS
+from ckanext.ap_cron.types import CronJobData, DictizedCronJob
 
 log = logging.getLogger(__name__)
 

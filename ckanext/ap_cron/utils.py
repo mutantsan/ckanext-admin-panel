@@ -1,16 +1,15 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Optional
 from datetime import datetime as dt
-from ckanext.ap_cron.col_renderers import last_run
+from typing import Any
 
 from croniter import croniter
 
 import ckan.plugins.toolkit as tk
 
+from ckanext.ap_cron.const import ERRORS, KWARGS, LOG_NAME
 from ckanext.ap_cron.model import CronJob
-from ckanext.ap_cron.const import LOG_NAME, ERRORS, KWARGS
 from ckanext.ap_cron.types import DictizedCronJob
 
 log = logging.getLogger(LOG_NAME)

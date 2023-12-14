@@ -1,6 +1,5 @@
 import ckan.plugins.toolkit as tk
 
-
 CONF_JOB_TIMEOUT = "ckanext.admin_panel.cron.job_timeout"
 DEF_JOB_TIMEOUT = 3600
 

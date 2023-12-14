@@ -5,15 +5,13 @@ from typing import Any, Callable
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 
+from ckanext.ap_cron import helpers
+from ckanext.ap_cron.cli import get_commands
+from ckanext.ap_cron.col_renderers import get_renderers
+
 import ckanext.ap_main.types as ap_types
 from ckanext.ap_main.interfaces import IAdminPanel
 from ckanext.ap_main.types import ColRenderer
-
-import ckanext.ap_cron.model as cron_model
-from ckanext.ap_cron import helpers
-from ckanext.ap_cron.col_renderers import get_renderers
-from ckanext.ap_cron.const import CronSchedule
-from ckanext.ap_cron.cli import get_commands
 
 
 @tk.blanket.blueprints
@@ -77,5 +75,6 @@ class AdminPanelCronPlugin(p.SingletonPlugin):
         return get_renderers()
 
     # IClick
+
     def get_commands(self) -> list[Any]:
         return get_commands()

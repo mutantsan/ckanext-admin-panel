@@ -1,17 +1,15 @@
 from __future__ import annotations
 
-from typing import Any
 
 from cron_descriptor import get_description
 
 import ckan.plugins.toolkit as tk
 
-from ckanext.toolbelt.decorators import Collector
-
 from ckanext.ap_cron import config as cron_conf
 from ckanext.ap_cron import const as cron_const
-from ckanext.ap_cron.types import DictizedCronJob
 from ckanext.ap_cron.model import CronJob
+from ckanext.ap_cron.types import DictizedCronJob
+from ckanext.toolbelt.decorators import Collector
 
 helper, get_helpers = Collector("ap_cron").split()
 

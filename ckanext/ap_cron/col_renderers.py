@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-import json
 
 import ckan.plugins.toolkit as tk
 
-import ckanext.ap_main.types as ap_types
-
 from ckanext.toolbelt.decorators import Collector
+
+import ckanext.ap_main.types as ap_types
 
 renderer, get_renderers = Collector("ap_cron").split()
 

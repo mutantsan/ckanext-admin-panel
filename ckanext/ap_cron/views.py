@@ -1,21 +1,23 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Union, cast, Callable
 from functools import partial
-
-from ckan import types
-from ckanext.ap_cron.model import CronJob
+from typing import Any, Callable, Union, cast
 
 from flask import Blueprint, Response, jsonify, make_response
 from flask.views import MethodView
 
+import ckan.plugins as p
 import ckan.plugins.toolkit as tk
+from ckan import types
 from ckan.lib.helpers import Page
 
 import ckanext.ap_cron.utils as cron_utils
-from ckanext.ap_main.utils import ap_before_request
 from ckanext.ap_cron import types as cron_types
+from ckanext.ap_cron.interfaces import IAPCron
+from ckanext.ap_cron.model import CronJob
+
+from ckanext.ap_main.utils import ap_before_request
 
 ap_cron = Blueprint(
     "ap_cron",
@@ -226,7 +228,7 @@ class CronDeleteJobView(MethodView):
                 {},
                 cast(types.DataDict, {"id": job_id}),
             )
-        except tk.ValidationError as e:
+        except tk.ValidationError:
             pass
 
         return ""
@@ -321,6 +323,9 @@ def action_autocomplete() -> Response:
 
     if q:
         from ckan.logic import _actions
+
+        for plugin in p.PluginImplementations(IAPCron):
+            _actions = plugin.exclude_action(_actions)
 
         actions = [{"Name": action} for action in _actions if q in action][:limit]
 

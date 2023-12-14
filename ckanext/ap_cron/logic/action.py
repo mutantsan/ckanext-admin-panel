@@ -1,17 +1,16 @@
 from __future__ import annotations
 
 import logging
-from typing import cast
 from datetime import datetime as dt
+from typing import cast
 
 from ckan.logic import validate
 from ckan.plugins import toolkit as tk
 
-
 import ckanext.ap_cron.logic.schema as cron_schema
+from ckanext.ap_cron.const import LOG_NAME
 from ckanext.ap_cron.model import CronJob
 from ckanext.ap_cron.utils import enqueue_cron_job
-from ckanext.ap_cron.const import LOG_NAME
 
 log = logging.getLogger(LOG_NAME)
 

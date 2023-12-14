@@ -5,8 +5,8 @@ from typing import Any
 from croniter import croniter
 
 import ckan.plugins.toolkit as tk
-from ckan.logic import get_action
 from ckan import types
+from ckan.logic import get_action
 
 from ckanext.ap_cron import model as cron_model
 from ckanext.ap_cron.const import KWARGS
