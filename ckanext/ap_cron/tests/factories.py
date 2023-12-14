@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 import factory
 
 import ckan.plugins as plugins
@@ -8,8 +7,8 @@ import ckan.types as types
 from ckan.tests import factories
 
 from ckanext.ap_cron import config as cron_conf
-from ckanext.ap_cron.model import CronJob
 from ckanext.ap_cron.interfaces import IAPCron
+from ckanext.ap_cron.model import CronJob
 
 
 class ApCronTestPlugin(plugins.SingletonPlugin):
@@ -37,7 +36,7 @@ class ApCronTestPlugin(plugins.SingletonPlugin):
     def exclude_action(
         self, action_list: dict[str, types.Action]
     ) -> dict[str, types.Action]:
-        action_list.pop("ap_cron_test_action", None)
+        action_list.pop("ap_cron_test_action_2", None)
 
         return action_list
 

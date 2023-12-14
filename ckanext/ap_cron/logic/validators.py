@@ -1,14 +1,16 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 from croniter import croniter
 
+import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 from ckan import types
 from ckan.logic import get_action
 
 from ckanext.ap_cron import model as cron_model
+from ckanext.ap_cron.interfaces import IAPCron
 from ckanext.ap_cron.const import KWARGS
 
 
@@ -43,11 +45,26 @@ def cron_job_exists(job_id: str, context: types.Context) -> Any:
 
 def cron_action_exists(actions: list[str], context: types.Context) -> Any:
     """Check if all the actions are registered in CKAN"""
+    action_funcs: dict[str, types.Action] = {}
+
     for action in actions:
         try:
-            get_action(action)
+            action_fn = get_action(action)
         except KeyError as e:
             raise tk.Invalid(str(e))
+
+        action_funcs[action] = action_fn
+
+    users_actions = list(action_funcs.keys())
+
+    for plugin in p.PluginImplementations(IAPCron):
+        action_funcs = plugin.exclude_action(action_funcs)
+
+    for user_action in users_actions:
+        if user_action not in action_funcs:
+            raise tk.Invalid(
+                f"Action {user_action} is excluded from usage in a cron job"
+            )
 
     return actions
 

@@ -19,5 +19,5 @@ class TestApCronInterace(object):
             query_string={"incomplete": "test"},
         ).json
 
-        # I've excluded "ap_cron_test_action" in ApCronTestPlugin
+        # I've excluded "ap_cron_test_action_2" in ApCronTestPlugin
         assert len(result["ResultSet"]["Result"]) == 2

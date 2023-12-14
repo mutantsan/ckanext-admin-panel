@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 import ckan.plugins.toolkit as tk
 
 from ckanext.toolbelt.decorators import Collector

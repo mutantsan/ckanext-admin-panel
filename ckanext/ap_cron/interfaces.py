@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from ckan.plugins.interfaces import Interface
 from ckan import types
+from ckan.plugins.interfaces import Interface
 
 
 class IAPCron(Interface):

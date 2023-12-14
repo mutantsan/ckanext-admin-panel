@@ -30,7 +30,6 @@ def add_cron_job(
     is_positive_integer,
     json_list_or_string,
     list_of_strings,
-    ignore,
     cron_action_exists,
     one_of,
 ) -> Schema:

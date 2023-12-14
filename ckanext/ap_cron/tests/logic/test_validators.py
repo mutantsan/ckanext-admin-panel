@@ -84,3 +84,11 @@ class TestCronActionExistValidator:
 
     def test_exist(self):
         cron_validators.cron_action_exists(["ap_cron_test_action"], {})
+
+    def test_excluded_action(self):
+        """If the actions is excluded, user shoudn't be able to use it"""
+        with pytest.raises(
+            tk.Invalid,
+            match="Action ap_cron_test_action_2 is excluded from usage in a cron job",
+        ):
+            cron_validators.cron_action_exists(["ap_cron_test_action_2"], {})

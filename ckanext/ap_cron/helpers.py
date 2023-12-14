@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 from cron_descriptor import get_description
 
 import ckan.plugins.toolkit as tk
