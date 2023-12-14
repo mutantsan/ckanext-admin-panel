@@ -99,11 +99,16 @@ class TestCronJobList:
 
 @pytest.mark.usefixtures("with_plugins", "reset_db_once")
 class TestCronJobRun:
-    @mock.patch("ckanext.ap_cron.logic.action.enqueue_cron_job")
+    @mock.patch("ckan.plugins.toolkit.enqueue_job")
     def test_basic_run(self, enqueue_mock, cron_job: DictizedCronJob):
         enqueue_mock.return_value = True
         assert enqueue_mock.call_count == 0
+        assert cron_job["last_run"] is None
 
         call_action("ap_cron_run_cron_job", id=cron_job["id"])
 
         assert enqueue_mock.call_count == 1
+
+        result: DictizedCronJob = call_action("ap_cron_get_cron_job", id=cron_job["id"])
+        assert result["updated_at"] != cron_job["updated_at"]
+        assert result["last_run"] is not None

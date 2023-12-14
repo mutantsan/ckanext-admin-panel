@@ -90,6 +90,8 @@ def ap_cron_run_cron_job(context, data_dict):
         log.exception("[id:%s] The cron job is already running.", job.id)
         raise tk.ValidationError({"message": tk._("The cron job is already running.")})
 
+    job.last_run = dt.utcnow()  # type: ignore
+
     return {
         "job": job.dictize(context),
         "success": enqueue_cron_job(job),

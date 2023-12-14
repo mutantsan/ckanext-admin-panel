@@ -59,12 +59,12 @@ class CronManagerView(MethodView):
         return [item for item in item_list if self.q.lower() in item["name"].lower()]
 
     def _sort_items(self, item_list: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        self.order_by = tk.request.args.get("order_by", "timestamp")
+        self.order_by = tk.request.args.get("order_by", "last_run")
         self.sort = tk.request.args.get("sort", "desc")
 
         return sorted(
             item_list,
-            key=lambda x: x.get(self.order_by, ""),
+            key=lambda x: x.get(self.order_by) or "",
             reverse=self.sort == "desc",
         )
 
@@ -109,7 +109,6 @@ class CronManagerView(MethodView):
                 label="Last run",
                 column_renderer="ap_cron_last_run",
                 width="7%",
-                sortable=False,
             ),
             tk.h.ap_table_column("state", label="State", width="5%"),
             tk.h.ap_table_column(

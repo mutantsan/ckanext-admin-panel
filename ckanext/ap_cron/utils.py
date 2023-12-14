@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Optional
 from datetime import datetime as dt
+from ckanext.ap_cron.col_renderers import last_run
 
 from croniter import croniter
 
@@ -28,7 +29,7 @@ def enqueue_cron_job(job: CronJob) -> bool:
     # throw away old errors on a new run
     job.data.pop(ERRORS, None)
 
-    _update_job_state(job.id, CronJob.State.pending, job.data)
+    _update_job_state({"id": job.id, "state": CronJob.State.pending, "data": job.data})
 
     log.info("[id:%s] The job %s has been added to the queue", job.id, job)
 
@@ -64,7 +65,7 @@ def job_failure_callback(rq_job, connection, type, value, traceback):
     job: CronJob = rq_job.args[0]["data"]["cron_job"]
     job.data[ERRORS] = str(value)
 
-    _update_job_state(job.id, CronJob.State.failed, job.data)
+    _update_job_state({"id": job.id, "state": CronJob.State.running, "data": job.data})
 
 
 def cron_job_pipe(data_dict: dict[str, Any]) -> DictizedCronJob:
@@ -75,7 +76,7 @@ def cron_job_pipe(data_dict: dict[str, Any]) -> DictizedCronJob:
 
     log.info("[id:%s] the cron job has been started", job.id)
 
-    _update_job_state(job.id, CronJob.State.running)
+    _update_job_state({"id": job.id, "state": CronJob.State.running})
 
     for action in data_dict["data"]["actions"]:
         log.info("[id:%s] starting to run an action %s", job.id, action)
@@ -90,24 +91,18 @@ def cron_job_pipe(data_dict: dict[str, Any]) -> DictizedCronJob:
             )
             log.exception("[id:%s] Error dict %s", job.id, e.error_dict)
 
-            return _update_job_state(job.id, CronJob.State.failed, job.data)
+            return _update_job_state(
+                {"id": job.id, "state": CronJob.State.failed, "data": job.data}
+            )
 
         log.info("[id:%s] the action %s was executed successfully...", job.id, action)
 
     log.info("[id:%s] cron job has successfuly finished", job.id)
 
-    return _update_job_state(job.id, CronJob.State.finished, job.data)
+    return _update_job_state(
+        {"id": job.id, "state": CronJob.State.finished, "data": job.data}
+    )
 
 
-def _update_job_state(
-    job_id: str, state: str, data: Optional[dict[str, Any]] = None
-) -> DictizedCronJob:
-    payload: dict[str, Any] = {
-        "id": job_id,
-        "state": state,
-    }
-
-    if data is not None:
-        payload["data"] = data
-
-    return tk.get_action("ap_cron_update_cron_job")({"ignore_auth": True}, payload)
+def _update_job_state(data: dict[str, Any]) -> DictizedCronJob:
+    return tk.get_action("ap_cron_update_cron_job")({"ignore_auth": True}, data)
