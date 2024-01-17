@@ -322,11 +322,5 @@ def content_list_type_options() -> list[dict[str, str | int]]:
 @helper
 def generate_page_unique_class() -> str:
     """Build a unique css class for each page"""
-    args_hash = (
-        hash(frozenset(tk.request.view_args.items())) if tk.request.view_args else 0
-    )
-
-    if args_hash:
-        return tk.h.ap_munge_string((f"ap-{tk.request.endpoint}-{args_hash}"))
 
     return tk.h.ap_munge_string((f"ap-{tk.request.endpoint}"))
