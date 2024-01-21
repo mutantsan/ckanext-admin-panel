@@ -1,3 +1,9 @@
+body.filters-modal {
+    #admin-panel {
+        z-index: 0;
+    }
+}
+
 #admin-panel {
     $border: 1px solid var(--ap-border-color);
     $color: var(--ap-color);
