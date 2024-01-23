@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-import json
 from functools import partial
-from typing import Any, Callable, Union, cast
+from typing import Any, Callable, Union
 
-from flask import Blueprint, Response, jsonify, make_response
+from flask import Blueprint, Response
 from flask.views import MethodView
 
-import ckan.plugins as p
 import ckan.plugins.toolkit as tk
-from ckan import types
 from ckan.lib.helpers import Page
+from ckan.logic import parse_params
 
 from ckanext.ap_main.utils import ap_before_request
 
@@ -122,4 +120,46 @@ class SupportListView(MethodView):
         )
 
 
+def init_modal():
+    """This view inits the modal data on first open or after a submit"""
+
+    return tk.render(
+        "ap_support/ticket_modal_form.html",
+    )
+
+
+class AddTicketView(MethodView):
+    def post(self):
+        data_dict = parse_params(tk.request.form)
+        data_dict["author_id"] = tk.g.userobj.id
+
+        try:
+            tk.get_action("ap_support_ticket_create")({"user": tk.g.user}, data_dict)
+        except (tk.ObjectNotFound, tk.ValidationError) as e:
+            return self._get_modal_body(
+                title=tk._("An error occurred while creating the ticket"),
+                message=str(e),
+            )
+
+        return self._get_modal_body(
+            title=tk._("Your ticket has been successfully created"),
+            message=tk._("View your tickets at the user account page"),
+        )
+
+    def _get_modal_body(self, title: str, message: str):
+        return tk.render(
+            "ap_support/ticket_modal_response.html",
+            extra_vars={
+                "title": title,
+                "message": message,
+            },
+        )
+
+
 ap_support.add_url_rule("/", view_func=SupportListView.as_view("list"))
+
+# HTMX
+ap_support.add_url_rule("/init_modal", view_func=init_modal)
+ap_support.add_url_rule(
+    "/add_ticket", view_func=AddTicketView.as_view("add_ticket"), methods=("POST",)
+)

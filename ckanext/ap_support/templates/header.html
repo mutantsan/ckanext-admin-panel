@@ -2,10 +2,19 @@
 
 {% block header_account_profile %}
     <li>
-        <a href="{{ h.url_for('user.read', id=c.userobj.name) }}" class="image" title="{{ _('Support') }}">
+        <a
+            href="#"
+            title="{{ _('Support') }}"
+            data-bs-toggle="modal"
+            data-bs-target="#create-ticket-modal"
+            {#} the modal is in page.html {#}
+            hx-get="{{ h.url_for('ap_support.init_modal') }}"
+            hx-target=".ap-ticket-data"
+            hx-trigger="click">
             <i class="fa fa-question-circle"></i>
         </a>
     </li>
+
 
     {{ super() }}
 {% endblock %}

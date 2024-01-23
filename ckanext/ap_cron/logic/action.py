@@ -21,7 +21,7 @@ def ap_cron_add_cron_job(context, data_dict):
 
     job = CronJob.add(data_dict)
 
-    log.info("[id:%s] Cron job has been created")
+    log.info("[id:%s] Cron job has been created", job.id)
 
     return job
 

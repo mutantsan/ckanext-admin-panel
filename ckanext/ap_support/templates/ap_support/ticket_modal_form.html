@@ -1,0 +1,25 @@
+{% import "macros/form.html" as form %}
+
+{% set markdown_tooltip = "<pre><p>__Bold text__ or _italic text_</p><p># title<br>## secondary title<br>### etc</p><p>* list<br>* of<br>* items</p><p>http://auto.link.ed/</p></pre><p><b><a href='http://daringfireball.net/projects/markdown/syntax' target='_blank'>Full markdown syntax</a></b></p><p class='text-muted'><b>Please note:</b> HTML tags are stripped out for security reasons</p>" %}
+
+
+<form id="add-ticket-form"
+    action="{{ h.url_for('ap_support.add_ticket') }}"
+    method="post"
+    hx-post="{{ h.url_for('ap_support.add_ticket') }}"
+    hx-target=".ap-ticket-data">
+
+    {% set attrs = {'class': 'form-control', 'required': 'true'} %}
+
+    {{ form.input("subject", label=_("Subject"), value="", is_required=True, attrs=attrs) }}
+
+    {% call form.textarea("text", label=_("Text"), value="", rows=12, is_required=True, attrs=attrs) %}
+        <span class="editor-info-block">{% trans %}You can use <a href="#markdown" title="Markdown quick reference" data-bs-toggle="popover" data-bs-content="{{ markdown_tooltip }}" data-bs-html="true">Markdown formatting</a> here{% endtrans %}</span>
+    {% endcall %}
+
+    <div class="form-actions">
+        <button class="btn btn-default msf-send-req-btn" type="submit">
+            {{ _('Submit') }}
+        </button>
+    </div>
+</form>

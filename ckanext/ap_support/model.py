@@ -73,7 +73,7 @@ class Ticket(tk.BaseModel):
         ticket = cls(
             subject=ticket_data["subject"],
             text=ticket_data["text"],
-            author=ticket_data["author_id"],
+            author_id=ticket_data["author_id"],
         )
 
         model.Session.add(ticket)

@@ -1,0 +1,5 @@
+admin_panel_support-js:
+  filter: rjsmin
+  output: ckanext-admin_panel/%(version)s-admin_panel_support.js
+  contents:
+    - js/ap-support-htmx.js

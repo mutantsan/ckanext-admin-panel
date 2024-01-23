@@ -15,6 +15,18 @@ STATUSES = [
 
 @validator_args
 def ticket_search(ignore_missing, unicode_safe, one_of) -> Schema:
+    return {"status": [ignore_missing, unicode_safe, one_of(STATUSES)]}
+
+
+@validator_args
+def ticket_create(not_missing, unicode_safe, user_id_or_name_exists) -> Schema:
     return {
-        "status": [ignore_missing, unicode_safe, one_of(STATUSES)]
+        "subject": [not_missing, unicode_safe],
+        "text": [not_missing, unicode_safe],
+        "author_id": [not_missing, unicode_safe, user_id_or_name_exists],
     }
+
+
+@validator_args
+def ticket_show(ignore_missing, unicode_safe, ticket_id_exists) -> Schema:
+    return {"id": [ignore_missing, unicode_safe, ticket_id_exists]}
