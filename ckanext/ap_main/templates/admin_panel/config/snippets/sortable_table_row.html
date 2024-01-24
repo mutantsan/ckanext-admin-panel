@@ -2,13 +2,9 @@
 
 <tr>
     {% if bulk_check %}
-        {% if name == "content-list" %}
-            {% snippet "admin_panel/config/snippets/bulk_column_user.html", item=item %}
-        {% else %}
-            <td class="checkbox-cell checkbox-cell-row">
-                <input type="checkbox" name="entity_id" id="entity_id" value="{{ item.id }}">
-            </td>
-        {% endif %}
+        <td class="checkbox-cell checkbox-cell-row">
+            <input type="checkbox" name="entity_id" id="entity_id" value="{{ item.id }}">
+        </td>
     {% endif %}
 
     {% for col in columns %}
