@@ -7,6 +7,7 @@ class TicketData(TypedDict):
     subject: str
     text: str
     author_id: str
+    category: str
 
 
 class DictizedTicket(TypedDict):

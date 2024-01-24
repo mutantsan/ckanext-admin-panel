@@ -1,5 +1,10 @@
 {% ckan_extends %}
 
+{% block styles %}
+    {% asset 'ap_cron/admin_panel_support-css' %}
+    {{ super() }}
+{% endblock %}
+
 {% block scripts %}
     {% snippet 'ap_support/ticket_modal.html' %}
 

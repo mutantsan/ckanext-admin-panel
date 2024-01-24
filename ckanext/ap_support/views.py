@@ -42,7 +42,6 @@ class SupportListView(MethodView):
         return {
             "page": self._get_pager(tickets),
             "columns": self._get_table_columns(),
-            "table_row_display": "ap_support/cron_table_row.html",
             "q": self.q,
             "order_by": self.order_by,
             "sort": self.sort,
@@ -64,21 +63,34 @@ class SupportListView(MethodView):
 
     def _get_table_columns(self) -> list[dict[str, Any]]:
         return [
-            tk.h.ap_table_column("id", width="5%"),
-            tk.h.ap_table_column("subject", width="15%"),
-            tk.h.ap_table_column("status", width="15%"),
-            tk.h.ap_table_column("author", width="15%"),
+            tk.h.ap_table_column(
+                "id",
+                width="5%",
+                sortable=False,
+            ),
+            tk.h.ap_table_column("subject", width="10%", sortable=False),
+            tk.h.ap_table_column(
+                "status", width="15%", column_renderer="ap_support_status"
+            ),
+            tk.h.ap_table_column(
+                "author", width="10%", column_renderer="ap_support_user_link"
+            ),
             tk.h.ap_table_column("category", width="10%"),
-            tk.h.ap_table_column("created_at", width="10%"),
-            tk.h.ap_table_column("updated_at", width="10%"),
-        ]
-
-    def _get_bulk_action_options(self):
-        return [
-            {
-                "value": "1",
-                "text": tk._("Close selected tickets"),
-            },
+            tk.h.ap_table_column("created_at", width="10%", column_renderer="ap_date"),
+            tk.h.ap_table_column("updated_at", width="10%", column_renderer="ap_date"),
+            tk.h.ap_table_column(
+                "actions",
+                column_renderer="ap_action_render",
+                width="10%",
+                sortable=False,
+                actions=[
+                    tk.h.ap_table_action(
+                        "ap_support.ticket_read",
+                        label=tk._("View"),
+                        params={"ticket_id": "$id"},
+                    )
+                ],
+            ),
         ]
 
     def post(self) -> Response:
@@ -89,7 +101,7 @@ class SupportListView(MethodView):
 
         if not action_func:
             tk.h.flash_error(tk._("The bulk action is not implemented"))
-            return tk.redirect_to("ap_support.manage")
+            return tk.redirect_to("ap_support.list")
 
         for entity_id in entity_ids:
             try:
@@ -97,26 +109,33 @@ class SupportListView(MethodView):
             except tk.ValidationError as e:
                 tk.h.flash_error(str(e))
 
-        return tk.redirect_to("ap_support.manage")
+        return tk.redirect_to("ap_support.list")
+
+    def _get_bulk_action_options(self):
+        return [
+            {"value": "1", "text": tk._("Close selected tickets")},
+            {"value": "2", "text": tk._("Remove selected tickets")},
+        ]
 
     def _get_bulk_action(self, value: str) -> Callable[[str], None] | None:
         return {
-            "1": partial(self._change_job_state, state=Ticket.Status.closed),
-            "3": self._remove_job,
+            "1": partial(self._change_ticket_state, status=Ticket.Status.closed),
+            "2": self._delete_ticket,
         }.get(value)
 
-    def _change_ticket_state(self, job_id: str, state: str) -> None:
-        tk.get_action("ap_support_update_cron_job")(
+    def _change_ticket_state(self, ticket_id: str, status: str) -> None:
+        tk.get_action("ap_support_ticket_update")(
             {"ignore_auth": True},
             {
-                "id": job_id,
-                "state": state,
+                "id": ticket_id,
+                "status": status,
             },
         )
 
-    def _remove_job(self, job_id: str) -> None:
-        tk.get_action("ap_support_remove_cron_job")(
-            {"ignore_auth": True}, {"id": job_id}
+    def _delete_ticket(self, ticket_id: str) -> None:
+        tk.get_action("ap_support_ticket_delete")(
+            {"ignore_auth": True},
+            {"id": ticket_id},
         )
 
 
@@ -156,7 +175,20 @@ class AddTicketView(MethodView):
         )
 
 
+class TicketReadView(MethodView):
+    def get(self, ticket_id: str) -> str:
+        ticket = tk.get_action("ap_support_ticket_show")(
+            {"ignore_auth": True},
+            {"id": ticket_id},
+        )
+
+        return tk.render("ap_support/ticket_read.html", extra_vars={"ticket": ticket})
+
+
 ap_support.add_url_rule("/", view_func=SupportListView.as_view("list"))
+ap_support.add_url_rule(
+    "/ticket/<ticket_id>", view_func=TicketReadView.as_view("ticket_read")
+)
 
 # HTMX
 ap_support.add_url_rule("/init_modal", view_func=init_modal)

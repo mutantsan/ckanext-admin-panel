@@ -12,6 +12,7 @@
     {% set attrs = {'class': 'form-control', 'required': 'true'} %}
 
     {{ form.input("subject", label=_("Subject"), value="", is_required=True, attrs=attrs) }}
+    {{ form.select('category', label=_('Category'), options=h.ap_support_get_category_options(), selected="", is_required=True, attrs=attrs) }}
 
     {% call form.textarea("text", label=_("Text"), value="", rows=12, is_required=True, attrs=attrs) %}
         <span class="editor-info-block">{% trans %}You can use <a href="#markdown" title="Markdown quick reference" data-bs-toggle="popover" data-bs-content="{{ markdown_tooltip }}" data-bs-html="true">Markdown formatting</a> here{% endtrans %}</span>

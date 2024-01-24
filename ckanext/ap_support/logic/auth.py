@@ -9,6 +9,12 @@ def ap_support_ticket_search(
     return _sysadmin_only()
 
 
+def ap_support_ticket_delete(
+    context: types.Context, data_dict: types.DataDict
+) -> types.AuthResult:
+    return _sysadmin_only()
+
+
 def ap_support_ticket_create(
     context: types.Context, data_dict: types.DataDict
 ) -> types.AuthResult:

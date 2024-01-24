@@ -19,9 +19,15 @@ def ticket_search(ignore_missing, unicode_safe, one_of) -> Schema:
 
 
 @validator_args
-def ticket_create(not_missing, unicode_safe, user_id_or_name_exists) -> Schema:
+def ticket_create(
+    not_missing,
+    unicode_safe,
+    user_id_or_name_exists,
+    ap_support_category_validator,
+) -> Schema:
     return {
         "subject": [not_missing, unicode_safe],
+        "category": [not_missing, unicode_safe, ap_support_category_validator],
         "text": [not_missing, unicode_safe],
         "author_id": [not_missing, unicode_safe, user_id_or_name_exists],
     }
@@ -29,4 +35,9 @@ def ticket_create(not_missing, unicode_safe, user_id_or_name_exists) -> Schema:
 
 @validator_args
 def ticket_show(ignore_missing, unicode_safe, ticket_id_exists) -> Schema:
+    return {"id": [ignore_missing, unicode_safe, ticket_id_exists]}
+
+
+@validator_args
+def ticket_delete(ignore_missing, unicode_safe, ticket_id_exists) -> Schema:
     return {"id": [ignore_missing, unicode_safe, ticket_id_exists]}

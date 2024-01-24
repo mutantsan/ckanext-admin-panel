@@ -4,7 +4,7 @@
 {% import 'macros/form.html' as form %}
 {% import 'admin_panel/macros/form.html' as ap_form %}
 
-{% block ap_main_class %} ap-log-list {% endblock %}
+{% block ap_main_class %} ap-cron-list {% endblock %}
 
 {% block breadcrumb_content %}
     <li>{% link_for _("Cron jobs"), named_route='ap_cron.manage' %}</li>

@@ -49,3 +49,19 @@ def ap_support_ticket_show(
     tk.check_access("ap_support_ticket_show", context, data_dict)
 
     return support_model.Ticket.get(data_dict["id"]).dictize(context)
+
+
+@tk.side_effect_free
+@validate(schema.ticket_delete)
+def ap_support_ticket_delete(
+    context: types.Context, data_dict: types.DataDict
+) -> DictizedTicket:
+    tk.check_access("ap_support_ticket_delete", context, data_dict)
+
+    ticket = support_model.Ticket.get(data_dict["id"])
+
+    ticket.delete()
+
+    context["session"].commit()
+
+    return True

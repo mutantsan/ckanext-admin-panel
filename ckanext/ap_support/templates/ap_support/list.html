@@ -4,33 +4,17 @@
 {% import 'macros/form.html' as form %}
 {% import 'admin_panel/macros/form.html' as ap_form %}
 
-{% block ap_main_class %} ap-log-list {% endblock %}
+{% block ap_main_class %} ap-ticket-list {% endblock %}
 
 {% block breadcrumb_content %}
-    <li>{% link_for _("Cron jobs"), named_route='ap_cron.manage' %}</li>
+    <li class="active">{% link_for _("Dashboard"), named_route='ap_support.list' %}</li>
 {% endblock breadcrumb_content %}
 
 {% block ap_content %}
-    <h1>{{ _("Cron jobs") }}</h1>
+    <h1>{{ _("Tickets") }}</h1>
 
-    <div class="cron-manage mb-2">
-        <button
-            type="button"
-            class="btn btn-success"
-            data-bs-toggle="modal"
-            data-bs-target="#add-cron-job">
-            {{ _("Add cron job")}}
-        </button>
-
-        <form class="d-inline-block" action="{{ h.url_for('ap_cron.run_active') }}" method="POST">
-            <button type="submit" class="btn btn-primary">
-                {{ _("Run active jobs")}}
-            </button>
-        </form>
-    </div>
-
-    <div class="row g-3" data-module="ap-cron-htmx">
-        <form action="{{ h.url_for('ap_cron.manage') }}" method="GET" id="ap-logs-filter" class="ap-table-filter">
+    <div class="row g-3">
+        <form action="{{ h.url_for('ap_support.list') }}" method="GET" id="ap-logs-filter" class="ap-table-filter">
             <div class="form-field">
                 <div class="search-input-wrapper">
                     {% call form.input("q", label=_("Search"), value=q, placeholder=_('Search')) %}
@@ -41,14 +25,14 @@
 
             <div class="form-buttons">
                 <button type="submit" class="btn btn-primary">{{ _("Filter") }}</button>
-                <a href="{{ h.url_for('ap_cron.manage') }}" class="btn btn-primary">{{ _("Clear") }}</a>
+                <a href="{{ h.url_for('ap_support.list') }}" class="btn btn-primary">{{ _("Clear") }}</a>
             </div>
 
             {{ form.hidden("sort", sort) }}
             {{ form.hidden("order_by", order_by) }}
         </form>
 
-        <form action="{{ h.url_for('ap_cron.manage') }}" method="POST">
+        <form action="{{ h.url_for('ap_support.list') }}" method="POST">
             {{ h.csrf_input() }}
 
             <div class="bulk-actions">
@@ -64,7 +48,7 @@
                 </button>
             </div>
 
-            {% snippet "admin_panel/config/snippets/sortable_table.html", items=page.items, columns=columns, empty_msg=_("No jobs available"), order_by=order_by, sort=sort, bulk_check=1, table_row_display=table_row_display %}
+            {% snippet "admin_panel/config/snippets/sortable_table.html", items=page.items, columns=columns, empty_msg=_("No jobs available"), order_by=order_by, sort=sort, bulk_check=1 %}
         </form>
 
     </div> <!-- row -->

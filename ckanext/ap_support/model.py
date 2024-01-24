@@ -72,6 +72,7 @@ class Ticket(tk.BaseModel):
     def add(cls, ticket_data: TicketData) -> DictizedTicket:
         ticket = cls(
             subject=ticket_data["subject"],
+            category=ticket_data["category"],
             text=ticket_data["text"],
             author_id=ticket_data["author_id"],
         )
@@ -86,6 +87,7 @@ class Ticket(tk.BaseModel):
             "id": self.id,
             "subject": self.subject,
             "status": self.status,
+            "category": self.category,
             "text": self.text,
             "author": self.author.as_dict(),
             "created_at": self.created_at.isoformat(),
