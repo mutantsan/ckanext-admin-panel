@@ -1,13 +1,17 @@
 from __future__ import annotations
+
 from typing import Any
+
 import sqlalchemy as sa
+from dominate import tags
+
 import ckan.plugins.toolkit as tk
 from ckan import model
-from dominate import tags
-from ckanext.collection.utils import Columns, UnionModelData, Filters
-from ckanext.collection.types import InputFilter, SelectFilter, LinkFilter
 
-from .base import ApCollection, RowAction, BulkAction
+from ckanext.collection.types import InputFilter, LinkFilter, SelectFilter
+from ckanext.collection.utils import Columns, Filters, UnionModelData
+
+from .base import ApCollection, BulkAction, RowAction
 
 
 class ContentCollection(ApCollection[Any]):
