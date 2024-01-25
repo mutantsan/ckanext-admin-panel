@@ -98,7 +98,7 @@ class CronJob(tk.BaseModel):
             "updated_at": self.updated_at.isoformat(),
             "last_run": self.last_run.isoformat() if self.last_run else None,
             "schedule": self.schedule,
-            "actions": self.get_actions,
+            "action": self.get_actions,
             "data": self.data,
             "state": self.state,
             "timeout": self.timeout,

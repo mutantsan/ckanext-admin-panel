@@ -13,7 +13,7 @@
 {% block ap_content %}
     <h1>{{ _("Cron jobs") }}</h1>
 
-    <div class="cron-manage mb-2" data-module="ap-cron-htmx" data-module-form-id="{{ collection.serializer.form_id }}">
+    <div class="cron-manage mb-2" data-module="ap-cron-htmx">
         <button
             type="button"
             class="btn btn-success"
@@ -29,13 +29,7 @@
         </form>
     </div>
 
-    <form action="{{ h.url_for('ap_cron.add') }}" method="POST" id="ap-cron-add">
-        {% snippet 'ap_cron/cron_new_modal.html' %}
-    </form>
-
-    <form action="{{ h.url_for('ap_cron.edit') }}" method="POST" id="ap-cron-add">
-        {% snippet 'ap_cron/cron_edit_modal.html' %}
-    </form>
+    {% snippet 'ap_cron/cron_new_modal.html' %}
 
     <div class="row g-3">
         {% if collection.data.total %}

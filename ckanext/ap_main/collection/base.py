@@ -14,7 +14,9 @@ from ckanext.collection.types import (
     TDataCollection,
     ValueSerializer,
 )
-from ckanext.collection.utils import Collection, HtmxTableSerializer
+from ckanext.collection.utils import Collection, HtmxTableSerializer, Columns
+
+import ckanext.ap_cron.col_renderers as cron_renderers
 
 
 def default_value_serializers(serializer: BaseSerializer) -> dict[str, ValueSerializer]:
@@ -34,6 +36,12 @@ def default_value_serializers(serializer: BaseSerializer) -> dict[str, ValueSeri
         )
         if value
         else "",
+        "schedule": lambda value, options, name, record, self: tk.literal(
+            cron_renderers.schedule([], record, value, **options)
+        ),
+        "last_run": lambda value, options, name, record, self: tk.literal(
+            cron_renderers.last_run([], record, value, **options)
+        ),
     }
 
 
@@ -65,10 +73,16 @@ class ApHtmxTableSerializer(HtmxTableSerializer[TDataCollection]):
     base_class: str = configurable_attribute("ap-collection")
 
     ensure_dictized = configurable_attribute(True)
+    push_url = True
 
     main_template: str = configurable_attribute(
         "collection/serialize/ap_htmx_table/main.html",
     )
+
+    table_template: str = configurable_attribute(
+        "collection/serialize/ap_htmx_table/table.html",
+    )
+
     record_template: str = configurable_attribute(
         "collection/serialize/ap_htmx_table/record.html",
     )
@@ -87,6 +101,10 @@ class ApHtmxTableSerializer(HtmxTableSerializer[TDataCollection]):
 
 class ApCollection(Collection[TData]):
     SerializerFactory = ApHtmxTableSerializer
+
+    ColumnsFactory = Columns.with_attributes(
+        width=configurable_attribute(default_factory=lambda self: {})
+    )
 
 
 class BulkActionOptions(TypedDict):

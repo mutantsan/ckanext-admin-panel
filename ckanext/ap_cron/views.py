@@ -11,6 +11,9 @@ import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 from ckan import types
 from ckan.lib.helpers import Page
+from ckan.logic import parse_params
+
+from ckanext.collection.shared import get_collection
 
 import ckanext.ap_cron.utils as cron_utils
 from ckanext.ap_cron import types as cron_types
@@ -35,23 +38,8 @@ class CronManagerView(MethodView):
         )
 
     def _prepare_data_dict(self) -> dict[str, Any]:
-        self.q = tk.request.args.get("q", "").strip()
-        self.order_by = tk.request.args.get("order_by", "name")
-        self.sort = tk.request.args.get("sort", "desc")
-
-        cron_jobs = tk.get_action("ap_cron_get_cron_job_list")({}, {})
-
-        cron_jobs = self._search_items(cron_jobs)
-        cron_jobs = self._sort_items(cron_jobs)
-
         return {
-            "page": self._get_pager(cron_jobs),
-            "columns": self._get_table_columns(),
-            "table_row_display": "ap_cron/cron_table_row.html",
-            "q": self.q,
-            "order_by": self.order_by,
-            "sort": self.sort,
-            "bulk_options": self._get_bulk_action_options(),
+            "collection": get_collection("ap-cron", parse_params(tk.request.args)),
         }
 
     def _search_items(self, item_list: list[dict[str, Any]]) -> list[dict[str, Any]]:

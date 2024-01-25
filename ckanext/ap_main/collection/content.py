@@ -1,4 +1,5 @@
 from __future__ import annotations
+from turtle import width
 
 from typing import Any
 
@@ -15,7 +16,7 @@ from .base import ApCollection, BulkAction, RowAction
 
 
 class ContentCollection(ApCollection[Any]):
-    ColumnsFactory = Columns.with_attributes(
+    ColumnsFactory = ApCollection.ColumnsFactory.with_attributes(
         names=[
             "bulk-action",
             "title",
@@ -25,7 +26,7 @@ class ContentCollection(ApCollection[Any]):
             "state",
             "metadata_created",
             "metadata_modified",
-            "actions",
+            "row_actions",
         ],
         sortable={
             "title",
@@ -52,7 +53,7 @@ class ContentCollection(ApCollection[Any]):
             "state": "State",
             "metadata_created": "Created at",
             "metadata_modified": "Modified at",
-            "actions": "Actions",
+            "row_actions": "Actions",
         },
         serializers={
             "creator_user_id": [("user_link", {})],

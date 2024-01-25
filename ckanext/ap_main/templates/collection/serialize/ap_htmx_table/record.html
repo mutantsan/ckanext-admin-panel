@@ -3,13 +3,13 @@
 #}
 
 {% extends "collection/serialize/htmx_table/record.html" %}
+
 {% set form_id = collection.serializer.form_id %}
 
 {% block value %}
-    {% if column == "actions" %}
+    {% if column == "row_actions" %}
         {# row actions can be gathered once inside `body` block of table.html. Remind me to move `selectattr` there #}
         {% for action in collection.filters.actions|selectattr("type", "equalto", "row_action") %}
-
             {% set params = {} %}
 
             {% for k, v in action.options.params.items() %}
@@ -36,9 +36,7 @@
 
     {% elif column == "bulk-action" %}
         <input type="checkbox" name="entity_id" value="{{ data[column] }}" form="{{ form_id }}--bulk-actions">
-
     {% else %}
         {{ super() }}
-
     {% endif %}
 {% endblock value %}
