@@ -309,17 +309,6 @@ def user_add_role_options() -> list[dict[str, str | int]]:
 
 
 @helper
-def content_list_type_options() -> list[dict[str, str | int]]:
-    """Return a list of options for a content list type filter"""
-    return [
-        {"value": "", "text": "Any"},
-        {"value": "dataset", "text": "Dataset"},
-        {"value": "group", "text": "Group"},
-        {"value": "organization", "text": "Organization"},
-    ]
-
-
-@helper
 def generate_page_unique_class() -> str:
     """Build a unique css class for each page"""
 

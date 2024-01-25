@@ -63,7 +63,7 @@ class CronCollection(ApCollection[Any]):
             "row_actions": "15%",
         },
         serializers={
-            "data": [("ap_cron_json_display", {})],
+            "data": [("json_display", {})],
             "schedule": [("schedule", {})],
             "updated_at": [("date", {})],
             "last_run": [("last_run", {})],
@@ -84,21 +84,12 @@ class CronCollection(ApCollection[Any]):
                 options={
                     "label": "Action",
                     "options": [
-                        {"value": "1", "text": "Restore selected entities(s)"},
-                        {"value": "2", "text": "Delete selected entities(s)"},
-                        {"value": "3", "text": "Purge selected entities(s)"},
+                        {"value": "1", "text": "Disable selected job"},
+                        {"value": "2", "text": "Enable selected job"},
+                        {"value": "3", "text": "Delete selected job"},
                     ],
                 },
-            ),
-            RowAction(
-                name="edit",
-                type="row_action",
-                options={
-                    "endpoint": "home.about",
-                    "label": "Edit",
-                    "params": {},
-                },
-            ),
+            )
         ],
         static_filters=[
             InputFilter(
@@ -116,31 +107,21 @@ class CronCollection(ApCollection[Any]):
                     "label": "State",
                     "options": [
                         {"value": "", "text": "Any"},
-                        {"value": model.State.DELETED, "text": "Deleted"},
-                        {"value": model.State.ACTIVE, "text": "Active"},
-                    ],
-                },
-            ),
-            SelectFilter(
-                name="type",
-                type="select",
-                options={
-                    "label": "Type",
-                    "options": [
-                        {"value": "", "text": "Any"},
-                        {"value": "dataset", "text": "Dataset"},
-                        {"value": "group", "text": "Group"},
-                        {"value": "organization", "text": "Organization"},
+                        {"value": CronJob.State.active, "text": "Active"},
+                        {"value": CronJob.State.disabled, "text": "Disabled"},
+                        {"value": CronJob.State.pending, "text": "Pending"},
+                        {"value": CronJob.State.running, "text": "Running"},
+                        {"value": CronJob.State.failed, "text": "Failed"},
+                        {"value": CronJob.State.finished, "text": "Finished"},
                     ],
                 },
             ),
             LinkFilter(
-                name="type",
+                name="clear",
                 type="link",
                 options={
                     "label": "Clear",
-                    "endpoint": "ap_content.list",
-                    "kwargs": {},
+                    "endpoint": "ap_cron.manage",
                 },
             ),
         ],

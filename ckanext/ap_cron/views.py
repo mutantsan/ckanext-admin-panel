@@ -10,7 +10,6 @@ from flask.views import MethodView
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 from ckan import types
-from ckan.lib.helpers import Page
 from ckan.logic import parse_params
 
 from ckanext.collection.shared import get_collection
@@ -34,96 +33,10 @@ class CronManagerView(MethodView):
     def get(self) -> Union[str, Response]:
         return tk.render(
             "ap_cron/cron_list.html",
-            extra_vars=self._prepare_data_dict(),
-        )
-
-    def _prepare_data_dict(self) -> dict[str, Any]:
-        return {
-            "collection": get_collection("ap-cron", parse_params(tk.request.args)),
-        }
-
-    def _search_items(self, item_list: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        if not self.q:
-            return item_list
-
-        return [item for item in item_list if self.q.lower() in item["name"].lower()]
-
-    def _sort_items(self, item_list: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        self.order_by = tk.request.args.get("order_by", "last_run")
-        self.sort = tk.request.args.get("sort", "desc")
-
-        return sorted(
-            item_list,
-            key=lambda x: x.get(self.order_by) or "",
-            reverse=self.sort == "desc",
-        )
-
-    def _get_pager(self, cron_jobs: list[dict[str, Any]]) -> Page:
-        page_number = tk.h.get_page_number(tk.request.args)
-        default_limit: int = tk.config.get("ckan.user_list_limit")
-        limit = int(tk.request.args.get("limit", default_limit))
-
-        return Page(
-            collection=cron_jobs,
-            page=page_number,
-            url=tk.h.pager_url,
-            item_count=len(cron_jobs),
-            items_per_page=limit,
-        )
-
-    def _get_table_columns(self) -> list[dict[str, Any]]:
-        return [
-            tk.h.ap_table_column("name", width="15%"),
-            tk.h.ap_table_column("actions", column_renderer="ap_list", width="15%"),
-            tk.h.ap_table_column(
-                "data",
-                column_renderer="ap_cron_json_display",
-                width="26%",
-                sortable=False,
-            ),
-            tk.h.ap_table_column(
-                "schedule",
-                column_renderer="ap_cron_schedule",
-                width="10%",
-                sortable=False,
-            ),
-            tk.h.ap_table_column(
-                "updated_at",
-                label="Updated at",
-                column_renderer="ap_date",
-                width="7%",
-                sortable=False,
-            ),
-            tk.h.ap_table_column(
-                "last_run",
-                label="Last run",
-                column_renderer="ap_cron_last_run",
-                width="7%",
-            ),
-            tk.h.ap_table_column("state", label="State", width="5%"),
-            tk.h.ap_table_column(
-                "actions",
-                column_renderer="ap_action_render",
-                width="15%",
-                sortable=False,
-            ),
-        ]
-
-    def _get_bulk_action_options(self):
-        return [
-            {
-                "value": "1",
-                "text": tk._("Disable selected job"),
+            extra_vars={
+                "collection": get_collection("ap-cron", parse_params(tk.request.args)),
             },
-            {
-                "value": "2",
-                "text": tk._("Enable selected job"),
-            },
-            {
-                "value": "3",
-                "text": tk._("Delete selected job"),
-            },
-        ]
+        )
 
     def post(self) -> Response:
         bulk_action = tk.request.form.get("bulk-action")

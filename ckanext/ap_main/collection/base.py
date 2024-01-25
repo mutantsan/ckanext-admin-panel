@@ -42,6 +42,9 @@ def default_value_serializers(serializer: BaseSerializer) -> dict[str, ValueSeri
         "last_run": lambda value, options, name, record, self: tk.literal(
             cron_renderers.last_run([], record, value, **options)
         ),
+        "json_display": lambda value, options, name, record, self: tk.literal(
+            cron_renderers.json_display([], record, value, **options)
+        ),
     }
 
 
