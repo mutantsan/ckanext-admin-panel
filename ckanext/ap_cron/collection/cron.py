@@ -2,13 +2,14 @@ from __future__ import annotations
 
 from typing import Any
 
+import sqlalchemy as sa
 from dominate import tags
 
 import ckan.plugins.toolkit as tk
 from ckan import model
 
 from ckanext.collection.types import InputFilter, LinkFilter, SelectFilter
-from ckanext.collection.utils import Columns, Filters, ModelData
+from ckanext.collection.utils import Columns, Filters, ModelData, UnionModelData
 
 from ckanext.ap_main.collection.base import (
     ApCollection,
@@ -70,10 +71,22 @@ class CronCollection(ApCollection[Any]):
         },
     )
 
-    DataFactory = ModelData.with_attributes(
+    DataFactory = UnionModelData.with_attributes(
         model=CronJob,
         use_naive_filters=True,
         use_naive_search=True,
+        statements=[
+            model.Session.query(
+                CronJob.id.label("bulk-action"),
+                CronJob.name.label("name"),
+                CronJob.actions.label("actions"),
+                CronJob.data.label("data"),
+                CronJob.schedule.label("schedule"),
+                CronJob.updated_at.label("updated_at"),
+                CronJob.last_run.label("last_run"),
+                CronJob.state.label("state"),
+            )
+        ],
     )
 
     FiltersFactory = Filters.with_attributes(

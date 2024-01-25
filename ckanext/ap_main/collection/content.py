@@ -1,5 +1,4 @@
 from __future__ import annotations
-from turtle import width
 
 from typing import Any
 
@@ -10,7 +9,7 @@ import ckan.plugins.toolkit as tk
 from ckan import model
 
 from ckanext.collection.types import InputFilter, LinkFilter, SelectFilter
-from ckanext.collection.utils import Columns, Filters, UnionModelData
+from ckanext.collection.utils import Filters, UnionModelData
 
 from .base import ApCollection, BulkAction, RowAction
 
