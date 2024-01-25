@@ -1,0 +1,28 @@
+{# Bulk actions dropdown.
+
+This widget does not exist in ckanext-collection. We implement it as a POST
+form containing a series of Filers with type `bulk_action`.
+
+Form is submitted to the current URL and corresponding view must implement
+logic for handling this submission.
+
+Variables:
+collection - Collection object that we are rendering right now
+
+#}
+{% import 'macros/form.html' as form %}
+{% set form_id = collection.serializer.form_id %}
+
+<form method="POST" id="{{ form_id }}--bulk-actions">
+    {{ h.csrf_input() }}
+
+    <div class="bulk-actions">
+        {% for action in collection.filters.actions|selectattr("type", "equalto", "bulk_action") %}
+            {{ form.select(action.name, label=_(action.options.label), options=action.options.options, selected="") }}
+        {% endfor %}
+
+        <button type="submit" id="bulk-submit" class="btn btn-primary mb-3">
+            {{ _("Apply to selected items") }}
+        </button>
+    </div>
+</form>

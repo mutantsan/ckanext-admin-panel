@@ -1,5 +1,9 @@
 ckan.module("ap-bulk-check", function ($) {
     return {
+        options: {
+            selector: ".checkbox-cell-row input",
+        },
+
         initialize() {
             $.proxyAll(this, /_on/);
 
@@ -7,7 +11,7 @@ ckan.module("ap-bulk-check", function ($) {
         },
 
         _onClick(e) {
-            $(".checkbox-cell-row input").prop("checked", $(e.target).prop("checked"));
+            $(this.options.selector).prop("checked", $(e.target).prop("checked"));
         },
     };
 });
