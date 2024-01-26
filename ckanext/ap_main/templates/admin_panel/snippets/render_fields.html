@@ -1,0 +1,12 @@
+{#}
+    This template must be dropped if this PR will be merged
+    https://github.com/ckan/ckanext-scheming/pull/403
+
+    fields - a list of scheming field dictionaries
+    data - form data fields
+    errors - A dict of errors for the fields
+{#}
+
+{% for field in fields if field.form_snippet is not none %}
+    {% snippet 'scheming/snippets/form_field.html', field=field, data=data, errors=errors %}
+{% endfor %}

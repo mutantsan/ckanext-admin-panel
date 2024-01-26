@@ -313,3 +313,20 @@ def generate_page_unique_class() -> str:
     """Build a unique css class for each page"""
 
     return tk.h.ap_munge_string((f"ap-{tk.request.endpoint}"))
+
+
+@helper
+def get_arbitrary_schema(schema_id: str) -> dict[Any, Any] | None:
+    """This is a temporary code. We've created a PR #403 to ckanext-scheming
+    to support an arbitrary schemas. For now, we are creating a polyfill"""
+    from ckanext.scheming.plugins import _load_schemas, _expand_schemas
+
+    SCHEMA_OPTION = "scheming.arbitrary_schemas"
+    SCHEMA_TYPE_FIELD = "schema_id"
+
+    schema_urls = tk.config.get(SCHEMA_OPTION, "").split()
+    schemas = _load_schemas(schema_urls, SCHEMA_TYPE_FIELD)
+
+    expanded_schemas = _expand_schemas(schemas)
+
+    return expanded_schemas.get(schema_id)
