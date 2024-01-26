@@ -1,0 +1,26 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block breadcrumb_content %}
+    <li>{% link_for _(breadcrum_label), named_route='home.index' %}</li>
+{% endblock breadcrumb_content %}
+
+{% block ap_content %}
+    <h1>{{ _(page_title) }}</h1>
+
+    {% block before_form %}{% endblock %}
+
+    {% block form %}
+        <form method="POST">
+            {% block form_fields %}
+                {% snippet 'admin_panel/snippets/render_fields.html', fields=schema.fields, data=data, errors=errors %}
+            {% endblock %}
+
+            {% block form_buttons %}
+                <button type="submit" class="btn btn-primary">{{ _('Update') }}</button>
+            {% endblock %}
+
+        </form>
+    {% endblock %}
+
+    {% block after_form %}{% endblock %}
+{% endblock ap_content %}
