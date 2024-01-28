@@ -4,14 +4,19 @@ about: An example how to use scheming for config page
 
 fields:
   - field_name: ckanext.ap_example.footer_html
-    label: Footer HTML
+    label: CKEditor 5
     form_snippet: wysiwyg_ckeditor5.html
     display_snippet: wysiwyg_ckeditor5.html
 
   - field_name: ckanext.ap_example.header_html
-    label: Header HTML
+    label: Quill
     form_snippet: wysiwyg_quill.html
     display_snippet: wysiwyg_quill.html
+
+  - field_name: ckanext.ap_example.summernote
+    label: Summernote
+    form_snippet: wysiwyg_summernote.html
+    display_snippet: wysiwyg_summernote.html
 
   - field_name: ckanext.ap_example.cache.duration
     label: Cache TTL

@@ -100,6 +100,7 @@ class ApConfigurationPageView(MethodView):
         self.schema = self.get_config_schema()
         self.data = parse_params(tk.request.form)
         self.disable_non_editable_fields()
+        self.throw_away_undeclared_fields()
 
         try:
             if self.data.pop("reset", False):
@@ -121,3 +122,6 @@ class ApConfigurationPageView(MethodView):
         tk.h.flash_success(self.success_update_message)
 
         return tk.redirect_to(tk.request.endpoint)
+
+    def throw_away_undeclared_fields(self) -> None:
+        self.data = {k: v for k, v in self.data.items() if k in tk.config}

@@ -4,9 +4,14 @@ groups:
     options:
       - key: ckanext.ap_example.footer_html
         editable: true
+        validators: ignore_empty unicode_safe wysiwyg_sanitize_html
 
       - key: ckanext.ap_example.header_html
         editable: true
+
+      - key: ckanext.ap_example.summernote
+        editable: true
+        validators: ignore_empty unicode_safe wysiwyg_sanitize_html
 
       - key: ckanext.ap_example.drupal_url
         editable: true
