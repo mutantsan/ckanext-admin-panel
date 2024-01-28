@@ -120,4 +120,4 @@ class ApConfigurationPageView(MethodView):
 
         tk.h.flash_success(self.success_update_message)
 
-        return self.get()
+        return tk.redirect_to(tk.request.endpoint)
