@@ -8,7 +8,7 @@ from dominate import tags
 import ckan.plugins.toolkit as tk
 from ckan import model
 
-from ckanext.collection.types import InputFilter, LinkFilter, SelectFilter
+from ckanext.collection.types import InputFilter, ButtonFilter, SelectFilter
 from ckanext.collection.utils import Filters, UnionSaData
 
 from .base import ApCollection, BulkAction, RowAction
@@ -171,13 +171,15 @@ class ContentCollection(ApCollection[Any]):
                     ],
                 },
             ),
-            LinkFilter(
+            ButtonFilter(
                 name="type",
-                type="link",
+                type="button",
                 options={
                     "label": "Clear",
-                    "endpoint": "ap_content.list",
-                    "kwargs": {},
+                    "type": "button",
+                    "attrs": {
+                        "onclick": "$(this).closest('form').find('input,select').val('').prevObject[0].requestSubmit()"
+                    },
                 },
             ),
         ],

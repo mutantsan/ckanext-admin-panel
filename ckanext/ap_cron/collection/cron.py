@@ -7,7 +7,7 @@ from dominate import tags
 import ckan.plugins.toolkit as tk
 import sqlalchemy as sa
 
-from ckanext.collection.types import InputFilter, LinkFilter, SelectFilter
+from ckanext.collection.types import InputFilter, ButtonFilter, SelectFilter
 from ckanext.collection.utils import Filters, StatementSaData
 
 from ckanext.ap_main.collection.base import (
@@ -127,10 +127,16 @@ class CronCollection(ApCollection[Any]):
                     ],
                 },
             ),
-            LinkFilter(
-                name="clear",
-                type="link",
-                options={"label": "Clear", "endpoint": "ap_cron.manage", "kwargs": {}},
+            ButtonFilter(
+                name="type",
+                type="button",
+                options={
+                    "label": "Clear",
+                    "type": "button",
+                    "attrs": {
+                        "onclick": "$(this).closest('form').find('input,select').val('').prevObject[0].requestSubmit()"
+                    },
+                },
             ),
         ],
     )

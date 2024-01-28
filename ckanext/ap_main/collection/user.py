@@ -8,7 +8,7 @@ import sqlalchemy as sa
 import ckan.plugins.toolkit as tk
 from ckan import model
 
-from ckanext.collection.types import InputFilter, LinkFilter, SelectFilter
+from ckanext.collection.types import InputFilter, ButtonFilter, SelectFilter
 from ckanext.collection.utils import Filters, ModelData
 
 from .base import ApCollection, BulkAction, RowAction
@@ -135,13 +135,15 @@ class UserCollection(ApCollection[Any]):
                     ],
                 },
             ),
-            LinkFilter(
+            ButtonFilter(
                 name="type",
-                type="link",
+                type="button",
                 options={
                     "label": "Clear",
-                    "endpoint": "ap_user.list",
-                    "kwargs": {},
+                    "type": "button",
+                    "attrs": {
+                        "onclick": "$(this).closest('form').find('input,select').val('').prevObject[0].requestSubmit()"
+                    },
                 },
             ),
         ],

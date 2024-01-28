@@ -6,7 +6,7 @@ import logging
 from ckan import model
 from ckanext.collection.types import (
     InputFilter,
-    LinkFilter,
+    ButtonFilter,
     Filter,
     SelectOption,
 )
@@ -92,13 +92,15 @@ class DbLogCollection(ApCollection[Any]):
                         "options": log_type_options,
                     },
                 ),
-                LinkFilter(
+                ButtonFilter(
                     name="type",
-                    type="link",
+                    type="button",
                     options={
                         "label": "Clear",
-                        "endpoint": "ap_report.logs",
-                        "kwargs": {},
+                        "type": "button",
+                        "attrs": {
+                            "onclick": "$(this).closest('form').find('input,select').val('').prevObject[0].requestSubmit()"
+                        },
                     },
                 ),
             ]
