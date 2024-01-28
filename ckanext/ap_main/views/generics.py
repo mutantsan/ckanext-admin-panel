@@ -103,7 +103,7 @@ class ApConfigurationPageView(MethodView):
         self.throw_away_undeclared_fields()
 
         try:
-            if self.data.pop("reset", False):
+            if tk.request.form.get("reset"):
                 tk.get_action("editable_config_reset")(
                     {},
                     {"keys": list(self.data)},
