@@ -1,4 +1,5 @@
 from __future__ import annotations
+import logging
 
 from typing import Any, Literal, Sequence
 
@@ -47,7 +48,7 @@ def default_value_serializers(serializer: BaseSerializer) -> dict[str, ValueSeri
             cron_renderers.json_display([], record, value, **options)
         ),
         "bool": lambda value, options, name, record, self: "Yes" if value else "No",
-        "log_level": lambda value, options, name, record, self: tk.h.ap_get_log_level_label(
+        "log_level": lambda value, options, name, record, self: logging.getLevelName(
             value
         ),
         "none_as_empty": lambda value, options, name, record, self: value

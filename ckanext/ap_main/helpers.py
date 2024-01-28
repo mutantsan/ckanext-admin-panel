@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from functools import lru_cache
 from typing import Any, Optional
 from urllib.parse import urlencode
 
@@ -12,7 +11,6 @@ import ckan.plugins.toolkit as tk
 from ckanext.toolbelt.decorators import Collector
 
 import ckanext.ap_main.config as ap_config
-import ckanext.ap_main.model as ap_model
 import ckanext.ap_main.utils as ap_utils
 from ckanext.ap_main.interfaces import IAdminPanel
 from ckanext.ap_main.types import ConfigurationItem, SectionConfig, ToolbarButton
@@ -169,26 +167,7 @@ def add_url_param(key: str, value: str) -> str:
     )
 
 
-@helper
-def user_list_state_options() -> list[dict[str, str]]:
-    """Return a list of options for a user list state select"""
-    return [
-        {"value": "any", "text": "Any"},
-        {"value": model.State.DELETED, "text": "Deleted"},
-        {"value": model.State.ACTIVE, "text": "Active"},
-    ]
-
-
-@helper
-def user_list_role_options() -> list[dict[str, str]]:
-    """Return a list of options for a user list role select"""
-    return [
-        {"value": "any", "text": "Any"},
-        {"value": "sysadmin", "text": "Sysadmin"},
-        {"value": "user", "text": "User"},
-    ]
-
-
+# TODO: remove after updating mailcraft
 @helper
 def table_column(
     name: str,
@@ -225,6 +204,7 @@ def table_column(
     }
 
 
+# TODO: remove after updating mailcraft
 @helper
 def table_action(
     endpoint: str,
@@ -254,39 +234,6 @@ def table_action(
         "params": params or {},
         "attributes": attributes or {},
     }
-
-
-@helper
-def log_list_type_options() -> list[dict[str, str | int]]:
-    """Return a list of options for a log list type multi select"""
-    return [
-        {"value": log_name, "text": log_name}
-        for log_name in sorted({log["name"] for log in ap_model.ApLogs.all()})
-    ]
-
-
-@helper
-def log_list_level_options() -> list[dict[str, str | int]]:
-    """Return a list of options for a log list level multi select"""
-    return [
-        {"value": ap_model.ApLogs.Level.NOTSET, "text": "NOTSET"},
-        {"value": ap_model.ApLogs.Level.DEBUG, "text": "DEBUG"},
-        {"value": ap_model.ApLogs.Level.INFO, "text": "INFO"},
-        {"value": ap_model.ApLogs.Level.WARNING, "text": "WARNING"},
-        {"value": ap_model.ApLogs.Level.ERROR, "text": "ERROR"},
-        {"value": ap_model.ApLogs.Level.ERROR, "text": "CRITICAL"},
-    ]
-
-
-@helper
-@lru_cache(maxsize=None)
-def get_log_level_label(level: int) -> str:
-    """Return a list of options for a log list level multi select"""
-    levels: dict[int, str] = {
-        int(opt["value"]): str(opt["text"]) for opt in tk.h.ap_log_list_level_options()
-    }
-
-    return levels.get(level, levels[0])
 
 
 @helper

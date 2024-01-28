@@ -1,4 +1,5 @@
 from __future__ import annotations
+import logging
 
 from ckan.plugins import toolkit as tk
 
@@ -48,7 +49,7 @@ def action_render(
 def log_level(
     rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue, **kwargs
 ) -> str:
-    return tk.h.ap_get_log_level_label(value)
+    return logging.getLevelName(value)
 
 
 @renderer

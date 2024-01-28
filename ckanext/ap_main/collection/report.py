@@ -2,12 +2,11 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Sequence
 import sqlalchemy as sa
-
+import logging
 from ckan import model
 from ckanext.collection.types import (
     InputFilter,
     LinkFilter,
-    SelectFilter,
     Filter,
     SelectOption,
 )
@@ -76,12 +75,12 @@ class DbLogCollection(ApCollection[Any]):
                     options={
                         "label": "Level",
                         "options": [
-                            {"value": str(ApLogs.Level.NOTSET), "text": "NOTSET"},
-                            {"value": str(ApLogs.Level.DEBUG), "text": "DEBUG"},
-                            {"value": str(ApLogs.Level.INFO), "text": "INFO"},
-                            {"value": str(ApLogs.Level.WARNING), "text": "WARNING"},
-                            {"value": str(ApLogs.Level.ERROR), "text": "ERROR"},
-                            {"value": str(ApLogs.Level.CRITICAL), "text": "CRITICAL"},
+                            {"value": str(logging.NOTSET), "text": "NOTSET"},
+                            {"value": str(logging.DEBUG), "text": "DEBUG"},
+                            {"value": str(logging.INFO), "text": "INFO"},
+                            {"value": str(logging.WARNING), "text": "WARNING"},
+                            {"value": str(logging.ERROR), "text": "ERROR"},
+                            {"value": str(logging.CRITICAL), "text": "CRITICAL"},
                         ],
                     },
                 ),

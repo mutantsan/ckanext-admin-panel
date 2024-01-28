@@ -15,17 +15,9 @@ from ckan.plugins import toolkit as tk
 log = logging.getLogger(__name__)
 
 
-class ApLogs(tk.BaseModel):
+class ApLogs(tk.BaseModel):  # type: ignore
     __tablename__ = "ap_logs"
     session: ClassVar[Session] = mock.MagicMock()
-
-    class Level:
-        NOTSET = 0
-        DEBUG = 10
-        INFO = 20
-        WARNING = 30
-        ERROR = 40
-        CRITICAL = 50
 
     id = Column(Text, primary_key=True, default=make_uuid)
 
