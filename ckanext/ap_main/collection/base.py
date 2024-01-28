@@ -48,6 +48,10 @@ def default_value_serializers(serializer: BaseSerializer) -> dict[str, ValueSeri
     }
 
 
+class ApColumns(Columns[TDataCollection]):
+    width = configurable_attribute(default_factory=lambda self: {})
+
+
 class ApHtmxTableSerializer(HtmxTableSerializer[TDataCollection]):
     """Main table serializer.
 
@@ -102,12 +106,11 @@ class ApHtmxTableSerializer(HtmxTableSerializer[TDataCollection]):
     )
 
 
+
 class ApCollection(Collection[TData]):
     SerializerFactory = ApHtmxTableSerializer
 
-    ColumnsFactory = Columns.with_attributes(
-        width=configurable_attribute(default_factory=lambda self: {})
-    )
+    ColumnsFactory = ApColumns
 
 
 class BulkActionOptions(TypedDict):

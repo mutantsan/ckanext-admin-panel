@@ -2,19 +2,18 @@ from __future__ import annotations
 
 from typing import Any
 
-import sqlalchemy as sa
 from dominate import tags
 
 import ckan.plugins.toolkit as tk
-from ckan import model
+import sqlalchemy as sa
 
 from ckanext.collection.types import InputFilter, LinkFilter, SelectFilter
-from ckanext.collection.utils import Columns, Filters, ModelData, UnionModelData
+from ckanext.collection.utils import Filters, StatementSaData
 
 from ckanext.ap_main.collection.base import (
     ApCollection,
+    ApColumns,
     BulkAction,
-    RowAction,
     ApHtmxTableSerializer,
 )
 
@@ -26,7 +25,7 @@ class CronCollection(ApCollection[Any]):
         record_template="ap_cron/cron_record.html"
     )
 
-    ColumnsFactory = Columns.with_attributes(
+    ColumnsFactory = ApColumns.with_attributes(
         names=[
             "bulk-action",
             "name",
@@ -71,22 +70,20 @@ class CronCollection(ApCollection[Any]):
         },
     )
 
-    DataFactory = UnionModelData.with_attributes(
+    DataFactory = StatementSaData.with_attributes(
         model=CronJob,
         use_naive_filters=True,
         use_naive_search=True,
-        statements=[
-            model.Session.query(
-                CronJob.id.label("bulk-action"),
-                CronJob.name.label("name"),
-                CronJob.actions.label("actions"),
-                CronJob.data.label("data"),
-                CronJob.schedule.label("schedule"),
-                CronJob.updated_at.label("updated_at"),
-                CronJob.last_run.label("last_run"),
-                CronJob.state.label("state"),
-            )
-        ],
+        statement=sa.select(
+            CronJob.id.label("bulk-action"),
+            CronJob.name.label("name"),
+            CronJob.actions.label("actions"),
+            CronJob.data.label("data"),
+            CronJob.schedule.label("schedule"),
+            CronJob.updated_at.label("updated_at"),
+            CronJob.last_run.label("last_run"),
+            CronJob.state.label("state"),
+        ),
     )
 
     FiltersFactory = Filters.with_attributes(
@@ -132,10 +129,7 @@ class CronCollection(ApCollection[Any]):
             LinkFilter(
                 name="clear",
                 type="link",
-                options={
-                    "label": "Clear",
-                    "endpoint": "ap_cron.manage",
-                },
+                options={"label": "Clear", "endpoint": "ap_cron.manage", "kwargs": {}},
             ),
         ],
     )

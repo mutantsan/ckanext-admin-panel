@@ -9,13 +9,13 @@ import ckan.plugins.toolkit as tk
 from ckan import model
 
 from ckanext.collection.types import InputFilter, LinkFilter, SelectFilter
-from ckanext.collection.utils import Filters, UnionModelData
+from ckanext.collection.utils import Filters, UnionSaData
 
-from .base import ApCollection, BulkAction, RowAction
+from .base import ApCollection, BulkAction, RowAction, ApColumns
 
 
 class ContentCollection(ApCollection[Any]):
-    ColumnsFactory = ApCollection.ColumnsFactory.with_attributes(
+    ColumnsFactory = ApColumns.with_attributes(
         names=[
             "bulk-action",
             "title",
@@ -61,7 +61,7 @@ class ContentCollection(ApCollection[Any]):
         },
     )
 
-    DataFactory = UnionModelData.with_attributes(
+    DataFactory = UnionSaData.with_attributes(
         use_naive_filters=True,
         use_naive_search=True,
         statements=[

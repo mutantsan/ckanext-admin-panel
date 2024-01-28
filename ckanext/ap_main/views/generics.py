@@ -58,14 +58,18 @@ class ApConfigurationPageView(MethodView):
         return schema
 
     def get_config_form_data(self) -> dict[str, Any]:
-        """Fetch configuration values from a CKANConfig"""
+        """Fetch/humanize configuration values from a CKANConfig"""
+        from ckanext.editable_config.shared import value_as_string
+
         data = {}
 
         for field in self.schema["fields"]:
             if field["field_name"] not in tk.config:
                 continue
 
-            data[field["field_name"]] = tk.config[field["field_name"]]
+            data[field["field_name"]] = value_as_string(
+                field["field_name"], tk.config[field["field_name"]]
+            )
 
         return data
 
@@ -98,10 +102,16 @@ class ApConfigurationPageView(MethodView):
         self.disable_non_editable_fields()
 
         try:
-            tk.get_action("editable_config_change")(
-                {"user": tk.current_user.name},
-                {"options": self.data},
-            )
+            if self.data.pop("reset", False):
+                tk.get_action("editable_config_reset")(
+                    {},
+                    {"keys": list(self.data)},
+                )
+            else:
+                tk.get_action("editable_config_change")(
+                    {},
+                    {"options": self.data},
+                )
         except tk.ValidationError as e:
             return tk.render(
                 self.render_template,
