@@ -10,6 +10,7 @@ from ckanext.collection.shared import configurable_attribute
 from ckanext.collection.types import (
     BaseSerializer,
     Filter,
+    SelectFilterOptions,
     TData,
     TDataCollection,
     ValueSerializer,
@@ -45,6 +46,13 @@ def default_value_serializers(serializer: BaseSerializer) -> dict[str, ValueSeri
         "json_display": lambda value, options, name, record, self: tk.literal(
             cron_renderers.json_display([], record, value, **options)
         ),
+        "bool": lambda value, options, name, record, self: "Yes" if value else "No",
+        "log_level": lambda value, options, name, record, self: tk.h.ap_get_log_level_label(
+            value
+        ),
+        "none_as_empty": lambda value, options, name, record, self: value
+        if value is not None
+        else "",
     }
 
 
@@ -99,6 +107,9 @@ class ApHtmxTableSerializer(HtmxTableSerializer[TDataCollection]):
     action_template: str = configurable_attribute(
         "collection/serialize/ap_htmx_table/action.html",
     )
+    filter_template: str = configurable_attribute(
+        "collection/serialize/ap_htmx_table/filter.html",
+    )
 
     # TODO: replace with `get_all_renderers` after signature update
     value_serializers = configurable_attribute(
@@ -106,10 +117,8 @@ class ApHtmxTableSerializer(HtmxTableSerializer[TDataCollection]):
     )
 
 
-
 class ApCollection(Collection[TData]):
     SerializerFactory = ApHtmxTableSerializer
-
     ColumnsFactory = ApColumns
 
 
@@ -135,3 +144,7 @@ class RowAction(Filter[RowActionOptions]):
 
 class BulkAction(Filter[BulkActionOptions]):
     type: Literal["bulk_action"]
+
+
+class MultiSelectFilter(Filter[SelectFilterOptions]):
+    type: Literal["multiselect"]

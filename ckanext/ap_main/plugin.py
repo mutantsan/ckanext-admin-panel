@@ -43,4 +43,6 @@ class AdminPanelPlugin(p.SingletonPlugin):
     def get_collection_factories(self) -> dict[str, CollectionFactory]:
         return {
             "ap-content": collection.ContentCollection,
+            "ap-user": collection.UserCollection,
+            "ap-logs": collection.DbLogCollection,
         }

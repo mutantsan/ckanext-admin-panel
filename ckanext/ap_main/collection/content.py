@@ -11,11 +11,11 @@ from ckan import model
 from ckanext.collection.types import InputFilter, LinkFilter, SelectFilter
 from ckanext.collection.utils import Filters, UnionSaData
 
-from .base import ApCollection, BulkAction, RowAction, ApColumns
+from .base import ApCollection, BulkAction, RowAction
 
 
 class ContentCollection(ApCollection[Any]):
-    ColumnsFactory = ApColumns.with_attributes(
+    ColumnsFactory = ApCollection.ColumnsFactory.with_attributes(
         names=[
             "bulk-action",
             "title",
