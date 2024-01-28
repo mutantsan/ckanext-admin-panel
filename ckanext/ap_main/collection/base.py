@@ -139,12 +139,23 @@ class RowActionOptions(TypedDict):
     icon: NotRequired[str]
 
 
+class GlobalActionOptions(TypedDict):
+    """Options of the global_action filter."""
+
+    label: str
+    attrs: dict[str, Any]
+
+
 class RowAction(Filter[RowActionOptions]):
     type: Literal["row_action"]
 
 
 class BulkAction(Filter[BulkActionOptions]):
     type: Literal["bulk_action"]
+
+
+class GlobalAction(Filter[GlobalActionOptions]):
+    type: Literal["global_action"]
 
 
 class MultiSelectFilter(Filter[SelectFilterOptions]):

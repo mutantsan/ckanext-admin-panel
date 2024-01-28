@@ -36,6 +36,7 @@
 
     {% elif column == "bulk-action" %}
         <input type="checkbox" name="entity_id" value="{{ data[column] }}" form="{{ form_id }}--bulk-actions">
+
     {% else %}
         {{ super() }}
     {% endif %}

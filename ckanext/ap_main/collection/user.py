@@ -4,7 +4,7 @@ from typing import Any
 from ckanext.collection.shared import configurable_attribute
 
 from dominate import tags
-
+import sqlalchemy as sa
 import ckan.plugins.toolkit as tk
 from ckan import model
 
@@ -61,8 +61,11 @@ class UserCollection(ApCollection[Any]):
     DataFactory = ModelData.with_attributes(
         use_naive_filters=True,
         use_naive_search=True,
-        is_scalar=True,
         model=model.User,
+        static_columns=[
+            *sa.inspect(model.User).columns,
+            model.User.id.label("bulk-action"),
+        ],
         static_filters=configurable_attribute(
             default_factory=lambda self: [model.User.name != tk.config["ckan.site_id"]]
         ),
