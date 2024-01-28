@@ -76,6 +76,7 @@ class CronCollection(ApCollection[Any]):
         use_naive_search=True,
         statement=sa.select(
             CronJob.id.label("bulk-action"),
+            CronJob.id.label("id"),
             CronJob.name.label("name"),
             CronJob.actions.label("actions"),
             CronJob.data.label("data"),
