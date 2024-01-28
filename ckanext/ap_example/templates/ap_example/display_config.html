@@ -1,0 +1,9 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block breadcrumb_content %}
+    <li>{% link_for _("Example display"), request.endpoint %}</li>
+{% endblock breadcrumb_content %}
+
+{% block ap_content %}
+    {% snippet 'admin_panel/snippets/render_fields_display.html', fields=schema.fields, data=data %}
+{% endblock ap_content %}

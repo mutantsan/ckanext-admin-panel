@@ -1,0 +1,5 @@
+{% for field in fields %}
+    <p><b>{{ h.scheming_language_text(field.label) }}</b></p>
+    {% snippet 'scheming/snippets/display_field.html', field=field, data=data, errors={} %}
+    <hr>
+{% endfor %}
