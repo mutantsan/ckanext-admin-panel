@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 from urllib.parse import urlencode
 
 import ckan.lib.munge as munge
-import ckan.model as model
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 
@@ -13,7 +12,7 @@ from ckanext.toolbelt.decorators import Collector
 import ckanext.ap_main.config as ap_config
 import ckanext.ap_main.utils as ap_utils
 from ckanext.ap_main.interfaces import IAdminPanel
-from ckanext.ap_main.types import ConfigurationItem, SectionConfig, ToolbarButton
+from ckanext.ap_main.types import SectionConfig, ToolbarButton
 
 helper, get_helpers = Collector("ap").split()
 
@@ -21,21 +20,23 @@ helper, get_helpers = Collector("ap").split()
 @helper
 def get_config_sections() -> list[SectionConfig]:
     """Prepare a config section structure for render"""
+    names = {
+        name for _, names in ap_utils.collect_sections_signal.send() for name in names
+    }
+
     default_sections = [
         SectionConfig(
-            name=tk._("Basic site settings"),
-            configs=[
-                ConfigurationItem(
-                    name=tk._("CKAN configuration"),
-                    info=tk._("CKAN site config options"),
-                    blueprint=(
-                        "ap_basic.editable_config"
-                        if p.plugin_loaded("editable_config")
-                        else "ap_basic.config"
-                    ),
-                )
-            ],
-        ),
+            name=tk._(name),
+            configs=sorted(
+                [
+                    item
+                    for _, items in ap_utils.collect_pages_signal.send(name)
+                    for item in items
+                ],
+                key=lambda item: item["name"],
+            ),
+        )
+        for name in sorted(names)
     ]
 
     for plugin in reversed(list(p.PluginImplementations(IAdminPanel))):

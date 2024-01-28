@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from typing import Any, Callable
+from typing import Any, Callable, Literal
 
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
+from ckan.types import SignalMapping
 
 from ckanext.collection.interfaces import ICollection, CollectionFactory
 import ckanext.ap_main.types as ap_types
-from ckanext.ap_main import helpers, collection
+from ckanext.ap_main import helpers, collection, utils
 from ckanext.ap_main.column_display import get_renderers
 from ckanext.ap_main.interfaces import IAdminPanel
 
@@ -18,6 +19,7 @@ from ckanext.ap_main.interfaces import IAdminPanel
 class AdminPanelPlugin(p.SingletonPlugin):
     p.implements(p.IConfigurer)
     p.implements(p.IBlueprint)
+    p.implements(p.ISignal)
     p.implements(p.ITemplateHelpers)
     p.implements(IAdminPanel, inherit=True)
     p.implements(ICollection, inherit=True)
@@ -46,3 +48,36 @@ class AdminPanelPlugin(p.SingletonPlugin):
             "ap-user": collection.UserCollection,
             "ap-logs": collection.DbLogCollection,
         }
+
+    # ISignal
+
+    def get_signal_subscriptions(self) -> SignalMapping:
+        return {
+            utils.collect_sections_signal: [
+                collect_config_sections_subscriber,
+            ],
+            utils.collect_pages_signal: [
+                {
+                    "sender": "Basic site settings",
+                    "receiver": collect_basic_pages_subscriber,
+                },
+            ],
+        }
+
+
+def collect_config_sections_subscriber(sender: None):
+    return ["Basic site settings"]
+
+
+def collect_basic_pages_subscriber(sender: Literal["Basic site settings"]):
+    return [
+        ap_types.ConfigurationItem(
+            name=tk._("CKAN configuration"),
+            info=tk._("CKAN site config options"),
+            blueprint=(
+                "ap_basic.editable_config"
+                if p.plugin_loaded("editable_config")
+                else "ap_basic.config"
+            ),
+        ),
+    ]
