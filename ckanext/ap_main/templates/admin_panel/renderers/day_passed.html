@@ -1,0 +1,5 @@
+{% set priority = h.ap_calculate_priority(value, h.files_get_unused_threshold()) %}
+
+<div class="badge badge-day-passed badge-priority-{{ priority }}">
+    {{ value }}
+</div>

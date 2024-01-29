@@ -48,3 +48,8 @@
         {% endif %}
     </div> <!-- row -->
 {% endblock ap_content %}
+
+{% block scripts %}
+    {% asset 'ap_cron/admin_panel_cron-js' %}
+    {{ super() }}
+{% endblock %}

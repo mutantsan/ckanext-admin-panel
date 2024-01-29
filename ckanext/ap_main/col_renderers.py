@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 import logging
+from datetime import datetime
 
 from ckan.plugins import toolkit as tk
 
@@ -57,3 +59,25 @@ def list(
     rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue, **kwargs
 ):
     return ", ".join(value)
+
+
+@renderer
+def day_passed(
+    rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue, **kwargs
+) -> str:
+    if not value:
+        return 0
+
+    try:
+        datetime_obj = datetime.fromisoformat(value)
+    except AttributeError:
+        return 0
+
+    current_date = datetime.now()
+
+    days_passed = (current_date - datetime_obj).days
+
+    return tk.render(
+        "admin_panel/renderers/day_passed.html",
+        extra_vars={"value": days_passed},
+    )

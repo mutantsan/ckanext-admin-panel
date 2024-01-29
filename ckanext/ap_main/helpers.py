@@ -208,3 +208,17 @@ def get_arbitrary_schema(schema_id: str) -> dict[Any, Any] | None:
     expanded_schemas = _expand_schemas(schemas)
 
     return expanded_schemas.get(schema_id)
+
+
+@helper
+def calculate_priority(value: int, threshold: int):
+    percentage = value / threshold * 100
+
+    if percentage < 25:
+        return "low"
+    elif percentage < 50:
+        return "medium"
+    elif percentage < 75:
+        return "high"
+    else:
+        return "urgent"

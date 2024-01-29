@@ -19,6 +19,7 @@ from ckanext.collection.types import (
 from ckanext.collection.utils import Collection, HtmxTableSerializer, Columns
 
 import ckanext.ap_cron.col_renderers as cron_renderers
+import ckanext.ap_main.col_renderers as main_renderers
 
 
 def default_value_serializers(serializer: BaseSerializer) -> dict[str, ValueSerializer]:
@@ -54,6 +55,9 @@ def default_value_serializers(serializer: BaseSerializer) -> dict[str, ValueSeri
         "none_as_empty": lambda value, options, name, record, self: value
         if value is not None
         else "",
+        "day_passed": lambda value, options, name, record, self: tk.literal(
+            main_renderers.day_passed([], record, value, **options)
+        ),
     }
 
 

@@ -1,0 +1,21 @@
+.badge {
+    &.badge-day-passed {
+        color: white;
+    }
+
+    &.badge-priority-urgent {
+        background-color: #f2053e;
+    }
+
+    &.badge-priority-high {
+        background-color: #f77825;
+    }
+
+    &.badge-priority-medium {
+        background-color: #0887da;
+    }
+
+    &.badge-priority-low {
+        background-color: #9c9c9d;
+    }
+}

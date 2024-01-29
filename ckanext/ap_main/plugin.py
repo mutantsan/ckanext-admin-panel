@@ -8,7 +8,7 @@ import ckan.plugins.toolkit as tk
 from ckanext.collection.interfaces import ICollection, CollectionFactory
 import ckanext.ap_main.types as ap_types
 from ckanext.ap_main import helpers, collection
-from ckanext.ap_main.column_display import get_renderers
+from ckanext.ap_main.col_renderers import get_renderers
 from ckanext.ap_main.interfaces import IAdminPanel
 
 

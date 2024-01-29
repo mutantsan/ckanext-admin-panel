@@ -65,16 +65,6 @@ ckan.module("ap-cron-htmx", function ($) {
                     html: true
                 })
             })
-        },
-
-        /**
-         * Remove a cron job table row from DOM
-         *
-         * @param {Event} e
-         */
-        _onRemoveCronJob: function (e) {
-            job_tr = $(e.target).closest("tr");
-            job_tr.remove();
-        },
+        }
     };
 });
