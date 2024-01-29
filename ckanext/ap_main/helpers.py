@@ -112,7 +112,7 @@ def get_toolbar_structure() -> list[ToolbarButton]:
             attributes={"title": tk._("Old admin")},
         ),
         ToolbarButton(
-            label=tk.h.user_image((tk.current_user.name), size=22),
+            label=tk.h.user_image((tk.current_user.name), size=20),
             url=tk.url_for("user.read", id=tk.current_user.name),
             attributes={"title": tk._("View profile")},
         ),
