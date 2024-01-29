@@ -57,14 +57,6 @@ ckan.module("ap-cron-htmx", function ($) {
             if (evt.detail.pathInfo.requestPath.includes("/cron/delete/")) {
                 htmx.trigger(`#${this.options.formId}`, "change");
             }
-
-            $("[data-module='ap-tooltip'").each((_, el) => {
-                new bootstrap.Tooltip(el, {
-                    customClass: 'ap-tooltip',
-                    placement: "bottom",
-                    html: true
-                })
-            })
         }
     };
 });
