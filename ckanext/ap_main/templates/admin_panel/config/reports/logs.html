@@ -3,27 +3,17 @@
 {% block ap_main_class %} ap-log-list {% endblock %}
 
 {% block breadcrumb_content %}
-    <li>{% link_for _("Recent log messages"), named_route='ap_report.logs' %}</li>
+    <li>{% link_for _("Recent log messages"), request.endpoint %}</li>
 {% endblock breadcrumb_content %}
 
 {% block ap_content %}
     <h1>{{ _("Recent log messages") }}</h1>
 
     <div class="row g-3">
-        <form action="{{ h.url_for('ap_report.logs') }}" method="POST">
-            <button
-                id="clear-logs-btn"
-                name="clear_logs"
-                type="submit"
-                class="btn btn-danger"
-                data-module="ap-confirm-action"
-                data-module-content="{{ _('Are you sure you want to clear all logs?') }}"
-                data-module-with-data=true>
-                {{ _("Clear logs") }}
-            </button>
-        </form>
-
-        {{ collection.serializer.render() | safe }}
-
+        {% if collection.data.total  %}
+            {{ collection.serializer.render() | safe }}
+        {% else %}
+            <p>{{ _("No logs found.") }}</p>
+        {% endif %}
     </div> <!-- row -->
 {% endblock ap_content %}

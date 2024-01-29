@@ -13,8 +13,11 @@ from ckanext.collection.types import (
 from ckanext.collection.utils import Filters, ModelData
 
 from ckanext.ap_main.model import ApLogs
-
-from .base import ApCollection, MultiSelectFilter
+from ckanext.ap_main.collection.base import (
+    ApCollection,
+    MultiSelectFilter,
+    GlobalAction,
+)
 
 
 class DbLogCollection(ApCollection[Any]):
@@ -54,6 +57,26 @@ class DbLogCollection(ApCollection[Any]):
     )
 
     class FiltersFactory(Filters["DbLogCollection"]):
+        def make_actions(self) -> Sequence[Filter[Any]]:
+            return [
+                ButtonFilter(
+                    name="clear_logs",
+                    type="global_action",
+                    options={
+                        "label": "Clear logs",
+                        "attrs": {
+                            "type": "submit",
+                            "class": "btn btn-danger",
+                            "data-module": "ap-confirm-action",
+                            "data-module-content": (
+                                "Are you sure you want to clear all logs?"
+                            ),
+                            "data-module-with-data": "true",
+                        },
+                    },
+                )
+            ]
+
         def make_filters(self) -> Sequence[Filter[Any]]:
             log_type_options: Iterable[SelectOption] = [
                 {"value": v, "text": v}
