@@ -77,12 +77,19 @@ def cron_job_pipe(data_dict: dict[str, Any]) -> DictizedCronJob:
 
     _update_job_state({"id": job.id, "state": CronJob.State.running})
 
+    payload = data_dict["data"].get(KWARGS, {})
+
     for action in data_dict["data"]["actions"]:
         log.info("[id:%s] starting to run an action %s", job.id, action)
 
         try:
-            data_dict = tk.get_action(action)({}, data_dict["data"].get(KWARGS, {}))
+            result = tk.get_action(action)(
+                {"ignore_auth": True}, payload
+            )
+            payload = result if result else {}
         except tk.ValidationError as e:
+            e.error_dict["action_name"] = action
+            e.error_dict["kwargs"] = payload
             job.data[ERRORS] = e.error_dict
 
             log.exception(
