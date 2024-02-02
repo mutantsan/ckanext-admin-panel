@@ -122,7 +122,7 @@ class ApHtmxTableSerializer(HtmxTableSerializer[TDataCollection]):
     )
 
 
-class ApCollection(Collection[TData]):
+class ApCollection(Collection):
     SerializerFactory = ApHtmxTableSerializer
     ColumnsFactory = ApColumns
 

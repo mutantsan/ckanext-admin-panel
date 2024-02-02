@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Any
-
 from dominate import tags
 
 import ckan.plugins.toolkit as tk
@@ -20,7 +18,7 @@ from ckanext.ap_main.collection.base import (
 from ckanext.ap_cron.model import CronJob
 
 
-class CronCollection(ApCollection[Any]):
+class CronCollection(ApCollection):
     SerializerFactory = ApHtmxTableSerializer.with_attributes(
         record_template="ap_cron/cron_record.html"
     )

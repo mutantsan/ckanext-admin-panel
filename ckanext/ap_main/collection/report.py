@@ -20,7 +20,7 @@ from ckanext.ap_main.collection.base import (
 )
 
 
-class DbLogCollection(ApCollection[Any]):
+class DbLogCollection(ApCollection):
     ColumnsFactory = ApCollection.ColumnsFactory.with_attributes(
         names=[
             "name",
@@ -59,7 +59,7 @@ class DbLogCollection(ApCollection[Any]):
     class FiltersFactory(Filters["DbLogCollection"]):
         def make_actions(self) -> Sequence[Filter[Any]]:
             return [
-                ButtonFilter(
+                GlobalAction(
                     name="clear_logs",
                     type="global_action",
                     options={

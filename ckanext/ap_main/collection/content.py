@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Any
-
 import sqlalchemy as sa
 from dominate import tags
 
@@ -14,7 +12,7 @@ from ckanext.collection.utils import Filters, UnionSaData
 from .base import ApCollection, BulkAction, RowAction
 
 
-class ContentCollection(ApCollection[Any]):
+class ContentCollection(ApCollection):
     ColumnsFactory = ApCollection.ColumnsFactory.with_attributes(
         names=[
             "bulk-action",

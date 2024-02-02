@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import Any
 from ckanext.collection.shared import configurable_attribute
 
 from dominate import tags
@@ -14,7 +13,7 @@ from ckanext.collection.utils import Filters, ModelData
 from .base import ApCollection, BulkAction, RowAction
 
 
-class UserCollection(ApCollection[Any]):
+class UserCollection(ApCollection):
     ColumnsFactory = ApCollection.ColumnsFactory.with_attributes(
         names=[
             "bulk-action",
