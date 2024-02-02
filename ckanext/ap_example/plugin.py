@@ -1,17 +1,23 @@
 from __future__ import annotations
 
+from os import path
+
+from yaml import safe_load
+
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
+import ckan.logic as logic
+from ckan.config.declaration import Declaration, Key
 
 import ckanext.ap_main.types as ap_types
 from ckanext.ap_main.interfaces import IAdminPanel
 
 
-@tk.blanket.config_declarations
 @tk.blanket.blueprints
 class AdminPanelExamplePlugin(p.SingletonPlugin):
     p.implements(p.IConfigurer)
     p.implements(IAdminPanel, inherit=True)
+    p.implements(p.IConfigDeclaration, inherit=True)
 
     # IConfigurer
 
@@ -43,3 +49,13 @@ class AdminPanelExamplePlugin(p.SingletonPlugin):
             )
         )
         return config_list
+
+    # IConfigDeclaration
+
+    def declare_config_options(self, declaration: Declaration, key: Key):
+        logic.clear_validators_cache()
+
+        with open(path.dirname(__file__) + "/config_declaration.yaml") as file:
+            data_dict = safe_load(file)
+
+        return declaration.load_dict(data_dict)
