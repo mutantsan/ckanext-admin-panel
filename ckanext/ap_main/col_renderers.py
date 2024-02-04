@@ -2,76 +2,77 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime
+from typing import Any, Callable
 
 from ckan.plugins import toolkit as tk
+from ckanext.collection.types import BaseSerializer
 
 from ckanext.toolbelt.decorators import Collector
 
-import ckanext.ap_main.types as ap_types
+from ckanext.ap_main.types import ColRenderer
 
-renderer, get_renderers = Collector("ap").split()
+renderer: Collector[ColRenderer]
+get_renderers: Callable[[], dict[str, ColRenderer]]
+renderer, get_renderers = Collector().split()
 
 
 @renderer
 def date(
-    rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue, **kwargs
+    value: Any, options: dict[str, Any], name: str, record: Any, self: BaseSerializer
 ) -> str:
-    date_format: str = kwargs.get("date_format", "%d/%m/%Y - %H:%M")
+    date_format: str = options.get("date_format", "%d/%m/%Y - %H:%M")
 
     return tk.h.render_datetime(value, date_format=date_format)
 
 
 @renderer
-def text_render(
-    rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue, **kwargs
-) -> str:
-    return str(value)
-
-
-@renderer
 def user_link(
-    rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue, **kwargs
+    value: Any, options: dict[str, Any], name: str, record: Any, self: BaseSerializer
 ) -> str:
-    return tk.h.linked_user(value, maxlength=kwargs.get("maxlength") or 20)
+    if not value:
+        return ""
+    return tk.h.linked_user(value, maxlength=options.get("maxlength") or 20)
 
 
 @renderer
-def bool(rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue) -> str:
+def bool(
+    value: Any, options: dict[str, Any], name: str, record: Any, self: BaseSerializer
+) -> str:
     return "Yes" if value else "No"
 
 
 @renderer
-def action_render(
-    rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue, **kwargs
-) -> str:
-    ...
-
-
-@renderer
 def log_level(
-    rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue, **kwargs
+    value: Any, options: dict[str, Any], name: str, record: Any, self: BaseSerializer
 ) -> str:
     return logging.getLevelName(value)
 
 
 @renderer
 def list(
-    rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue, **kwargs
+    value: Any, options: dict[str, Any], name: str, record: Any, self: BaseSerializer
 ):
     return ", ".join(value)
 
 
 @renderer
+def none_as_empty(
+    value: Any, options: dict[str, Any], name: str, record: Any, self: BaseSerializer
+) -> Any:
+    return value if value is not None else ""
+
+
+@renderer
 def day_passed(
-    rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue, **kwargs
+    value: Any, options: dict[str, Any], name: str, record: Any, self: BaseSerializer
 ) -> str:
     if not value:
-        return 0
+        return "0"
 
     try:
         datetime_obj = datetime.fromisoformat(value)
     except AttributeError:
-        return 0
+        return "0"
 
     current_date = datetime.now()
 

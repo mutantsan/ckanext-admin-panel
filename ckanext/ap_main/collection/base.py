@@ -1,64 +1,17 @@
 from __future__ import annotations
-import logging
 
 from typing import Any, Literal, Sequence
 
 from typing_extensions import NotRequired, TypedDict
 
-import ckan.plugins.toolkit as tk
-
 from ckanext.collection.shared import configurable_attribute
 from ckanext.collection.types import (
-    BaseSerializer,
     Filter,
     SelectFilterOptions,
-    TData,
     TDataCollection,
-    ValueSerializer,
 )
 from ckanext.collection.utils import Collection, HtmxTableSerializer, Columns
-
-import ckanext.ap_cron.col_renderers as cron_renderers
-import ckanext.ap_main.col_renderers as main_renderers
-
-
-def default_value_serializers(serializer: BaseSerializer) -> dict[str, ValueSerializer]:
-    """Value serializers available for all collections.
-
-    These functions serves the same purpose as renderers in original
-    implementation. When signature of renderers changed to ValueSerializer,
-    this function can be replaced with `get_all_renderers`.
-    """
-
-    return {
-        "date": lambda value, options, name, record, self: tk.h.render_datetime(
-            value, date_format=options.get("date_format", "%d/%m/%Y - %H:%M")
-        ),
-        "user_link": lambda value, options, name, record, self: tk.h.linked_user(
-            value, maxlength=options.get("maxlength") or 20
-        )
-        if value
-        else "",
-        "schedule": lambda value, options, name, record, self: tk.literal(
-            cron_renderers.schedule([], record, value, **options)
-        ),
-        "last_run": lambda value, options, name, record, self: tk.literal(
-            cron_renderers.last_run([], record, value, **options)
-        ),
-        "json_display": lambda value, options, name, record, self: tk.literal(
-            cron_renderers.json_display([], record, value, **options)
-        ),
-        "bool": lambda value, options, name, record, self: "Yes" if value else "No",
-        "log_level": lambda value, options, name, record, self: logging.getLevelName(
-            value
-        ),
-        "none_as_empty": lambda value, options, name, record, self: value
-        if value is not None
-        else "",
-        "day_passed": lambda value, options, name, record, self: tk.literal(
-            main_renderers.day_passed([], record, value, **options)
-        ),
-    }
+from ckanext.ap_main.utils import get_all_renderers
 
 
 class ApColumns(Columns[TDataCollection]):
@@ -116,9 +69,8 @@ class ApHtmxTableSerializer(HtmxTableSerializer[TDataCollection]):
         "collection/serialize/ap_htmx_table/filter.html",
     )
 
-    # TODO: replace with `get_all_renderers` after signature update
     value_serializers = configurable_attribute(
-        default_factory=default_value_serializers
+        default_factory=lambda self: get_all_renderers()
     )
 
 

@@ -1,14 +1,16 @@
 from __future__ import annotations
 
-from typing import Any, Optional, TypedDict, Union
+from typing import Any, Optional, TypedDict
 
 from typing_extensions import TypeAlias
+
+from ckanext.collection.types import ValueSerializer
 
 ItemList: TypeAlias = "list[dict[str, Any]]"
 Item: TypeAlias = "dict[str, Any]"
 ItemValue: TypeAlias = Any
 
-ColRenderer = Union[ItemList, Item, ItemValue, "dict[str, Any]"]
+ColRenderer: TypeAlias = ValueSerializer
 
 
 class SectionConfig(TypedDict):
