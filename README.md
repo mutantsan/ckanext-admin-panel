@@ -50,6 +50,8 @@ import ckan.types as types
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 
+import ckanext.ap_main.types as ap_types
+
 
 class ExamplePlugin(p.SingletonPlugin):
     ...
@@ -68,22 +70,37 @@ class ExamplePlugin(p.SingletonPlugin):
 
     @staticmethod
     def collect_config_sections_subs(sender: None):
-        return {
-            "name": "Example plugin configuration",
-            "configs": [
-                {
-                    "name": "Configuration",
-                    "blueprint": "example_plugin.config",
-                    "info": "Basic configuration options",
-                },
+        return ap_types.SectionConfig(
+            name="Example plugin configuration",
+            configs=[
+                ap_types.ConfigurationItem(
+                    name="Configuration",
+                    blueprint="example_plugin.config,
+                    info="Basic configuration options",
+                ),
             ],
-        }
+        )
 ```
 
 The structure of the section is outlined in the `SectionConfig` and `ConfigurationItem` [here](ckanext/ap_main/types.py).
-You can import these structures and use them to assemble the section or just return a dictionary mirroring the same structure.
+You can import these structures and use them to assemble the section or just return a dictionary mirroring the same structure. This method works the same as described above:
 
-In the section with the specified `name` has already been registered by another plugin, the configuration options will be included into it.
+```py
+@staticmethod
+def collect_config_sections_subs(sender: None):
+    return {
+        "name": "Example plugin configuration",
+        "configs": [
+            {
+                "name": "Configuration",
+                "blueprint": "example_plugin.config",
+                "info": "Basic configuration options",
+            },
+        ],
+    }
+```
+
+If the section with the specified `name` has already been registered by another plugin, the configuration options will be included into it.
 
 ## Requirements
 
