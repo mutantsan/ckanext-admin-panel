@@ -56,12 +56,6 @@ class AdminPanelPlugin(p.SingletonPlugin):
             utils.collect_sections_signal: [
                 collect_config_sections_subscriber,
             ],
-            # utils.collect_pages_signal: [
-            #     {
-            #         "sender": "Basic site settings",
-            #         "receiver": collect_basic_pages_subscriber,
-            #     },
-            # ],
         }
 
 
@@ -80,17 +74,3 @@ def collect_config_sections_subscriber(sender: None):
             ),
         ],
     )
-
-
-# def collect_basic_pages_subscriber(sender: Literal["Basic site settings"]):
-#     return [
-#         ap_types.ConfigurationItem(
-#             name=tk._("CKAN configuration"),
-#             info=tk._("CKAN site config options"),
-#             blueprint=(
-#                 "ap_basic.editable_config"
-#                 if p.plugin_loaded("editable_config")
-#                 else "ap_basic.config"
-#             ),
-#         ),
-#     ]

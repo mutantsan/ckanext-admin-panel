@@ -11,12 +11,7 @@ _renderers_cache: dict[str, ap_types.ColRenderer] = {}
 
 collect_sections_signal = tk.signals.ckanext.signal(
     "ap_main:collect_config_sections",
-    "Collect configuration section names from subscribers",
-)
-
-collect_pages_signal = tk.signals.ckanext.signal(
-    "ap_main:collect_config_pages",
-    "Collect configuration pages for specific section from subscribers",
+    "Collect configuration section from subscribers",
 )
 
 
