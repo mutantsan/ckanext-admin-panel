@@ -103,9 +103,9 @@ def collect_config_sections_subs(sender: None):
 If the section with the specified `name` has already been registered by another plugin, the configuration options will be included into it.
 
 The structure of `ConfigurationItem` is as follows:
-    + `name` - defines the name of the configuration section link
-    + `blueprint` - indicates the configuration page blueprint
-    + `info` (optional, default: `No description`) - provides a description for the configuration link
+    - `name` - defines the name of the configuration section link
+    - `blueprint` - indicates the configuration page blueprint
+    - `info` (optional, default: `No description`) - provides a description for the configuration link
 
 ## Requirements
 
