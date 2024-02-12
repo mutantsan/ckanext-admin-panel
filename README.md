@@ -10,6 +10,7 @@ Next generation admin interface for CKAN.
 - [ckanext-admin-panel](#ckanext-admin-panel)
   - [Content](#content)
   - [TODO](#todo)
+  - [Registering config sections](#registering-config-sections)
   - [Requirements](#requirements)
   - [Installation](#installation)
   - [Config settings](#config-settings)
@@ -36,6 +37,53 @@ This extension is under development, so there are many things to do:
 - Work on `Available updates?` page. Show user if he could upgrade an extension or CKAN to a new version.
 - Work on `Appearance` page. TODO
 - Work on `Help` page. TODO
+
+
+## Registering config sections
+
+We utilize the `ISignal` interface for gathering configuration sections. For instance, to register a configuration section from your extension:
+
+```py
+from __future__ import annotations
+
+import ckan.types as types
+import ckan.plugins as p
+import ckan.plugins.toolkit as tk
+
+
+class ExamplePlugin(p.SingletonPlugin):
+    ...
+    p.implements(p.ISignal)
+
+    ...
+
+    # ISignal
+
+    def get_signal_subscriptions(self) -> types.SignalMapping:
+        return {
+            tk.signals.ckanext.signal("ap_main:collect_config_sections"): [
+                self.collect_config_sections_subs
+            ],
+        }
+
+    @staticmethod
+    def collect_config_sections_subs(sender: None):
+        return {
+            "name": "Example plugin configuration",
+            "configs": [
+                {
+                    "name": "Configuration",
+                    "blueprint": "example_plugin.config",
+                    "info": "Basic configuration options",
+                },
+            ],
+        }
+```
+
+The structure of the section is outlined in the `SectionConfig` and `ConfigurationItem` [here](ckanext/ap_main/types.py).
+You can import these structures and use them to assemble the section or just return a dictionary mirroring the same structure.
+
+In the section with the specified `name` has already been registered by another plugin, the configuration options will be included into it.
 
 ## Requirements
 
