@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 from urllib.parse import urlencode
 
 import ckan.lib.munge as munge
-import ckan.model as model
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 
@@ -13,7 +12,7 @@ from ckanext.toolbelt.decorators import Collector
 import ckanext.ap_main.config as ap_config
 import ckanext.ap_main.utils as ap_utils
 from ckanext.ap_main.interfaces import IAdminPanel
-from ckanext.ap_main.types import ConfigurationItem, SectionConfig, ToolbarButton
+from ckanext.ap_main.types import SectionConfig, ToolbarButton
 
 helper, get_helpers = Collector("ap").split()
 
@@ -21,27 +20,15 @@ helper, get_helpers = Collector("ap").split()
 @helper
 def get_config_sections() -> list[SectionConfig]:
     """Prepare a config section structure for render"""
-    default_sections = [
-        SectionConfig(
-            name=tk._("Basic site settings"),
-            configs=[
-                ConfigurationItem(
-                    name=tk._("CKAN configuration"),
-                    info=tk._("CKAN site config options"),
-                    blueprint=(
-                        "ap_basic.editable_config"
-                        if p.plugin_loaded("editable_config")
-                        else "ap_basic.config"
-                    ),
-                )
-            ],
-        ),
-    ]
+    config_sections = {}
 
-    for plugin in reversed(list(p.PluginImplementations(IAdminPanel))):
-        default_sections = plugin.register_config_sections(default_sections)
+    for _, section in ap_utils.collect_sections_signal.send():
+        config_sections.setdefault(
+            section["name"], {"name": section["name"], "configs": []}
+        )
+        config_sections[section["name"]]["configs"].extend(section["configs"])
 
-    return default_sections
+    return list(config_sections.values())
 
 
 @helper
@@ -65,17 +52,6 @@ def get_toolbar_structure() -> list[ToolbarButton]:
             icon="fa fa-folder",
             url=tk.url_for("ap_content.list"),
         ),
-        # ToolbarButton(
-        #     label=tk._("Appearance"),
-        #     icon="fa fa-wand-magic-sparkles",
-        # ),
-        # ToolbarButton(
-        #     label=tk._("Extensions"),
-        #     icon="fa fa-gem",
-        #     url=tk.url_for(
-        #         "api.action", ver=3, logic_function="status_show", qualified=True
-        #     ),
-        # ),
         ToolbarButton(
             label=tk._("Configuration"),
             icon="fa fa-gear",
@@ -98,14 +74,12 @@ def get_toolbar_structure() -> list[ToolbarButton]:
             label=tk._("Reports"),
             icon="fa fa-chart-bar",
             subitems=[
-                # ToolbarButton(label=tk._("Available updates")),
                 ToolbarButton(
                     label=tk._("Recent log messages"),
                     url=tk.url_for("ap_report.logs"),
                 )
             ],
         ),
-        # ToolbarButton(label=tk._("Help"), icon="fa fa-circle-info"),
         ToolbarButton(
             icon="fa fa-gavel",
             url=tk.url_for("admin.index"),
