@@ -10,6 +10,8 @@ admin_panel-js:
     - js/ap-bulk-check.js
     - js/ap-tooltip.js
     - js/ap-notify.js
+    - js/ap-disable-field.js
+    - js/ap-copy-to-clipboard.js
 
   extra:
     preload:

@@ -1,21 +1,18 @@
 from __future__ import annotations
 
-from functools import lru_cache
-from typing import Any, Optional
+from typing import Any
 from urllib.parse import urlencode
 
 import ckan.lib.munge as munge
-import ckan.model as model
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 
 from ckanext.toolbelt.decorators import Collector
 
 import ckanext.ap_main.config as ap_config
-import ckanext.ap_main.model as ap_model
 import ckanext.ap_main.utils as ap_utils
 from ckanext.ap_main.interfaces import IAdminPanel
-from ckanext.ap_main.types import ConfigurationItem, SectionConfig, ToolbarButton
+from ckanext.ap_main.types import SectionConfig, ToolbarButton
 
 helper, get_helpers = Collector("ap").split()
 
@@ -23,27 +20,15 @@ helper, get_helpers = Collector("ap").split()
 @helper
 def get_config_sections() -> list[SectionConfig]:
     """Prepare a config section structure for render"""
-    default_sections = [
-        SectionConfig(
-            name=tk._("Basic site settings"),
-            configs=[
-                ConfigurationItem(
-                    name=tk._("CKAN configuration"),
-                    info=tk._("CKAN site config options"),
-                    blueprint=(
-                        "ap_basic.editable_config"
-                        if p.plugin_loaded("editable_config")
-                        else "ap_basic.config"
-                    ),
-                )
-            ],
-        ),
-    ]
+    config_sections = {}
 
-    for plugin in reversed(list(p.PluginImplementations(IAdminPanel))):
-        default_sections = plugin.register_config_sections(default_sections)
+    for _, section in ap_utils.collect_sections_signal.send():
+        config_sections.setdefault(
+            section["name"], {"name": section["name"], "configs": []}
+        )
+        config_sections[section["name"]]["configs"].extend(section["configs"])
 
-    return default_sections
+    return list(config_sections.values())
 
 
 @helper
@@ -67,17 +52,6 @@ def get_toolbar_structure() -> list[ToolbarButton]:
             icon="fa fa-folder",
             url=tk.url_for("ap_content.list"),
         ),
-        # ToolbarButton(
-        #     label=tk._("Appearance"),
-        #     icon="fa fa-wand-magic-sparkles",
-        # ),
-        # ToolbarButton(
-        #     label=tk._("Extensions"),
-        #     icon="fa fa-gem",
-        #     url=tk.url_for(
-        #         "api.action", ver=3, logic_function="status_show", qualified=True
-        #     ),
-        # ),
         ToolbarButton(
             label=tk._("Configuration"),
             icon="fa fa-gear",
@@ -100,21 +74,19 @@ def get_toolbar_structure() -> list[ToolbarButton]:
             label=tk._("Reports"),
             icon="fa fa-chart-bar",
             subitems=[
-                # ToolbarButton(label=tk._("Available updates")),
                 ToolbarButton(
                     label=tk._("Recent log messages"),
                     url=tk.url_for("ap_report.logs"),
                 )
             ],
         ),
-        # ToolbarButton(label=tk._("Help"), icon="fa fa-circle-info"),
         ToolbarButton(
             icon="fa fa-gavel",
             url=tk.url_for("admin.index"),
             attributes={"title": tk._("Old admin")},
         ),
         ToolbarButton(
-            label=tk.h.user_image((tk.current_user.name), size=22),
+            label=tk.h.user_image((tk.current_user.name), size=20),
             url=tk.url_for("user.read", id=tk.current_user.name),
             attributes={"title": tk._("View profile")},
         ),
@@ -170,126 +142,6 @@ def add_url_param(key: str, value: str) -> str:
 
 
 @helper
-def user_list_state_options() -> list[dict[str, str]]:
-    """Return a list of options for a user list state select"""
-    return [
-        {"value": "any", "text": "Any"},
-        {"value": model.State.DELETED, "text": "Deleted"},
-        {"value": model.State.ACTIVE, "text": "Active"},
-    ]
-
-
-@helper
-def user_list_role_options() -> list[dict[str, str]]:
-    """Return a list of options for a user list role select"""
-    return [
-        {"value": "any", "text": "Any"},
-        {"value": "sysadmin", "text": "Sysadmin"},
-        {"value": "user", "text": "User"},
-    ]
-
-
-@helper
-def table_column(
-    name: str,
-    label: Optional[str] = None,
-    sortable: Optional[bool] = True,
-    width: Optional[str] = "fit-content",
-    actions: Optional[list[dict[str, Any]]] = None,
-    column_renderer: Optional[str] = "ap_text_render",
-    renderer_kwargs: Optional[dict[str, Any]] = None,
-) -> dict[str, Any]:
-    """Create a structure for a sorted table column item.
-
-    Args:
-        name: A column name will be used as a sorting GET param.
-        label (optional): A human-readable column label. Defaults to None.
-        sortable (optional): add column sort. Defaults to True.
-        column_renderer (optional): defines how column will be rendered. Defaults to "ap_text".
-        width (optional): width of the column. Defaults to "fit-content".
-        actions (optional): A list of actions. Defaults to None.
-    """
-    col_renderers = ap_utils.get_all_renderers()
-
-    if column_renderer not in col_renderers:
-        raise tk.ValidationError(f"Column renderer {column_renderer} is not supported")
-
-    return {
-        "name": name,
-        "label": label or name.title(),
-        "sortable": sortable,
-        "width": width,
-        "actions": actions,
-        "column_renderer": col_renderers[column_renderer],
-        "renderer_kwargs": renderer_kwargs or {},
-    }
-
-
-@helper
-def table_action(
-    endpoint: str,
-    label: Optional[str] = None,
-    icon: Optional[str] = None,
-    params: Optional[dict[str, str]] = None,
-    attributes: Optional[dict[str, str]] = None,
-) -> dict[str, Any]:
-    """Create a structure for a sorted table action item.
-
-    Params must be a dict, where key is a field name and value could be a arbitrary
-    value or an attribute of a table row item. To refer the actual attribute,ap_def
-    use $ sign at the beggining of the value. E.g.
-
-    ap_action("user.edit", tk._("Edit"), {"id": "$name"})
-
-    Args:
-        endpoint: an endpoint to build an action URL
-        label: label for a button text
-        params (optional): params dict. Defaults to None.
-        attributes (optional): attributes dict. Defaults to None.
-    """
-    return {
-        "endpoint": endpoint,
-        "label": label,
-        "icon": icon,
-        "params": params or {},
-        "attributes": attributes or {},
-    }
-
-
-@helper
-def log_list_type_options() -> list[dict[str, str | int]]:
-    """Return a list of options for a log list type multi select"""
-    return [
-        {"value": log_name, "text": log_name}
-        for log_name in sorted({log["name"] for log in ap_model.ApLogs.all()})
-    ]
-
-
-@helper
-def log_list_level_options() -> list[dict[str, str | int]]:
-    """Return a list of options for a log list level multi select"""
-    return [
-        {"value": ap_model.ApLogs.Level.NOTSET, "text": "NOTSET"},
-        {"value": ap_model.ApLogs.Level.DEBUG, "text": "DEBUG"},
-        {"value": ap_model.ApLogs.Level.INFO, "text": "INFO"},
-        {"value": ap_model.ApLogs.Level.WARNING, "text": "WARNING"},
-        {"value": ap_model.ApLogs.Level.ERROR, "text": "ERROR"},
-        {"value": ap_model.ApLogs.Level.ERROR, "text": "CRITICAL"},
-    ]
-
-
-@helper
-@lru_cache(maxsize=None)
-def get_log_level_label(level: int) -> str:
-    """Return a list of options for a log list level multi select"""
-    levels: dict[int, str] = {
-        int(opt["value"]): str(opt["text"]) for opt in tk.h.ap_log_list_level_options()
-    }
-
-    return levels.get(level, levels[0])
-
-
-@helper
 def show_toolbar_search() -> bool:
     return ap_config.show_toolbar_search()
 
@@ -309,18 +161,38 @@ def user_add_role_options() -> list[dict[str, str | int]]:
 
 
 @helper
-def content_list_type_options() -> list[dict[str, str | int]]:
-    """Return a list of options for a content list type filter"""
-    return [
-        {"value": "", "text": "Any"},
-        {"value": "dataset", "text": "Dataset"},
-        {"value": "group", "text": "Group"},
-        {"value": "organization", "text": "Organization"},
-    ]
-
-
-@helper
 def generate_page_unique_class() -> str:
     """Build a unique css class for each page"""
 
     return tk.h.ap_munge_string((f"ap-{tk.request.endpoint}"))
+
+
+@helper
+def get_arbitrary_schema(schema_id: str) -> dict[Any, Any] | None:
+    """This is a temporary code. We've created a PR #403 to ckanext-scheming
+    to support an arbitrary schemas. For now, we are creating a polyfill"""
+    from ckanext.scheming.plugins import _load_schemas, _expand_schemas
+
+    SCHEMA_OPTION = "scheming.arbitrary_schemas"
+    SCHEMA_TYPE_FIELD = "schema_id"
+
+    schema_urls = tk.config.get(SCHEMA_OPTION, "").split()
+    schemas = _load_schemas(schema_urls, SCHEMA_TYPE_FIELD)
+
+    expanded_schemas = _expand_schemas(schemas)
+
+    return expanded_schemas.get(schema_id)
+
+
+@helper
+def calculate_priority(value: int, threshold: int):
+    percentage = value / threshold * 100
+
+    if percentage < 25:
+        return "low"
+    elif percentage < 50:
+        return "medium"
+    elif percentage < 75:
+        return "high"
+    else:
+        return "urgent"

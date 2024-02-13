@@ -1,19 +1,24 @@
 from __future__ import annotations
+from typing import Any, Callable
 
 import ckan.plugins.toolkit as tk
+from ckanext.collection.types import BaseSerializer
 
 from ckanext.toolbelt.decorators import Collector
 
-import ckanext.ap_main.types as ap_types
+from ckanext.ap_main.types import ColRenderer
 
-renderer, get_renderers = Collector("ap_cron").split()
+
+renderer: Collector[ColRenderer]
+get_renderers: Callable[[], dict[str, ColRenderer]]
+renderer, get_renderers = Collector().split()
 
 
 @renderer
 def last_run(
-    rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue, **kwargs
+    value: Any, options: dict[str, Any], name: str, record: Any, self: BaseSerializer
 ) -> str:
-    date_format: str = kwargs.get("date_format", "%d/%m/%Y - %H:%M")
+    date_format: str = options.get("date_format", "%d/%m/%Y - %H:%M")
 
     if not value:
         return tk._("Never")
@@ -23,7 +28,7 @@ def last_run(
 
 @renderer
 def schedule(
-    rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue, **kwargs
+    value: Any, options: dict[str, Any], name: str, record: Any, self: BaseSerializer
 ) -> str:
     tooltip = tk.h.ap_cron_explain_cron_schedule(value)
 
@@ -35,7 +40,7 @@ def schedule(
 
 @renderer
 def json_display(
-    rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue, **kwargs
+    value: Any, options: dict[str, Any], name: str, record: Any, self: BaseSerializer
 ) -> str:
     return tk.render(
         "ap_cron/renderers/json.html",

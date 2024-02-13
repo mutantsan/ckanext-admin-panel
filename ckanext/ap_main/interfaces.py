@@ -6,12 +6,6 @@ import ckanext.ap_main.types as ap_types
 
 
 class IAdminPanel(Interface):
-    def register_config_sections(
-        self, config_list: list[ap_types.SectionConfig]
-    ) -> list[ap_types.SectionConfig]:
-        """Extension will receive the list of section config objects."""
-        return config_list
-
     def register_toolbar_button(
         self, toolbar_buttons_list: list[ap_types.ToolbarButton]
     ) -> list[ap_types.ToolbarButton]:

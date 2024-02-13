@@ -3,12 +3,16 @@
  */
 ckan.module("ap-cron-htmx", function ($) {
     return {
+        options: {
+            formId: null,
+        },
         initialize: function () {
             $.proxyAll(this, /_on/);
 
             document.addEventListener('htmx:beforeRequest', this._onHTMXbeforeRequest);
             document.addEventListener('htmx:afterSettle', this._onHTMXafterSettle);
             document.addEventListener('htmx:confirm', this._onHTMXconfirm);
+            document.addEventListener('htmx:afterRequest', this._onAfterRequest)
         },
 
         _onHTMXbeforeRequest: function (e) {
@@ -42,22 +46,17 @@ ckan.module("ap-cron-htmx", function ($) {
                     dangerMode: true,
                 }).then((confirmed) => {
                     if (confirmed) {
-                        evt.detail.issueRequest(true);
-                        this._onRemoveCronJob(evt);
+                        evt.detail.issueRequest();
                         this.sandbox.publish("ap:notify", this._("A cron job has been removed"));
                     }
                 });
             }
         },
 
-        /**
-         * Remove a cron job table row from DOM
-         *
-         * @param {Event} e
-         */
-        _onRemoveCronJob: function (e) {
-            job_tr = $(e.target).closest("tr");
-            job_tr.remove();
-        },
+        _onAfterRequest: function (evt) {
+            if (evt.detail.pathInfo.requestPath.includes("/cron/delete/")) {
+                htmx.trigger(`#${this.options.formId}`, "change");
+            }
+        }
     };
 });

@@ -12,10 +12,10 @@ import ckan.lib.navl.dictization_functions as df
 import ckan.logic as logic
 import ckan.plugins.toolkit as tk
 from ckan import model, types
-from ckan.lib.helpers import Page
 
 from ckanext.ap_main.logic import schema as ap_schema
 from ckanext.ap_main.utils import ap_before_request
+from ckanext.collection.shared import get_collection
 
 UserList: TypeAlias = "list[dict[str, Any]]"
 
@@ -27,46 +27,15 @@ log = logging.getLogger(__name__)
 
 class UserListView(MethodView):
     def get(self) -> Union[str, Response]:
-        self.q = tk.request.args.get("q", "").strip()
-        self.order_by = tk.request.args.get("order_by", "name")
-        self.sort = tk.request.args.get("sort", "desc")
-        self.state = tk.request.args.get("state", "")
-        self.role = tk.request.args.get("role", "")
-
-        data_dict = {"q": self.q, "order_by": self.order_by}
-
-        try:
-            logic.check_access("user_list", self._make_context(), data_dict)
-        except logic.NotAuthorized:
-            tk.abort(403, tk._("Not authorized to see this page"))
-
-        # TODO: write custom user_list action to make it more flexible
-        self.user_list = logic.get_action("user_list")(self._make_context(), data_dict)
-        self.user_list = self._filter_by_state(self.user_list)
-        self.user_list = self._filter_by_role(self.user_list)
-
         return tk.render(
             "admin_panel/config/user/user_list.html", self._prepare_data_dict()
         )
 
-    def _make_context(self) -> types.Context:
-        return {
-            "user": tk.current_user.name,
-            "auth_user_obj": tk.current_user,
-        }
-
     def _prepare_data_dict(self) -> dict[str, Any]:
-        user_list = self.user_list if self.sort == "desc" else self.user_list[::-1]
-
         return {
-            "page": self._get_pager(user_list),
-            "columns": self._get_table_columns(),
-            "q": self.q,
-            "order_by": self.order_by,
-            "sort": self.sort,
-            "state": self.state,
-            "role": self.role,
-            "bulk_options": self._get_bulk_action_options(),
+            "collection": get_collection(
+                "ap-user", logic.parse_params(tk.request.args)
+            ),
         }
 
     def post(self) -> Response:
@@ -87,65 +56,6 @@ class UserListView(MethodView):
         tk.h.flash_success(tk._("Done."))
 
         return tk.redirect_to("ap_user.list")
-
-    def _get_pager(self, users_list: UserList) -> Page:
-        page_number = tk.h.get_page_number(tk.request.args)
-        limit: int = tk.config.get("ckan.user_list_limit")
-
-        return Page(
-            collection=users_list,
-            page=page_number,
-            url=tk.h.pager_url,
-            item_count=len(users_list),
-            items_per_page=limit,
-        )
-
-    def _get_table_columns(self) -> list[dict[str, Any]]:
-        return [
-            tk.h.ap_table_column(
-                "name",
-                "Username",
-                column_renderer="ap_user_link",
-                width="23%",
-                renderer_kwargs={"maxlength": 36},
-            ),
-            tk.h.ap_table_column("display_name", "Full Name", width="25%"),
-            tk.h.ap_table_column("email", "Email", width="20%"),
-            tk.h.ap_table_column("state", "State", width="10%"),
-            tk.h.ap_table_column(
-                "sysadmin", "Sysadmin", column_renderer="ap_bool", width="10%"
-            ),
-            tk.h.ap_table_column(
-                "actions",
-                sortable=False,
-                column_renderer="ap_action_render",
-                width="10%",
-                actions=[
-                    tk.h.ap_table_action(
-                        "user.edit",
-                        tk._("Edit"),
-                        {"id": "$name"},
-                    )
-                ],
-            ),
-        ]
-
-    def _get_bulk_action_options(self):
-        return [
-            {
-                "value": "1",
-                "text": tk._("Add the sysadmin role to the selected user(s)"),
-            },
-            {
-                "value": "2",
-                "text": tk._("Remove the sysadmin role from the selected user(s)"),
-            },
-            {
-                "value": "3",
-                "text": tk._("Block the selected user(s)"),
-            },
-            {"value": "4", "text": tk._("Unblock the selected user(s)")},
-        ]
 
     def _get_bulk_action(self, value: str) -> Callable[[list[str]], None] | None:
         return {
@@ -181,22 +91,10 @@ class UserListView(MethodView):
                 )
             except tk.ObjectNotFound:
                 pass
-
-    def _filter_by_state(self, users_list: UserList) -> UserList:
-        if self.state == model.State.DELETED:
-            return [user for user in users_list if user["state"] == model.State.DELETED]
-
-        if self.state == model.State.ACTIVE:
-            return [user for user in users_list if user["state"] == model.State.ACTIVE]
-
-        return users_list
-
-    def _filter_by_role(self, users_list: UserList) -> UserList:
-        if self.role == "sysadmin":
-            return [user for user in users_list if user["sysadmin"]]
-        elif self.role == "user":
-            return [user for user in users_list if not user["sysadmin"]]
-        return users_list
+            except tk.ValidationError:
+                # we shouldn't get there, but currently CKAN has a problem
+                # system user doesn't have an email, so it's impossible to update it
+                pass
 
 
 class UserAddView(MethodView):

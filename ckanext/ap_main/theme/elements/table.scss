@@ -1,3 +1,40 @@
+// ckanext-collection /////////////////////////////////////////////////////////
+.collection-table {
+    &--header &--cell{
+        font-weight: bold;
+
+        &-sortable{
+            .sort-trigger {
+                border: none;
+                background: none;
+                font-weight: bold;
+                display: flex;
+                gap: 0.5rem;
+                width: 100%;
+                justify-content: space-between;
+
+                &:after {
+                    font-family: FontAwesome;
+                    content: "\f0dc";
+                }
+            }
+
+            &--primary-order {
+                .sort-trigger:after {
+                    content: "\f15d";
+                }
+            }
+
+            &--secondary-order {
+                .sort-trigger:after {
+                    content: "\f882";
+                }
+            }
+        }
+    }
+}
+
+// original styles ////////////////////////////////////////////////////////////
 .table.table-scrollable {
     table-layout: fixed;
 

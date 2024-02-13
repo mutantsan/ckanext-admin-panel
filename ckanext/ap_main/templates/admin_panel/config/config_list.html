@@ -9,18 +9,18 @@
             <div class="col-12 col-lg-6">
                 <div class="accordion accordion-flush" id="{{ parent_accordion_id }}">
                     <div class="accordion-item">
-                        <h2 class="accordion-header" id="flush-headingOne">
+                        <h2 class="accordion-header">
                             <button class="accordion-button" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#{{ accordion_id }}" aria-expanded="true"
-                                aria-controls="{{ accordion_id }}">
+                                aria-controls="{{ accordion_id }}" ap-section="{{ h.ap_munge_string(section.name) }}">
                                 {{ section.name | truncate(69) }}
                             </button>
                         </h2>
-                        <div id="{{ accordion_id }}" class="accordion-collapse show" aria-labelledby="flush-headingOne">
+                        <div id="{{ accordion_id }}" class="accordion-collapse show">
                             <div class="accordion-body">
                                 <div class="list-group">
                                     {% for config in section.configs %}
-                                        <li class="list-group-item d-flex flex-column">
+                                        <li class="list-group-item d-flex flex-column" ap-section-item="{{ h.ap_munge_string(config.name) }}">
                                             <a href="{{ h.url_for(config.blueprint) }}" aria-current="true">
                                                 <i class="fa-solid fa-arrow-right"></i>
                                                 {{ config.name }}

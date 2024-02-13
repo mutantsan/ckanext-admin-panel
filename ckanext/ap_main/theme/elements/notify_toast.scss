@@ -2,7 +2,8 @@
     display: block;
     min-width: 350px;
     border-radius: 4px;
-    position: absolute;
+    position: fixed;
+    z-index: 1000;
     right: 64px;
     top: 10px;
     padding: 16px 24px 16px 24px;

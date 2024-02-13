@@ -1,0 +1,42 @@
+version: 1
+groups:
+  - annotation: Admin panel example
+    options:
+      - key: ckanext.ap_example.footer_html
+        editable: true
+        validators: ignore_empty unicode_safe wysiwyg_sanitize_html
+
+      - key: ckanext.ap_example.header_html
+        editable: true
+
+      - key: ckanext.ap_example.summernote
+        editable: true
+        validators: ignore_empty unicode_safe wysiwyg_sanitize_html
+
+      - key: ckanext.ap_example.drupal_url
+        editable: true
+        validators: ignore_empty unicode_safe url_validator
+
+      - key: ckanext.ap_example.cache.duration
+        type: int
+        default: 3600
+        editable: true
+
+      - key: ckanext.ap_example.timeout
+        type: int
+        default: 5
+        editable: true
+
+      - key: ckanext.ap_example.request.user
+        editable: true
+
+      - key: ckanext.ap_example.request.pass
+        editable: true
+
+      - key: ckanext.ap_example.api_version
+        default: core
+        editable: true
+
+      - key: ckanext.ap_example.core.menu_export_endpoint
+        editable: true
+        default: "/resource/layout/export"

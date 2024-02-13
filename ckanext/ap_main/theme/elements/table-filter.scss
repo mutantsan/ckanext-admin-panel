@@ -1,3 +1,28 @@
+// ckanext-collection /////////////////////////////////////////////////////////
+.ap-collection {
+    &--form {
+
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        @media (min-width: $screen-sm-min) {
+            flex-direction: row;
+            align-items: end;
+            gap: 0.5rem;
+        }
+
+        select {
+            appearance: auto;
+
+            &[multiple] {
+                height: auto;
+            }
+        }
+    }
+}
+
+// original styles ////////////////////////////////////////////////////////////
 .ap-table-filter {
     $input-height: 40px;
 

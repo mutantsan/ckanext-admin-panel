@@ -9,6 +9,12 @@ from ckanext.ap_main.interfaces import IAdminPanel
 _renderers_cache: dict[str, ap_types.ColRenderer] = {}
 
 
+collect_sections_signal = tk.signals.ckanext.signal(
+    "ap_main:collect_config_sections",
+    "Collect configuration section from subscribers",
+)
+
+
 def ap_before_request() -> None:
     try:
         tk.check_access(
