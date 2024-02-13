@@ -8,4 +8,5 @@
 
 .ap-ticket-list .badge.badge-closed {
     background-color: #6c757d;
+    color: white;
 }

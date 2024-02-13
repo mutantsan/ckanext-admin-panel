@@ -41,3 +41,16 @@ def ticket_show(ignore_missing, unicode_safe, ticket_id_exists) -> Schema:
 @validator_args
 def ticket_delete(ignore_missing, unicode_safe, ticket_id_exists) -> Schema:
     return {"id": [ignore_missing, unicode_safe, ticket_id_exists]}
+
+
+@validator_args
+def ticket_update(
+    not_missing, ignore_missing, unicode_safe, ignore, one_of, ticket_id_exists
+) -> Schema:
+    return {
+        "id": [not_missing, unicode_safe, ticket_id_exists],
+        "status": [ignore_missing, unicode_safe, one_of(STATUSES)],
+        "text": [ignore_missing, unicode_safe],
+        "__extras": [ignore],
+        "__junk": [ignore],
+    }

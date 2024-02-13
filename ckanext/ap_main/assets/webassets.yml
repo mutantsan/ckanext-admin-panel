@@ -3,6 +3,7 @@ admin_panel-js:
   output: ckanext-admin_panel/%(version)s-admin_panel.js
   contents:
     - js/ap-main.js
+    - js/ap-htmx.js
     - js/ap-theme-switcher.js
     - js/ap-nested-dropdown.js
     - js/ap-toggle-state.js
@@ -23,3 +24,12 @@ admin_panel-css:
   output: ckanext-admin_panel/%(version)s-admin_panel.css
   contents:
     - css/admin_panel.css
+
+admin_panel-htmx:
+  filter: rjsmin
+  output: ckanext-admin_panel/%(version)s-admin_panel-htmx.js
+  contents:
+    - js/vendor/sweetalert.min.js
+    - js/vendor/htmx.min.js
+    - js/vendor/_hyperscript.min.js
+    - js/vendor/jsonlint.min.js

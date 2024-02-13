@@ -32,17 +32,17 @@ def schedule(
 ) -> str:
     tooltip = tk.h.ap_cron_explain_cron_schedule(value)
 
-    return tk.render(
+    return tk.literal(tk.render(
         "ap_cron/renderers/schedule.html",
         extra_vars={"value": value, "tooltip": tooltip},
-    )
+    ))
 
 
 @renderer
 def json_display(
     value: Any, options: dict[str, Any], name: str, record: Any, self: BaseSerializer
 ) -> str:
-    return tk.render(
+    return tk.literal(tk.render(
         "ap_cron/renderers/json.html",
         extra_vars={"value": value},
-    )
+    ))

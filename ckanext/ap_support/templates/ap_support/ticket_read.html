@@ -10,5 +10,12 @@
 {% endblock breadcrumb_content %}
 
 {% block ap_content %}
-    {{ ticket }}
+    <p><b>Subject</b>: {{ ticket.subject }}</p>
+    <p><b>Author</b>: {{ h.linked_user(ticket.author.name, maxlength=30) }}</p>
+
+    <p><b>Text</b></p>
+    <div class="ck-content">
+        {{ h.wysiwyg_sanitize_html(ticket.text) | safe }}
+    </div>
+
 {% endblock ap_content %}

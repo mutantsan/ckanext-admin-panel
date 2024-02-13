@@ -78,7 +78,7 @@ def day_passed(
 
     days_passed = (current_date - datetime_obj).days
 
-    return tk.render(
+    return tk.literal(tk.render(
         "admin_panel/renderers/day_passed.html",
         extra_vars={"value": days_passed},
-    )
+    ))

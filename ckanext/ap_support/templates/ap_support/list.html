@@ -7,63 +7,20 @@
 {% block ap_main_class %} ap-ticket-list {% endblock %}
 
 {% block breadcrumb_content %}
-    <li class="active">{% link_for _("Dashboard"), named_route='ap_support.list' %}</li>
+    <li class="active">{% link_for _("Dashboard"), request.endpoint %}</li>
 {% endblock breadcrumb_content %}
 
 {% block ap_content %}
     <h1>{{ _("Tickets") }}</h1>
 
     <div class="row g-3">
-        <form action="{{ h.url_for('ap_support.list') }}" method="GET" id="ap-logs-filter" class="ap-table-filter">
-            <div class="form-field">
-                <div class="search-input-wrapper">
-                    {% call form.input("q", label=_("Search"), value=q, placeholder=_('Search')) %}
-                        <button class="btn-search" type="submit"><i class="fa fa-search"></i></button>
-                    {% endcall %}
-                </div>
-            </div>
-
-            <div class="form-buttons">
-                <button type="submit" class="btn btn-primary">{{ _("Filter") }}</button>
-                <a href="{{ h.url_for('ap_support.list') }}" class="btn btn-primary">{{ _("Clear") }}</a>
-            </div>
-
-            {{ form.hidden("sort", sort) }}
-            {{ form.hidden("order_by", order_by) }}
-        </form>
-
-        <form action="{{ h.url_for('ap_support.list') }}" method="POST">
-            {{ h.csrf_input() }}
-
-            <div class="bulk-actions">
-                {{ form.select('bulk-action', id='bulk-action', label=_('Action'), options=bulk_options, selected="", error=error) }}
-
-                <button
-                    type="submit" id="bulk-submit"
-                    class="btn btn-primary mb-3"
-                    data-module="ap-confirm-action"
-                    data-module-content="{{ _('Are you sure you want to perform a bulk action?') }}"
-                    data-module-with-data=true>
-                    {{ _("Apply to selected items") }}
-                </button>
-            </div>
-
-            {% snippet "admin_panel/config/snippets/sortable_table.html", items=page.items, columns=columns, empty_msg=_("No jobs available"), order_by=order_by, sort=sort, bulk_check=1 %}
-        </form>
-
+        {% if collection.data.total %}
+            {{ collection.serializer.render() | safe }}
+        {% else %}
+            <p>
+                {{ _("No tickets found.") }}
+                <a href="{{ request.path }}">{{ _("Clear the search") }}</a>
+            </p>
+        {% endif %}
     </div> <!-- row -->
-
-    <form action="{{ h.url_for('ap_cron.add') }}" method="POST" id="ap-cron-add">
-        {% snippet 'ap_cron/cron_new_modal.html' %}
-    </form>
-
-    <form action="{{ h.url_for('ap_cron.edit') }}" method="POST" id="ap-cron-add">
-        {% snippet 'ap_cron/cron_edit_modal.html' %}
-    </form>
-
 {% endblock ap_content %}
-
-
-{% block page_pagination %}
-    {{ page.pager(q=q, order_by=order_by, sort=sort, type=types, level=levels) }}
-{% endblock %}

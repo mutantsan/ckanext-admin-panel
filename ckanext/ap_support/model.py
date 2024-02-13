@@ -43,17 +43,17 @@ class Ticket(tk.BaseModel):
         return f"Ticket #{self.id}: {self.subject}"
 
     @classmethod
-    def get(cls, job_id: str) -> Self | None:
-        query = model.Session.query(cls).filter(cls.id == job_id)
+    def get(cls, ticket_id: str) -> Self | None:
+        query = model.Session.query(cls).filter(cls.id == ticket_id)
 
         return query.one_or_none()
 
     @classmethod
     def get_list(cls, statuses: Optional[list[str]] = None) -> list[Self]:
-        """Get a list of cron jobs.
+        """Get a list of tickets.
 
         Args:
-            states (Optional[list[str]], optional): Filter by job state.
+            states (Optional[list[str]], optional): Filter by ticket status.
         """
         query = model.Session.query(cls)
 

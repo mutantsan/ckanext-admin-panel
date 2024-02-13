@@ -1,6 +1,6 @@
 <div
     id="admin-panel"
-    data-module="ap-main ap-nested-dropdown {% if h.ap_show_toolbar_theme_switcher() %}ap-theme-switcher{% endif %}">
+    data-module="ap-main ap-htmx ap-nested-dropdown {% if h.ap_show_toolbar_theme_switcher() %}ap-theme-switcher{% endif %}">
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             {% block ap_toolbar_logo %}

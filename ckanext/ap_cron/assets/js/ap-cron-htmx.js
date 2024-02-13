@@ -9,8 +9,6 @@ ckan.module("ap-cron-htmx", function ($) {
         initialize: function () {
             $.proxyAll(this, /_on/);
 
-            document.addEventListener('htmx:beforeRequest', this._onHTMXbeforeRequest);
-            document.addEventListener('htmx:afterSettle', this._onHTMXafterSettle);
             document.addEventListener('htmx:confirm', this._onHTMXconfirm);
             document.addEventListener('htmx:afterRequest', this._onAfterRequest)
         },

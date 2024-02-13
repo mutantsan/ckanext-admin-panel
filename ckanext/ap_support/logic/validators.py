@@ -10,7 +10,7 @@ from ckanext.ap_support.model import Ticket
 
 
 def ticket_id_exists(ticket_id: str, context: types.Context) -> Any:
-    """Ensures that the cron job with a given id exists."""
+    """Ensures that the ticket with a given id exists."""
 
     session = context["session"]
 

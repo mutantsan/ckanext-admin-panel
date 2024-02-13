@@ -8,11 +8,6 @@ fields:
     form_snippet: wysiwyg_ckeditor5.html
     display_snippet: wysiwyg_ckeditor5.html
 
-  - field_name: ckanext.ap_example.header_html
-    label: Quill
-    form_snippet: wysiwyg_quill.html
-    display_snippet: wysiwyg_quill.html
-
   - field_name: ckanext.ap_example.summernote
     label: Summernote
     form_snippet: wysiwyg_summernote.html

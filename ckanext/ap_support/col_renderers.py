@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+from typing import Any
+
 import ckan.plugins.toolkit as tk
 
-import ckanext.ap_main.types as ap_types
+from ckanext.collection.types import BaseSerializer
 from ckanext.toolbelt.decorators import Collector
 
 renderer, get_renderers = Collector("ap_support").split()
@@ -10,16 +12,9 @@ renderer, get_renderers = Collector("ap_support").split()
 
 @renderer
 def status(
-    rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue, **kwargs
+    value: Any, options: dict[str, Any], name: str, record: Any, self: BaseSerializer
 ) -> str:
-    return tk.render(
+    return tk.literal(tk.render(
         "ap_support/renderers/status.html",
         extra_vars={"value": value},
-    )
-
-
-@renderer
-def user_link(
-    rows: ap_types.ItemList, row: ap_types.Item, value: ap_types.ItemValue, **kwargs
-) -> str:
-    return tk.h.linked_user(value["id"], maxlength=kwargs.get("maxlength") or 20)
+    ))

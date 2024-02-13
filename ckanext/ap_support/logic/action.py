@@ -65,3 +65,22 @@ def ap_support_ticket_delete(
     context["session"].commit()
 
     return True
+
+
+@tk.side_effect_free
+@validate(schema.ticket_update)
+def ap_support_ticket_update(
+    context: types.Context, data_dict: types.DataDict
+) -> DictizedTicket:
+    tk.check_access("ap_support_ticket_delete", context, data_dict)
+
+    ticket = support_model.Ticket.get(data_dict["id"])
+
+    for key, value in data_dict.items():
+        setattr(ticket, key, value)
+
+    context["session"].commit()
+
+    log.info("[id:%s] ticket been updated: %s", ticket.id, data_dict)
+
+    return True
