@@ -91,6 +91,10 @@ class UserListView(MethodView):
                 )
             except tk.ObjectNotFound:
                 pass
+            except tk.ValidationError:
+                # we shouldn't get there, but currently CKAN has a problem
+                # system user doesn't have an email, so it's impossible to update it
+                pass
 
 
 class UserAddView(MethodView):
