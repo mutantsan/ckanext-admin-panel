@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 
 from ckan.plugins import toolkit as tk
 
-from ckanext.ap_main.model import ApLogs
+from ckanext.ap_log.model import ApLogs
 
 log = logging.getLogger(__name__)
 

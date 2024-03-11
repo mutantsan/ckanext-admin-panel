@@ -149,24 +149,26 @@ To install ckanext-admin-panel:
 None at present
 
 ## Enabling logging
-To store the log messages, you have to initiate the database log table and create a handler in your `ckan.ini` file.
+To store log messages in a database, you must enable the `admin_panel_log` extension, initialize the database log table,
+and create a handler in your 'ckan.ini' file.
 
- 1. This command will initiate all missing tables: `ckan db pending-migrations --apply`
- 2. To register a handler you must specify it in your CKAN configuration file. Because of some CKAN specific, the logger must know the database URI to initiate itself. Provide it with `kwargs` option.
+ 1. Add `admin_panel_log` to the `ckan.plugins` setting in your CKAN config file.
+ 2. Initialize all missing tables with: `ckan db pending-migrations --apply`
+ 3. To register a handler, you must specify it in your CKAN configuration file. Due to some CKAN specifics, the logger needs to know the database URI to initialize itself. Provide it with the `kwargs` option.
 	```
     [handler_dbHandler]
-    class = ckanext.ap_main.log_handlers.DatabaseHandler
+    class = ckanext.ap_log.log_handlers.DatabaseHandler
     formatter = generic
     level = NOTSET
     kwargs={"db_uri": "postgresql://ckan_default:pass@localhost/master"}
     ```
 
- 3. The logging handler must be also included in `[handlers]` section.
+ 4. The logging handler must be also included in `[handlers]` section.
 	```
     [handlers]
     keys = console, dbHandler
 	```
- 4. The last thing you need to do is to add our handler to a logger you need. For example, if you want to log only `ckan` logs, do this:
+ 5. The last thing you need to do is to add our handler to a logger you need. For example, if you want to log only `ckan` logs, do this:
 	```
     [logger_ckan]
 	level = INFO

@@ -12,12 +12,13 @@ from ckanext.collection.types import (
 )
 from ckanext.collection.utils import Filters, ModelData
 
-from ckanext.ap_main.model import ApLogs
 from ckanext.ap_main.collection.base import (
     ApCollection,
     MultiSelectFilter,
     GlobalAction,
 )
+
+from ckanext.ap_log.model import ApLogs
 
 
 class DbLogCollection(ApCollection):

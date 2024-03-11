@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Literal
+from typing import Any, Callable
 
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
@@ -46,7 +46,6 @@ class AdminPanelPlugin(p.SingletonPlugin):
         return {
             "ap-content": collection.ContentCollection,
             "ap-user": collection.UserCollection,
-            "ap-logs": collection.DbLogCollection,
         }
 
     # ISignal

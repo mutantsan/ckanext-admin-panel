@@ -1,15 +1,16 @@
-"""Add ApLogs table
+"""Init table
 
-Revision ID: 65d431520aa2
+Revision ID: fe11724f1867
 Revises:
-Create Date: 2023-08-21 10:18:49.128929
+Create Date: 2024-03-11 13:20:05.331015
 
 """
-import sqlalchemy as sa
 from alembic import op
+import sqlalchemy as sa
+
 
 # revision identifiers, used by Alembic.
-revision = "65d431520aa2"
+revision = 'fe11724f1867'
 down_revision = None
 branch_labels = None
 depends_on = None
