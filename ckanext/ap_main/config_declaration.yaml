@@ -2,11 +2,6 @@ version: 1
 groups:
   - annotation: ckanext-admin_panel
     options:
-      - key: ckanext.admin_panel.show_toolbar_search
-        type: bool
-        description: Enable/disable search on a toolbar
-        default: True
-
       - key: ckanext.admin_panel.show_toolbar_theme_switcher
         type: bool:
         description: Enable/disable theme switcher on a toolbar

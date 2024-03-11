@@ -142,11 +142,6 @@ def add_url_param(key: str, value: str) -> str:
 
 
 @helper
-def show_toolbar_search() -> bool:
-    return ap_config.show_toolbar_search()
-
-
-@helper
 def show_toolbar_theme_switcher() -> bool:
     return ap_config.show_toolbar_theme_switcher()
 
