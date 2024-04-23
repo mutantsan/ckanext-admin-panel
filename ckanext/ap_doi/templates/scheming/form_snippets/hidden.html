@@ -1,0 +1,4 @@
+{# Form snippet for fields that should be hidden from the user, but we still want
+    their contents to be saved and submitted with the form #}
+
+    <input type="hidden" id="field-{{ field.field_name }}" name="{{ field.field_name }}" value="{{ data.get(field.field_name, '') }}">

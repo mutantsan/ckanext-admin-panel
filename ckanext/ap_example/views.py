@@ -8,6 +8,8 @@ from flask.views import MethodView
 
 import ckan.plugins.toolkit as tk
 
+from ckanext.editable_config.shared import value_as_string
+
 from ckanext.ap_main.utils import ap_before_request
 from ckanext.ap_main.views.generics import ApConfigurationPageView
 
@@ -29,7 +31,6 @@ class ApConfigurationDisplayPageView(MethodView):
 
     def get_config_form_data(self) -> dict[str, Any]:
         """Fetch/humanize configuration values from a CKANConfig"""
-        from ckanext.editable_config.shared import value_as_string
 
         data = {}
 

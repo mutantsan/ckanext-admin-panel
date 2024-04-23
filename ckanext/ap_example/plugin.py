@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Literal
 
 from os import path
 
@@ -19,6 +18,7 @@ class AdminPanelExamplePlugin(p.SingletonPlugin):
     p.implements(p.IConfigurer)
     p.implements(p.IConfigDeclaration, inherit=True)
     p.implements(p.ISignal)
+    p.implements(p.IConfigDeclaration)
 
     # IConfigurer
 

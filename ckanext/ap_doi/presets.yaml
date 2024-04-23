@@ -1,0 +1,11 @@
+scheming_presets_version: 2
+about: AP DOI presets
+about_url: http://github.com/ckan/ckanext-scheming#preset
+
+presets:
+  - preset_name: ap_doi
+    values:
+      field_name: doi
+      label: Dataset DOI
+      form_snippet: hidden.html
+      display_snippet: text.html

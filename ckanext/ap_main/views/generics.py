@@ -16,7 +16,7 @@ class ApConfigurationPageView(MethodView):
         breadcrum_label: str = "Configuration",
         page_title: str = "Configuration page",
         success_update_message: str = "Config options have been updated",
-        fields: list[dict[str, Any]] = None,
+        fields: list[dict[str, Any]] | None = None,
     ):
         """A generic view to render configurations for an extension based on
         an arbitrary schema and config_declaration.yaml

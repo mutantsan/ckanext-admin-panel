@@ -37,7 +37,5 @@
 {% endmacro %}
 
 {% for button in h.ap_get_toolbar_structure() %}
-    {% if button.url or button.sibitems %}
-        {{ toolbar_button(button) }}
-    {% endif %}
+    {{ toolbar_button(button) }}
 {% endfor %}

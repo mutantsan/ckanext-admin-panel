@@ -1,0 +1,59 @@
+{% extends "user/dashboard.html" %}
+
+{% block primary_content_inner %}
+    <div data-module="dashboard">
+        <h2 class="page-heading">
+            {% block page_heading %}
+                {{ _('DATASETS WITH DOI ISSUE') }}
+            {% endblock %}
+        </h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alerts">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <a class="close" data-dismiss="alert" href="#">×</a>
+                            <p>{{ message }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <ul class="activity">
+            {% for package in problem_packages %}
+                {% if package.doi_status == None %}
+                    {% set doi_status_text = _('has a missing DOI') %}
+                    {% set doi_status_button_text = _('Generate DOI') %}
+                {% else %}
+                    {% set doi_status_text = _('has an outdated DOI') %}
+                    {% set doi_status_button_text = _('Regenerate DOI') %}
+                {% endif %}
+
+                <li class="item doi-issue changed-package">
+                    <span class="fa-stack fa-lg">
+                        <i class="fa fa-circle fa-stack-2x icon"></i>
+                        <i class="fa fa-sitemap fa-stack-1x fa-inverse"></i>
+                    </span>
+
+                    <a href="{{ h.url_for('dataset.read', id=package.id) }}">
+                        {{ package.title }}
+                    </a>
+
+                    {{ doi_status_text }}
+
+                    <form action="{{ h.url_for('doi_dashboard.create_or_update_doi', package_id=package.id) }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-link p-0 mx-2">
+                            {{ doi_status_button_text }}
+                        </button>
+                    </form>
+
+                    <br>
+
+                    <span class="date" title="{{ h.render_datetime(package.timestamp, with_hours=True) }}" style="margin: 5px 0 0 50px;">
+                        {{ h.time_ago_from_timestamp(package.timestamp) }}
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

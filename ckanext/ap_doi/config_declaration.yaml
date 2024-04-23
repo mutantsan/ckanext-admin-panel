@@ -1,0 +1,44 @@
+version: 1
+groups:
+  - annotation: Admin panel example
+    options:
+      # The following keys are declared here, because ckanext-doi doesn't provide config declaration
+
+      - key: ckanext.doi.account_name
+        required: true
+        description: Your DataCite Repository account
+        editable: true
+
+      - key: ckanext.doi.account_password
+        required: true
+        description: Your DataCite Repository account password
+        editable: true
+
+      - key: ckanext.doi.prefix
+        required: true
+        description: The prefix taken from your DataCite Repository account (from your test account if running in test mode)
+        editable: true
+
+      - key: ckanext.doi.publisher
+        required: true
+        description: The name of the institution publishing the DOI
+        editable: true
+
+      - key: ckanext.doi.test_mode
+        description: Enable dev/test mode
+        required: true
+        description: If test mode is set to true, the DOIs will use the DataCite test site. The test site uses a separate account, so you must also change your credentials and prefix.
+        editable: true
+
+      - key: ckanext.doi.site_url
+        description: Used to build the link back to the dataset
+        editable: true
+
+      - key: ckanext.doi.site_title
+        description: Site title to use in the citation
+        editable: true
+
+      # AP_DOI config options
+      - key: ckanext.ap_doi.mock_api_calls
+        description: If enabled, the extension will not make any API calls to DataCite
+        editable: true
