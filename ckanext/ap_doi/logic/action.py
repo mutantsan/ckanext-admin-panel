@@ -160,7 +160,7 @@ def _mock_update_doi_metadata(context: Any, package_id: dict[str, Any]):
     else:
         alphabet = string.ascii_lowercase + string.digits
         doi = f"{config.get_doi_prefix()}/{''.join(random.choices(alphabet, k=8))}"
-        doi_crud.DOIQuery.create(doi, package_id)
+        doi_crud.DOIQuery.create(doi, package_id, dt.now(timezone.utc).isoformat())
 
     context["model"].Session.commit()
 
