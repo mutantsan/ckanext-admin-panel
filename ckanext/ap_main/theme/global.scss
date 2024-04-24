@@ -6,7 +6,8 @@ body[admin-panel="true"] {
         padding-top: 1rem;
     }
 
-    div.main {
+    div.main,
+    div.main #content {
         background: var(--ap-body-bg);
     }
 

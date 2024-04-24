@@ -1,5 +1,7 @@
 // ckanext-collection /////////////////////////////////////////////////////////
-.collection-table {
+.table.collection-table {
+    color: var(--ap-color);
+
     &--header &--cell{
         font-weight: bold;
 
