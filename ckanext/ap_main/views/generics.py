@@ -55,6 +55,9 @@ class ApConfigurationPageView(MethodView):
             else {"schema_id": self.schema_id, "fields": self.fields}
         )
 
+        if not schema:
+            raise ValueError(f"Config schema '{self.schema_id}' not found")
+
         return schema
 
     def get_config_form_data(self) -> dict[str, Any]:
