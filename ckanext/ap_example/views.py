@@ -21,7 +21,7 @@ ap_example.before_request(ap_before_request)
 
 class ApConfigurationDisplayPageView(MethodView):
     def get(self):
-        self.schema = tk.h.ap_get_arbitrary_schema("admin_panel_example_config")
+        self.schema = tk.h.ap_get_config_schema("admin_panel_example_config")
         data = self.get_config_form_data()
 
         return tk.render(

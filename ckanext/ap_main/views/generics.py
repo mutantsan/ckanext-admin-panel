@@ -50,7 +50,7 @@ class ApConfigurationPageView(MethodView):
         """Fetch a full schema or use the fields user provides and put them inside
         a dict to imitate a schema"""
         schema = (
-            tk.h.ap_get_arbitrary_schema(self.schema_id)
+            tk.h.ap_get_config_schema(self.schema_id)
             if not self.fields
             else {"schema_id": self.schema_id, "fields": self.fields}
         )

@@ -72,9 +72,32 @@ class AdminPanelDoiPlugin(p.SingletonPlugin):
     def get_signal_subscriptions(self) -> SignalMapping:
         return {
             tk.signals.ckanext.signal("ap_main:collect_config_sections"): [
-                collect_config_sections_subscriber,
+                self.collect_config_sections_subscriber,
+            ],
+            tk.signals.ckanext.signal("ap_main:collect_config_schemas"): [
+                self.collect_config_schemas_subs
             ],
         }
+
+    @staticmethod
+    def collect_config_sections_subscriber(sender: None):
+        return ap_types.SectionConfig(
+            name="DOI",
+            configs=[
+                ap_types.ConfigurationItem(
+                    name="Dashboard",
+                    blueprint="doi_dashboard.list",
+                ),
+                ap_types.ConfigurationItem(
+                    name="DOI settings",
+                    blueprint="doi_dashboard.config",
+                ),
+            ],
+        )
+
+    @staticmethod
+    def collect_config_schemas_subs(sender: None):
+        return ["ckanext.ap_doi:config_schema.yaml"]
 
     # IConfigDeclaration
 
@@ -90,22 +113,6 @@ class AdminPanelDoiPlugin(p.SingletonPlugin):
 
     def get_collection_factories(self) -> dict[str, CollectionFactory]:
         return {"ap-doi": ApDOICollection}
-
-
-def collect_config_sections_subscriber(sender: None):
-    return ap_types.SectionConfig(
-        name="DOI",
-        configs=[
-            ap_types.ConfigurationItem(
-                name="Dashboard",
-                blueprint="doi_dashboard.list",
-            ),
-            ap_types.ConfigurationItem(
-                name="DOI settings",
-                blueprint="doi_dashboard.config",
-            ),
-        ],
-    )
 
 
 class ApDOIPlugin(DOIPlugin):

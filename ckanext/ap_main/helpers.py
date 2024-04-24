@@ -158,20 +158,16 @@ def generate_page_unique_class() -> str:
 
 
 @helper
-def get_arbitrary_schema(schema_id: str) -> dict[Any, Any] | None:
-    """This is a temporary code. We've created a PR #403 to ckanext-scheming
-    to support an arbitrary schemas. For now, we are creating a polyfill"""
+def get_config_schema(schema_id: str) -> dict[Any, Any] | None:
+    """Get a schema by its id from the loaded schemas"""
     from ckanext.scheming.plugins import _load_schemas, _expand_schemas
 
-    SCHEMA_OPTION = "scheming.arbitrary_schemas"
-    SCHEMA_TYPE_FIELD = "schema_id"
+    for _, schemas_paths in ap_utils.collect_config_schemas_signal.send():
+        schemas = _load_schemas(schemas_paths, "schema_id")
+        expanded_schemas = _expand_schemas(schemas)
 
-    schema_urls = tk.config.get(SCHEMA_OPTION, "").split()
-    schemas = _load_schemas(schema_urls, SCHEMA_TYPE_FIELD)
-
-    expanded_schemas = _expand_schemas(schemas)
-
-    return expanded_schemas.get(schema_id)
+        if schema := expanded_schemas.get(schema_id):
+            return schema
 
 
 @helper

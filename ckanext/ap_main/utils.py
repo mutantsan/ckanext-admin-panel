@@ -14,6 +14,11 @@ collect_sections_signal = tk.signals.ckanext.signal(
     "Collect configuration section from subscribers",
 )
 
+collect_config_schemas_signal = tk.signals.ckanext.signal(
+    "ap_main:collect_config_schemas",
+    "Collect config schemas from subscribers",
+)
+
 
 def ap_before_request() -> None:
     try:
