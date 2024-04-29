@@ -8,7 +8,7 @@ from croniter import croniter
 
 import ckan.plugins.toolkit as tk
 
-from ckanext.ap_cron.const import ERRORS, KWARGS, LOG_NAME
+from ckanext.ap_cron.const import ERRORS, KWARGS, RESULTS, LOG_NAME
 from ckanext.ap_cron.model import CronJob
 from ckanext.ap_cron.types import DictizedCronJob
 
@@ -93,7 +93,7 @@ def cron_job_pipe(data_dict: dict[str, Any]) -> DictizedCronJob:
             payload = result if result else {}
         except tk.ValidationError as e:
             e.error_dict["action_name"] = action
-            e.error_dict["kwargs"] = payload # type: ignore
+            e.error_dict[KWARGS] = payload # type: ignore
             job.data[ERRORS] = e.error_dict
 
             log.exception(
@@ -104,6 +104,8 @@ def cron_job_pipe(data_dict: dict[str, Any]) -> DictizedCronJob:
             return _update_job_state(
                 {"id": job.id, "state": CronJob.State.failed, "data": job.data}
             )
+        else:
+            job.data[RESULTS] = result
 
         log.info("[id:%s] The action %s was executed successfully...", job.id, action)
 
