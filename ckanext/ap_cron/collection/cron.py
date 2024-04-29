@@ -57,6 +57,7 @@ class CronCollection(ApCollection):
             "row_actions": "Actions",
         },
         width={
+            "bulk-action": "3%",
             "data": "30%",
             "row_actions": "15%",
         },

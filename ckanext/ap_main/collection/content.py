@@ -32,7 +32,7 @@ class ContentCollection(ApCollection):
             "metadata_created",
             "metadata_modified",
         },
-        width={"title": "15%", "notes": "20%", "row_actions": "15%"},
+        width={"bulk-action": "3%", "title": "15%", "notes": "20%", "row_actions": "15%"},
         searchable={"title", "notes"},
         labels={
             "bulk-action": tk.literal(

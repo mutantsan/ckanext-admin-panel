@@ -24,8 +24,6 @@ def row_dictizer(
 class ApDOICollection(collection_base.ApCollection):
     SerializerFactory = collection_base.ApHtmxTableSerializer.with_attributes(
         row_dictizer=row_dictizer,
-        # record_template="ap_doi/record.html",
-        # pager_template="ap_doi/pager.html",
     )
 
     ColumnsFactory = collection_base.ApColumns.with_attributes(
@@ -56,7 +54,12 @@ class ApDOICollection(collection_base.ApCollection):
             "published": "Publish Date",
             "row_actions": "Actions",
         },
-        width={"title": "15%", "doi_status": "10%", "row_actions": "20%"},
+        width={
+            "bulk-action": "3%",
+            "title": "15%",
+            "doi_status": "10%",
+            "row_actions": "20%",
+        },
         serializers={
             "timestamp": [("date", {})],
             "published": [("date", {})],

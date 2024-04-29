@@ -3,6 +3,10 @@
     color: var(--ap-color);
     table-layout: fixed;
 
+    .collection-table--cell {
+        word-break: break-all;
+    }
+
     .collection-table--header .collection-table--cell {
         font-weight: bold;
 
@@ -38,6 +42,10 @@
 
     @media (max-width: $screen-md-min) {
         table-layout: unset;
+
+        .collection-table--cell {
+            word-break: unset;
+        }
     }
 }
 
@@ -115,6 +123,7 @@
         input {
             height: auto;
         }
+
         .form-group {
             margin: 0;
         }

@@ -31,6 +31,7 @@ class UserCollection(ApCollection):
             "state",
             "sysadmin",
         },
+        width={"bulk-action": "3%"},
         searchable={"name", "fullname"},
         labels={
             "bulk-action": tk.literal(
