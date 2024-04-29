@@ -1,6 +1,7 @@
 // ckanext-collection /////////////////////////////////////////////////////////
 .table.collection-table {
     color: var(--ap-color);
+    table-layout: fixed;
 
     .collection-table--header .collection-table--cell {
         font-weight: bold;
@@ -33,6 +34,10 @@
                 }
             }
         }
+    }
+
+    @media (max-width: $screen-md-min) {
+        table-layout: unset;
     }
 }
 
