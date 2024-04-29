@@ -54,6 +54,7 @@ class ContentCollection(ApCollection):
             "row_actions": "Actions",
         },
         serializers={
+            "notes": [("trim_string", {"max_length": 100})],
             "creator_user_id": [("user_link", {})],
             "metadata_created": [("date", {})],
             "metadata_modified": [("date", {})],

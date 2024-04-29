@@ -78,7 +78,26 @@ def day_passed(
 
     days_passed = (current_date - datetime_obj).days
 
-    return tk.literal(tk.render(
-        "admin_panel/renderers/day_passed.html",
-        extra_vars={"value": days_passed},
-    ))
+    return tk.literal(
+        tk.render(
+            "admin_panel/renderers/day_passed.html",
+            extra_vars={"value": days_passed},
+        )
+    )
+
+
+@renderer
+def trim_string(
+    value: str, options: dict[str, Any], name: str, record: Any, self: BaseSerializer
+) -> str:
+    """Trim string to a certain length"""
+    if not value:
+        return ""
+
+    max_length: int = options.get("max_length", 79)
+    trimmed_value: str = value[:max_length]
+
+    if tk.asbool(options.get("add_ellipsis", True)):
+        trimmed_value += "..."
+
+    return trimmed_value
