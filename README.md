@@ -200,7 +200,7 @@ Register a separate logger for a cron job logging. The DB handler must be initia
 ### Scheduling
 Each cron job can be manually triggered from the cron manager page. However, it's essential to schedule a single command with crontab to automatically trigger all jobs created within CKAN. For example:
 
-    */10 * * * * /usr/lib/ckan/default/bin/ckan -c /etc/ckan/default/production.ini ap
+    */10 * * * * /usr/lib/ckan/default/bin/ckan -c /etc/ckan/default/production.ini ap-cron trigger-jobs
 
 This command checks all the jobs every 10 minutes to determine if they should be run again. Without scheduling this command, you can manually initiate a specific job through the user interface by clicking the `Run` button. Alternatively, you can execute all scheduled jobs by clicking the `Run active jobs` button.
 
