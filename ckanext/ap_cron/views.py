@@ -170,6 +170,7 @@ class CronEditJobFormView(MethodView):
             "ap_cron/cron_edit_modal_form.html",
             extra_vars={
                 "data": result,
+                "scope": "edit"
             },
         )
 
@@ -244,4 +245,4 @@ ap_cron.add_url_rule("/edit", view_func=CronEditJobView.as_view("edit"))
 ap_cron.add_url_rule("/run_active", view_func=CronRunActiveView.as_view("run_active"))
 
 # API
-ap_cron.add_url_rule("/util/action/autocomplete", view_func=action_autocomplete)
+ap_cron.add_url_rule("/actions_autocomplete", view_func=action_autocomplete)

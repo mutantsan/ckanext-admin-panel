@@ -41,7 +41,7 @@ def _job_should_be_started(job: CronJob) -> bool:
     if not job.last_run:
         return True
 
-    now = dt.now()
+    now = dt.utcnow()
     next_run = cron_utils.get_next_run_datetime(job.last_run, job.schedule)
 
     return next_run <= now

@@ -1,5 +1,9 @@
-ckan.setSchedule = function (scheduleContainer) {
-    $(scheduleContainer).val(getSchedule())
+ckan.setCreateSchedule = function (scheduleContainer) {
+    $(scheduleContainer).val(getSchedule("create"))
+}
+
+ckan.setEditSchedule = function (scheduleContainer) {
+    $(scheduleContainer).val(getSchedule("edit"))
 }
 
 /**
@@ -7,12 +11,12 @@ ckan.setSchedule = function (scheduleContainer) {
  *
  * @returns
  */
-function getSchedule() {
-    const min = $("#job-minute").val() || "*";
-    const hour = $("#job-hour").val() || "*";
-    const day = $("#job-day").val() || "*";
-    const month = $("#job-month").val() || "*";
-    const week = $("#job-week").val() || "*";
+function getSchedule(scope) {
+    const min = $(`#${scope}-job-minute`).val() || "*";
+    const hour = $(`#${scope}-job-hour`).val() || "*";
+    const day = $(`#${scope}-job-day`).val() || "*";
+    const month = $(`#${scope}-job-month`).val() || "*";
+    const week = $(`#${scope}-job-week`).val() || "*";
 
     return `${min} ${hour} ${day} ${month} ${week}`
 }

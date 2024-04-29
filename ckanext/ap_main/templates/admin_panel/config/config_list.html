@@ -1,5 +1,9 @@
 {% extends 'admin_panel/base.html' %}
 
+{% block breadcrumb_content %}
+    <li>{% link_for _("Configurations list"), request.endpoint %}</li>
+{% endblock breadcrumb_content %}
+
 {% block ap_content %}
     <h1>{{ _("List of config options") }}</h1>
     <div class="row g-3">

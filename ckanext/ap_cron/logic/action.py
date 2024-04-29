@@ -23,7 +23,7 @@ def ap_cron_add_cron_job(context, data_dict):
 
     log.info("[id:%s] Cron job has been created", job.id)
 
-    return job
+    return job.dictize(context)
 
 
 @tk.side_effect_free
@@ -95,9 +95,3 @@ def ap_cron_run_cron_job(context, data_dict):
         "job": job.dictize(context),
         "success": enqueue_cron_job(job),
     }
-
-
-def aaa_test_cron(context, data_dict):
-    from time import sleep
-
-    sleep(5)

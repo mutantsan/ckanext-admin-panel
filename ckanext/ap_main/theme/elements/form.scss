@@ -23,4 +23,8 @@ body[admin-panel="true"],
             max-width: 600px;
         }
     }
+
+    .form-group .info-block {
+        color: var(--ap-color);
+    }
 }

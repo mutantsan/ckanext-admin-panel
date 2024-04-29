@@ -11,7 +11,7 @@
 
 {{ form.input("name", label=_("Name"), value=data.name, is_required=true, attrs={"required": "required", "class": "form-control"}) }}
 
-{{ form.input('actions', label=_('Actions'), value=data.actions|join(",") if data.actions else "", is_required=true, error=error, attrs={"multiple": "multiple", "data-module": "autocomplete", "data-module-source": h.url_for('ap_cron.action_autocomplete', incomplete="?"), "data-module-tags": ""}) }}
+{{ form.input('actions', label=_('Actions'), value=data.actions|join(",") if data.actions else "", is_required=true, error=error, attrs={"multiple": "multiple", "data-module": "autocomplete", "data-module-source": "/admin-panel/cron/actions_autocomplete?incomplete=?", "data-module-tags": "", "data-module-createtags": "false"}) }}
 
 {% call form.textarea("data", id=field_data_id, label=_("Data"), value=data.data|tojson if data else "{}", attrs={"data-module": "ap-jsonlint", "data-module-input": "#" + field_data_id, "data-module-result":"#" + field_data_validation_id}) %}
     <div id="{{ field_data_validation_id }}"></div>
@@ -40,26 +40,30 @@
 
 <div class="row">
     <div class="col-md-2">
-        <input type="text" class="form-control" id="job-minute" value="*">
+        <input type="text" class="form-control" id="{{ scope }}-job-minute" value="*">
     </div>
 
     <div class="col-md-2">
-        <input type="text" class="form-control" id="job-hour" value="*">
+        <input type="text" class="form-control" id="{{ scope }}-job-hour" value="*">
     </div>
 
     <div class="col-md-2">
-        <input type="text" class="form-control" id="job-day" value="*">
+        <input type="text" class="form-control" id="{{ scope }}-job-day" value="*">
     </div>
 
     <div class="col-md-2">
-        <input type="text" class="form-control" id="job-month" value="*">
+        <input type="text" class="form-control" id="{{ scope }}-job-month" value="*">
     </div>
 
     <div class="col-md-2">
-        <input type="text" class="form-control" id="job-week" value="*">
+        <input type="text" class="form-control" id="{{ scope }}-job-week" value="*">
     </div>
 
-    <div class="col-md-2"><a class="btn btn-primary" _="{{ 'on click call ckan.setSchedule(#' ~ field_schedule_id ~ ')' }}">Set</a></div>
+    {% if scope == "create" %}
+        <div class="col-md-2"><a class="btn btn-primary" _="{{ 'on click call ckan.setCreateSchedule(#' ~ field_schedule_id ~ ')' }}">{{ _("Set") }}</a></div>
+    {% else %}
+        <div class="col-md-2"><a class="btn btn-primary" _="{{ 'on click call ckan.setEditSchedule(#' ~ field_schedule_id ~ ')' }}">{{ _("Set") }}</a></div>
+    {% endif %}
 </div>
 
 {{ form.input("schedule", id=field_schedule_id, value=data.schedule, label=_("Schedule"), is_required=true, attrs={"readonly": 1, "required": 1, "class": "form-control"}) }}

@@ -1,10 +1,18 @@
 body[admin-panel="true"],
 #admin-panel {
+    .sort-trigger {
+        color: var(--ap-color);
+    }
+
     .btn,
     a.btn {
         border-radius: 0 ;
         box-shadow: none;
         display: inline-block;
+        font-weight: normal;
+        padding: 6px 12px;
+        border: 1px solid var(--ap-primary-btn-border);
+        color: var(--ap-color);
 
         &.btn-primary {
             border: 1px solid var(--ap-primary-btn-border);
@@ -34,6 +42,28 @@ body[admin-panel="true"],
 
         &.btn-danger {
             color: $white;
+            background-color: #d43f3a;
+            border-color: #d43f3a;
+        }
+
+        &.btn-remove-url {
+            right: 0;
+            top: 0;
+            height: 100%;
+            border-radius: 0;
+            border-top-right-radius: 0.25rem;
+            border-bottom-right-radius: 0.25rem;
+            display: flex;
+        }
+
+        &.btn-success {
+            background-color: #3A833A;
+            border-color: #3A833A;
+            color: var(--ap-primary-btn-color);
+        }
+
+        i {
+            margin-left: 0;
         }
     }
 }

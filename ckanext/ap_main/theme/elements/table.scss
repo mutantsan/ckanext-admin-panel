@@ -2,10 +2,10 @@
 .table.collection-table {
     color: var(--ap-color);
 
-    &--header &--cell{
+    .collection-table--header .collection-table--cell {
         font-weight: bold;
 
-        &-sortable{
+        &.collection-table--cell-sortable {
             .sort-trigger {
                 border: none;
                 background: none;

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import datetime
 import logging
-from datetime import datetime as dt
 from typing import Any
 
 from croniter import croniter
@@ -15,9 +15,9 @@ from ckanext.ap_cron.types import DictizedCronJob
 log = logging.getLogger(LOG_NAME)
 
 
-def get_next_run_datetime(date: dt, schedule: str) -> dt:
+def get_next_run_datetime(date: datetime.datetime, schedule: str) -> datetime.datetime:
     """Get a datetime object of the next job run"""
-    return croniter(schedule, date).get_next(dt)
+    return croniter(schedule, date).get_next(datetime.datetime)
 
 
 def enqueue_cron_job(job: CronJob) -> bool:
@@ -73,23 +73,27 @@ def cron_job_pipe(data_dict: dict[str, Any]) -> DictizedCronJob:
 
     job: CronJob = data_dict["data"]["cron_job"]
 
-    log.info("[id:%s] the cron job has been started", job.id)
+    log.info("[id:%s] The cron job has been started", job.id)
 
-    _update_job_state({"id": job.id, "state": CronJob.State.running})
+    _update_job_state(
+        {
+            "id": job.id,
+            "state": CronJob.State.running,
+            "last_run": datetime.datetime.utcnow(),
+        }
+    )
 
     payload = data_dict["data"].get(KWARGS, {})
 
     for action in data_dict["data"]["actions"]:
-        log.info("[id:%s] starting to run an action %s", job.id, action)
+        log.info("[id:%s] Starting to run an action %s", job.id, action)
 
         try:
-            result = tk.get_action(action)(
-                {"ignore_auth": True}, payload
-            )
+            result = tk.get_action(action)({"ignore_auth": True}, payload)
             payload = result if result else {}
         except tk.ValidationError as e:
             e.error_dict["action_name"] = action
-            e.error_dict["kwargs"] = payload
+            e.error_dict["kwargs"] = payload # type: ignore
             job.data[ERRORS] = e.error_dict
 
             log.exception(
@@ -101,9 +105,9 @@ def cron_job_pipe(data_dict: dict[str, Any]) -> DictizedCronJob:
                 {"id": job.id, "state": CronJob.State.failed, "data": job.data}
             )
 
-        log.info("[id:%s] the action %s was executed successfully...", job.id, action)
+        log.info("[id:%s] The action %s was executed successfully...", job.id, action)
 
-    log.info("[id:%s] cron job has successfuly finished", job.id)
+    log.info("[id:%s] The cron job has successfuly finished", job.id)
 
     return _update_job_state(
         {"id": job.id, "state": CronJob.State.finished, "data": job.data}

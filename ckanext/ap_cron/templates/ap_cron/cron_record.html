@@ -7,7 +7,7 @@
         <a
             data-module="ap-tooltip" title="{{ _('Open job logs')}}"
             class="btn btn-black"
-            href="{{ h.url_for('ap_log.list', type=h.ap_cron_get_cron_logger_name(), q=data.id) }}">
+            href="{{ h.url_for('ap_log.list') + '?ap-logs:name=' + h.ap_cron_get_cron_logger_name() + '&ap-logs:q=' + data.id }}">
             <i class="fa-regular fa-file-lines"></i>
         </a>
 

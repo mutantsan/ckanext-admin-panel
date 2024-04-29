@@ -19,7 +19,6 @@ fields:
     validators: default(3600) int_validator
     input_type: number
 
-
   - field_name: ckanext.ap_example.drupal_url
     label: Drupal base URL
     required: true

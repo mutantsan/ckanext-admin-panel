@@ -85,6 +85,7 @@ def update_cron_job(
     json_list_or_string,
     ignore,
     one_of,
+    isodate,
     cron_job_exists,
     cron_schedule_validator,
     cron_actions_to_string,
@@ -94,6 +95,7 @@ def update_cron_job(
         "id": [not_missing, unicode_safe, cron_job_exists],
         "name": [ignore_missing, unicode_safe],
         "schedule": [ignore_missing, unicode_safe, cron_schedule_validator],
+        "last_run": [ignore_missing, isodate],
         "actions": [
             ignore_missing,
             unicode_safe,

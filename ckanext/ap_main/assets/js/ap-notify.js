@@ -15,7 +15,12 @@ ckan.module("ap-notify", function ($) {
         },
 
         _onShowNotification: function (msg, msgType) {
-            var tickIcon = document.createElement("i")
+            var tickIcon = document.createElement("i");
+
+            if (msgType === "alert-danger") {
+                msgType = "error"
+            }
+
             tickIcon.classList = msgType === "error" ? ["fa fa-times"] : ["fa fa-check"];
 
             var toastDiv = document.createElement("div");

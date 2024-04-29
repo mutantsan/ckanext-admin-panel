@@ -5,7 +5,7 @@ about: Configuration options for the DOI extension
 fields:
   - field_name: ckanext.ap_doi.mock_api_calls
     label: Mock API calls
-    description: If enabled, the extension will not make any API calls to DataCite
+    help_text: If enabled, the extension will not make any API calls to DataCite
     validators: default(true), one_of([true, false])
     preset: select
     required: true
@@ -18,30 +18,30 @@ fields:
   - field_name: ckanext.doi.account_name
     label: Account name
     required: true
-    description: Your DataCite Repository account
+    help_text: Your DataCite Repository account
     form_snippet: text.html
     display_snippet: text.html
 
   - field_name: ckanext.doi.account_password
     label: Account password
     required: true
-    description: Your DataCite Repository account password
+    help_text: Your DataCite Repository account password
     input_type: password
 
   - field_name: ckanext.doi.prefix
     label: DOI prefix
     required: true
-    description: The prefix taken from your DataCite Repository account (from your test account if running in test mode)
+    help_text: The prefix taken from your DataCite Repository account (from your test account if running in test mode)
 
   - field_name: ckanext.doi.publisher
     label: Publisher
     required: true
-    description: The name of the institution publishing the DOI
+    help_text: The name of the institution publishing the DOI
 
   - field_name: ckanext.doi.test_mode
     label: Test mode
     required: true
-    description: If test mode is set to true, the DOIs will use the DataCite test site. The test site uses a separate account, so you must also change your credentials and prefix.
+    help_text: If test mode is set to true, the DOIs will use the DataCite test site. The test site uses a separate account, so you must also change your credentials and prefix.
     validators: default(true), one_of([true, false])
     preset: select
     required: true
@@ -53,8 +53,8 @@ fields:
 
   - field_name: ckanext.doi.site_url
     label: Site URL
-    description: Used to build the link back to the dataset
+    help_text: Used to build the link back to the dataset
 
   - field_name: ckanext.doi.site_title
     label: Site title
-    description: Site title to use in the citation
+    help_text: Site title to use in the citation

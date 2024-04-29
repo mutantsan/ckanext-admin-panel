@@ -76,7 +76,7 @@ class CronJob(tk.BaseModel):
         model.Session.delete(self)
 
     @classmethod
-    def add(cls, job_data: CronJobData) -> DictizedCronJob:
+    def add(cls, job_data: CronJobData) -> Self:
         job = cls(
             name=job_data["name"],
             schedule=job_data["schedule"],
@@ -88,7 +88,7 @@ class CronJob(tk.BaseModel):
         model.Session.add(job)
         model.Session.commit()
 
-        return job.dictize({})
+        return job
 
     def dictize(self, context) -> DictizedCronJob:
         return {

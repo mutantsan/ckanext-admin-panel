@@ -116,6 +116,12 @@ class ApConfigurationPageView(MethodView):
                     {},
                     {"options": self.data},
                 )
+        except tk.ObjectNotFound as e:
+            tk.h.flash_error(tk._("No default value found for option {}".format(e.message)))
+            return tk.render(
+                self.render_template,
+                self.prepare_extra_vars(self.schema, self.data, {"test": "No default value"}),
+            )
         except tk.ValidationError as e:
             return tk.render(
                 self.render_template,
