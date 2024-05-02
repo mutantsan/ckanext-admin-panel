@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import Any
 from os import path
 
@@ -21,6 +22,8 @@ from ckanext.ap_doi.collection import ApDOICollection
 import ckanext.ap_doi.const as const
 import ckanext.ap_doi.utils as utils
 import ckanext.ap_doi.config as config
+
+log = logging.getLogger(__name__)
 
 
 @tk.blanket.blueprints
@@ -120,11 +123,17 @@ class ApDOIPlugin(DOIPlugin):
         if config.is_mock_api_calls():
             return
 
-        super(ApDOIPlugin, self).after_dataset_create(context, pkg_dict)
+        try:
+            super(ApDOIPlugin, self).after_dataset_create(context, pkg_dict)
+        except Exception as e:
+            log.error(e)
 
     ## IPackageController
     def after_dataset_update(self, context, pkg_dict):
         if config.is_mock_api_calls():
             return
 
-        super(ApDOIPlugin, self).after_dataset_update(context, pkg_dict)
+        try:
+            super(ApDOIPlugin, self).after_dataset_update(context, pkg_dict)
+        except Exception as e:
+            log.error(e)
