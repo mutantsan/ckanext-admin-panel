@@ -5,7 +5,10 @@ from typing import Any
 from flask.views import MethodView
 
 import ckan.plugins.toolkit as tk
+import ckan.plugins as p
 from ckan.logic import parse_params
+
+from ckanext.ap_main.interfaces import IAdminPanel
 
 
 class ApConfigurationPageView(MethodView):
@@ -105,6 +108,11 @@ class ApConfigurationPageView(MethodView):
         self.disable_non_editable_fields()
         self.throw_away_undeclared_fields()
 
+        conf_before_update = {key: tk.config[key] for key in self.data.keys()}
+
+        for plugin in reversed(list(p.PluginImplementations(IAdminPanel))):
+            plugin.before_config_update(self.schema_id, self.data)
+
         try:
             if tk.request.form.get("reset"):
                 tk.get_action("editable_config_reset")(
@@ -117,15 +125,26 @@ class ApConfigurationPageView(MethodView):
                     {"options": self.data},
                 )
         except tk.ObjectNotFound as e:
-            tk.h.flash_error(tk._("No default value found for option {}".format(e.message)))
+            tk.h.flash_error(
+                tk._("No default value found for option {}".format(e.message))
+            )
             return tk.render(
                 self.render_template,
-                self.prepare_extra_vars(self.schema, self.data, {"test": "No default value"}),
+                self.prepare_extra_vars(
+                    self.schema, self.data, {"test": "No default value"}
+                ),
             )
         except tk.ValidationError as e:
             return tk.render(
                 self.render_template,
                 self.prepare_extra_vars(self.schema, self.data, e.error_dict),
+            )
+
+        for plugin in reversed(list(p.PluginImplementations(IAdminPanel))):
+            plugin.after_config_update(
+                self.schema_id,
+                conf_before_update,
+                self.data,
             )
 
         tk.h.flash_success(self.success_update_message)

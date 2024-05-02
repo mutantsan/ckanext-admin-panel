@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from ckan.plugins.interfaces import Interface
 
 import ckanext.ap_main.types as ap_types
@@ -22,3 +24,13 @@ class IAdminPanel(Interface):
 
         """
         return {}
+
+    def before_config_update(self, schema_id: str, data: dict[str, Any]) -> None:
+        """Called before configuration update"""
+        pass
+
+    def after_config_update(
+        self, schema_id: str, data_before_update: dict[str, Any], data: dict[str, Any]
+    ) -> None:
+        """Called after configuration update"""
+        pass
