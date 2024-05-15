@@ -140,7 +140,7 @@ def set_package_author(pkg_dict: dict[str, Any]):
             pkg_dict["author"] = package.get("author")
             return pkg_dict
 
-    creator = tk.get_action("user_show")({}, {"id": creator_id})
+    creator = tk.get_action("user_show")({"ignore_auth": True}, {"id": creator_id})
 
     pkg_dict["author"] = creator.get("fullname") or creator.get("name")
 
