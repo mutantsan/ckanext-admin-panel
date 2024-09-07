@@ -10,7 +10,7 @@ from ckanext.ap_cron.model import CronJob
 from ckanext.ap_cron.types import DictizedCronJob
 
 
-@pytest.mark.usefixtures("with_plugins", "reset_db_once")
+@pytest.mark.usefixtures("with_plugins", "clean_db")
 class TestCronJobCreate:
     def test_basic_create(self, cron_job_factory):
         job: DictizedCronJob = cron_job_factory()
@@ -28,7 +28,7 @@ class TestCronJobCreate:
         assert isinstance(job["actions"], list)
 
 
-@pytest.mark.usefixtures("with_plugins", "reset_db_once")
+@pytest.mark.usefixtures("with_plugins", "clean_db")
 class TestCronJobUpdate:
     def test_basic_update(self, cron_job: DictizedCronJob):
         assert cron_job["last_run"] is None
@@ -51,7 +51,7 @@ class TestCronJobUpdate:
         assert result["updated_at"] != cron_job["updated_at"]
 
 
-@pytest.mark.usefixtures("with_plugins", "reset_db_once")
+@pytest.mark.usefixtures("with_plugins", "clean_db")
 class TestCronJobGet:
     def test_basic_get(self, cron_job: DictizedCronJob):
         result: DictizedCronJob = call_action("ap_cron_get_cron_job", id=cron_job["id"])
@@ -63,7 +63,7 @@ class TestCronJobGet:
             call_action("ap_cron_get_cron_job", id="xxx")
 
 
-@pytest.mark.usefixtures("with_plugins", "reset_db_once")
+@pytest.mark.usefixtures("with_plugins", "clean_db")
 class TestCronJobRemove:
     def test_basic_remove(self, cron_job: DictizedCronJob):
         result: DictizedCronJob = call_action(
@@ -98,7 +98,7 @@ class TestCronJobList:
         assert len(result) == 1
 
 
-@pytest.mark.usefixtures("with_plugins", "reset_db_once")
+@pytest.mark.usefixtures("with_plugins", "clean_db")
 class TestCronJobRun:
     @mock.patch("ckan.plugins.toolkit.enqueue_job")
     def test_basic_run(self, enqueue_mock, cron_job: DictizedCronJob):

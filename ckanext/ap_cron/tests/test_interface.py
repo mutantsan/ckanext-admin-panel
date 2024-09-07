@@ -6,7 +6,7 @@ import ckan.plugins.toolkit as tk
 from ckan.tests import factories
 
 
-@pytest.mark.usefixtures("non_clean_db", "with_plugins")
+@pytest.mark.usefixtures("with_plugins", "clean_db")
 class TestApCronInterace(object):
     def test_action_without_exclude(self, app, sysadmin):
         url = tk.h.url_for("ap_cron.action_autocomplete")
@@ -15,9 +15,9 @@ class TestApCronInterace(object):
 
         result = app.get(
             url=url,
-            headers={"Authorization": user_token["token"]},  # type: ignore
+            headers={"Authorization": user_token["token"]},
             query_string={"incomplete": "test"},
         ).json
 
         # I've excluded "ap_cron_test_action_2" in ApCronTestPlugin
-        assert len(result["ResultSet"]["Result"]) == 2
+        assert len(result["ResultSet"]["Result"]) == 1

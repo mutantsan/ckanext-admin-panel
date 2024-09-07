@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
 
 from ckan.plugins import toolkit as tk
@@ -19,8 +19,8 @@ class DatabaseHandler(logging.Handler):
         super().__init__()
 
         engine = create_engine(db_uri)
-
-        if not engine.has_table(ApLogs.__tablename__):
+        inspector = inspect(engine)
+        if not inspector.has_table(ApLogs.__tablename__):
             self.not_ready = True
             log.error("The ApLogs table is not initialized")
 

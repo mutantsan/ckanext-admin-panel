@@ -14,7 +14,6 @@ sections = "FUTURE,STDLIB,FIRSTPARTY,THIRDPARTY,CKAN,CKANEXT,SELF,LOCALFOLDER"
 [tool.pytest.ini_options]
 addopts = "--ckan-ini test.ini"
 filterwarnings = [
-               "ignore::sqlalchemy.exc.SADeprecationWarning",
                "ignore::sqlalchemy.exc.SAWarning",
                "ignore::DeprecationWarning",
 ]

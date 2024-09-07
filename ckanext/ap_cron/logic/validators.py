@@ -37,7 +37,7 @@ def cron_job_exists(job_id: str, context: types.Context) -> Any:
 
     session = context["session"]
 
-    if not session.query(cron_model.CronJob).get(job_id):
+    if not session.get(cron_model.CronJob, job_id):
         raise tk.Invalid("The cron job not found.")
 
     return job_id
