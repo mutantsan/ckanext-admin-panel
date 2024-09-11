@@ -4,12 +4,13 @@
 
 {%- block page %}
     {% snippet 'snippets/apply_color_schema.html' %}
+
     {{ super() }}
 {% endblock page %}
 
 {%- block scripts %}
     {% asset 'admin_panel/admin_panel-js' %}
-    {% asset 'admin_panel/admin_panel-htmx' %}
+    {% asset 'admin_panel/admin_panel-vendor-js' %}
 
     {{ super() }}
 {% endblock -%}
@@ -17,5 +18,7 @@
 
 {%- block styles -%}
     {% asset 'admin_panel/admin_panel-css' %}
+    {% asset 'admin_panel/admin_panel-vendor-css' %}
+
     {{ super() }}
 {% endblock %}

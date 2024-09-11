@@ -13,6 +13,7 @@ admin_panel-js:
     - js/ap-notify.js
     - js/ap-disable-field.js
     - js/ap-copy-to-clipboard.js
+    - js/ap-tom-select.js
 
   extra:
     preload:
@@ -25,11 +26,18 @@ admin_panel-css:
   contents:
     - css/admin_panel.css
 
-admin_panel-htmx:
+admin_panel-vendor-js:
   filter: rjsmin
-  output: ckanext-admin_panel/%(version)s-admin_panel-htmx.js
+  output: ckanext-admin_panel/%(version)s-admin_panel-vendor-js.js
   contents:
     - js/vendor/sweetalert.min.js
     - js/vendor/htmx.min.js
     - js/vendor/_hyperscript.min.js
     - js/vendor/jsonlint.min.js
+    - js/vendor/tomselect.min.js
+
+admin_panel-vendor-css:
+  filter: cssrewrite
+  output: ckanext-admin_panel/%(version)s-admin_panel-vendor-css.css
+  contents:
+    - css/vendor/tomselect.min.css
